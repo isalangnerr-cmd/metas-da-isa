@@ -1,0 +1,1809 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Metas da Isa</title>
+<meta name="theme-color" content="#2E0F17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Metas da Isa">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+body[data-view="login"] .tabs, body[data-view="login"] .fab, body[data-view="login"] .top .stats, body[data-view="login"] .top .nivel{display:none!important}
+.login{display:grid;gap:12px;max-width:420px;margin:24px auto}.login input{width:100%}.login .msg{font-size:14px;color:var(--muted)}
+.ag-card input{width:100%;margin:8px 0}.ag-card ol{margin:6px 0 4px;padding-left:20px;line-height:1.5}
+.avisos-card{display:grid;gap:8px}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: app de celular. Cabeçalho com o pote de estrelas e a sequência, conteúdo em uma coluna (máx 720px), barra de abas fixa embaixo. Uma cor viva por área da vida. */
+/* identidade "adesivinhos · cereja e creme": sempre escura (vinho), cereja e creme como cores de destaque,
+   blocos com borda branca que parecem adesivos, letras redondinhas Fredoka + Nunito */
+:root,:root[data-theme="light"],:root[data-theme="dark"]{
+  --bg:#2E0F17; --surface:#451A25; --surface2:#5A2432; --ink:#FFF4EC; --muted:#EBC6CC; --line:#6B2E3D;
+  --cereja:#FF4D6A; --creme:#FFE8C7; --creme-ink:#5A2A10; --sticker:#FFFFFF;
+  --roxo:#FFC2CD; --verm:#FF4D6A; --amar:#FFD59A; --rosa:#FFC2CD; --verde:#FFD9A8; --azul:#FFB3C1;
+  --a-carreira:#FFD59A; --a-saude:#FF9E7A; --a-familia:#FF4D6A; --a-eu:#FFC2CD;
+  --pote:var(--cereja);
+  --on-accent:#2E0F17; --shadow:0 4px 0 rgba(0,0,0,.28);
+  --display:"Fredoka","Baloo 2",ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;
+  --body:"Nunito",ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:22px; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 calc(150px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:720px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--amar);outline-offset:2px;border-radius:10px}
+.st{width:1em;height:1em;display:inline-block;vertical-align:-.12em;fill:currentColor}
+.num{font-variant-numeric:tabular-nums}
+
+/* topo */
+.top{padding-top:18px;display:grid;gap:14px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-family:var(--display);font-weight:700;font-size:22px;color:var(--roxo);display:flex;align-items:center;gap:6px}
+.logo .st{color:var(--verm)}
+.logo small{font-family:var(--body);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-left:4px}
+.icon-btn{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;height:36px;min-width:36px;padding:0 10px;display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:1.25fr 1fr;gap:10px}
+.pote{background:var(--pote);color:#fff;border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.pote .big{font-family:var(--display);font-size:38px;font-weight:700;line-height:1}
+.pote .lbl{font-size:12px;font-weight:700;opacity:.85;letter-spacing:.04em}
+.pote .st-bg{position:absolute;right:-14px;top:-14px;width:84px;height:84px;color:#fff;opacity:.28}
+.pote.pop .big{animation:pop .5s cubic-bezier(.3,1.8,.5,1)}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+.seq{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;gap:2px}
+.seq .big{font-family:var(--display);font-size:26px;font-weight:700;line-height:1.1;color:var(--verm)}
+.seq .big .fogo{font-size:22px;margin-right:2px}
+.seq.vivo{border-color:color-mix(in srgb,var(--verm) 45%,var(--line))}
+.areas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.area-card{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:6px;text-align:left;width:100%}
+.area-card .nivel-row{font-size:13px}
+.area-card .nivel-row span:first-child{color:var(--area)}
+.area-card .bar i{background:var(--area)}
+.area-card small{color:var(--muted);font-weight:700;font-size:11.5px}
+.seq .lbl{font-size:12px;color:var(--muted);font-weight:700}
+.nivel{display:grid;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:10px 14px}
+.nivel-row{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
+.nivel-row span:last-child{color:var(--muted)}
+.bar{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--verm),var(--amar));transition:width .6s cubic-bezier(.3,1.4,.5,1)}
+
+main{padding-top:18px;display:grid;gap:22px}
+.banner{font-size:13px;font-weight:600;background:var(--surface2);border-radius:12px;padding:10px 12px;color:var(--muted)}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sec-h h2{font-size:21px}
+.hint{color:var(--muted);font-size:13px;margin:2px 0 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:800;letter-spacing:.03em;border-radius:999px;padding:2px 9px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.tag.area{background:color-mix(in srgb,var(--area) 16%,transparent);color:var(--area)}
+.tag.ex{border:1.5px dashed var(--line);background:transparent}
+.tag.late{background:color-mix(in srgb,var(--verm) 16%,transparent);color:var(--verm)}
+
+.hello h1{font-size:30px;color:var(--ink)}
+.hello h1 .st{color:var(--verm)}
+.hello p{margin:4px 0 0;color:var(--muted);font-weight:600;max-width:60ch}
+
+/* passinhos */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.step{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px 10px 10px}
+.step .txt{min-width:0}
+.step b{display:block;font-weight:700;overflow-wrap:anywhere}
+.step small{display:block;color:var(--muted);font-size:12.5px;overflow-wrap:anywhere}
+.chk{width:40px;height:40px;border-radius:12px;border:2.5px solid var(--area,var(--roxo));background:transparent;display:grid;place-items:center;color:transparent;transition:transform .15s}
+.chk:hover{transform:scale(1.06)}
+.chk:active{transform:scale(.92)}
+.chk .st{width:22px;height:22px}
+.done .chk{background:var(--area,var(--roxo));color:var(--on-accent)}
+.done b{text-decoration:line-through;text-decoration-thickness:2px;color:var(--muted)}
+.tmin{font-size:12px;font-weight:800;color:var(--muted);background:var(--surface2);border-radius:8px;padding:3px 7px;white-space:nowrap}
+.pts{font-size:12px;font-weight:800;color:var(--verm)}
+.hdots{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+.hd{width:28px;height:28px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);font-size:11px;font-weight:800;color:var(--muted);display:grid;place-items:center;padding:0}
+.hd.ok{background:var(--area);border-color:var(--area);color:var(--on-accent)}
+.hd.hoje{border-color:var(--area);border-width:2px}
+.hd:disabled{opacity:.35}
+.hab.done b{text-decoration:none;color:var(--ink)}
+.tbtns{display:flex;align-items:center;gap:2px}
+.foco{border:0;background:none;font-size:21px;line-height:1;color:var(--line);padding:4px 6px;border-radius:8px}
+.foco.on{color:var(--amar)}
+.step small .tag{margin:3px 6px 0 0}
+.addf{margin-top:10px;align-items:stretch}
+.addf select.field{flex:1 1 120px}
+.ver-tudo{border:0;background:none;color:var(--roxo);font-weight:800;font-size:13px;padding:4px 0}
+body[data-view="rotina"] .fab,body[data-view="leituras"] .fab{display:none}
+body:not([data-view="hoje"]) .top .stats,body:not([data-view="hoje"]) .top .nivel{display:none}
+.leit-hero{background:linear-gradient(135deg,color-mix(in srgb,var(--a-eu) 18%,var(--surface)),var(--surface));border:2px solid color-mix(in srgb,var(--a-eu) 45%,var(--line));border-radius:var(--r);padding:14px;display:grid;gap:10px;box-shadow:var(--shadow)}
+.leit-hero h2{color:var(--a-eu)}
+.leit-hero .livro{border-color:color-mix(in srgb,var(--a-eu) 35%,var(--line))}
+.leit-hero p{margin:0;color:var(--muted);font-weight:600}
+.livros{display:grid;gap:8px}
+.livro{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:9px}
+.livro.lendo{border-color:color-mix(in srgb,var(--a-eu) 55%,var(--line))}
+.livro-top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:0;color:inherit}
+.livro b{display:block;font-weight:700;overflow-wrap:anywhere}
+.livro small{display:block;color:var(--muted);font-size:12.5px;overflow-wrap:anywhere}
+.nota{color:var(--amar);font-size:15px;letter-spacing:1px;white-space:nowrap}
+.lrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pagf{display:flex;gap:6px;flex:1 1 150px}
+.pagf .field{flex:1 1 70px;min-width:0}
+.estrelas{display:flex;gap:2px}
+.estrelas button{border:0;background:none;font-size:28px;line-height:1;color:var(--line);padding:0 2px}
+.estrelas button.on{color:var(--amar)}
+.lstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media (max-width:480px){.lstats{grid-template-columns:repeat(2,1fr)}}
+.meta-leit{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:6px;font-weight:700;font-size:13.5px}
+.meta-leit.ok{border-color:color-mix(in srgb,var(--a-eu) 55%,var(--line))}
+.meta-leit .nivel-row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.agora{background:linear-gradient(135deg,color-mix(in srgb,var(--verde) 14%,var(--surface)),var(--surface));border:2px solid color-mix(in srgb,var(--verde) 40%,var(--line));border-radius:var(--r);padding:12px 14px;display:grid;gap:8px;box-shadow:var(--shadow)}
+.agora .rh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.agora .rh b{font-family:var(--display);font-weight:600;font-size:16px}
+.agora .rh button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-weight:800;font-size:13px;color:var(--muted)}
+.agora p{margin:0;color:var(--muted);font-weight:600;font-size:13.5px}
+.agora p b{color:var(--ink)}
+.dobra{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden}
+.dobra>button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;background:none;border:0;padding:12px 14px;font:inherit;font-weight:800;color:var(--ink);text-align:left;cursor:pointer}
+.dobra>button small{color:var(--muted);font-weight:700;font-size:12.5px}
+.dobra>button .caret{transition:transform .2s}
+.dobra>button[aria-expanded="true"] .caret{transform:rotate(180deg)}
+.dobra .dobra-in{padding:0 14px 14px;display:grid;gap:14px}
+.dobra .dobra-in>section{margin:0}
+.ag-livre .riscar{margin-top:4px;border:1.5px solid color-mix(in srgb,var(--verde) 55%,var(--line));background:var(--surface);color:var(--verde);border-radius:999px;padding:3px 10px;font:inherit;font-weight:800;font-size:12px;cursor:pointer}
+.seg{display:flex;gap:4px;background:var(--surface2);border-radius:999px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;border:0;background:none;border-radius:999px;padding:8px;font:inherit;font-weight:800;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--roxo);box-shadow:var(--shadow)}
+.lstats div{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 6px;text-align:center}
+.lstats b{display:block;font-family:var(--display);font-size:24px}
+.lstats small{color:var(--muted);font-size:12px;font-weight:700}
+.livro textarea.field{width:100%;min-height:90px;font:inherit;resize:vertical}
+.livro .tags{display:flex;gap:5px;flex-wrap:wrap}
+.livro .lab{font-size:12.5px;font-weight:800;color:var(--muted)}
+.empty{background:var(--surface);border:1.5px dashed var(--line);border-radius:var(--r);padding:20px;text-align:center;color:var(--muted);font-weight:600}
+.empty b{display:block;color:var(--ink);font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:4px}
+
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:84px}
+.week div{display:grid;gap:4px;justify-items:center;font-size:11px;font-weight:800;color:var(--muted);height:100%;align-content:end}
+.week i{display:block;width:100%;max-width:34px;border-radius:8px;background:var(--surface2);min-height:6px}
+.week .on i{background:var(--verm)}
+.week .hoje{color:var(--ink)}
+
+/* metas */
+.horiz{display:grid;gap:10px}
+.horiz-h{display:flex;align-items:baseline;gap:8px;margin-top:6px}
+.horiz-h h3{font-size:17px}
+.horiz-h span{color:var(--muted);font-size:13px;font-weight:700}
+.meta{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;position:relative}
+.meta-top{padding-right:52px!important}
+.del{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--muted);display:grid;place-items:center}
+.del svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.del:hover{color:var(--verm);border-color:var(--verm)}
+.confirm{margin:0 14px 14px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--verm) 10%,transparent);display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700}
+.confirm span{flex:1 1 160px}
+.fab{position:fixed;z-index:25;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));border:0;border-radius:999px;background:var(--verm);color:#fff;font-family:var(--display);font-weight:600;font-size:17px;padding:13px 20px;display:flex;align-items:center;gap:6px;box-shadow:0 10px 24px -8px color-mix(in srgb,var(--verm) 70%,transparent)}
+.fab b{font-size:24px;line-height:.8}
+/* desafio da semana */
+.desafio{background:var(--surface);border:2px solid var(--area);border-radius:var(--r);padding:14px;display:grid;gap:10px;box-shadow:var(--shadow)}
+.d-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.d-top small{font-weight:800;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--area)}
+.d-top button{border:0;background:none;color:var(--muted);font-weight:800;font-size:13px;text-decoration:underline;padding:4px}
+.desafio h3{font-size:20px}
+.dias{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dia{border:2px solid var(--line);background:var(--surface);border-radius:12px;aspect-ratio:1;max-width:100%;display:grid;place-items:center;font-size:11.5px;font-weight:800;color:var(--muted);padding:0}
+.dia.hoje{border-color:var(--area);color:var(--ink)}
+.dia.ok{background:var(--area);border-color:var(--area);color:#fff}
+.dia:disabled{opacity:.4;cursor:default}
+.d-foot{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700;color:var(--muted);flex-wrap:wrap}
+.d-foot b{color:var(--ink)}
+.desafio.venceu{background:color-mix(in srgb,var(--area) 10%,var(--surface))}
+/* relâmpago */
+.relampago{background:var(--surface2);border-radius:var(--r);padding:12px;display:grid;gap:8px}
+.relampago .rh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.relampago .rh b{font-family:var(--display);font-weight:600;font-size:16px}
+.relampago .rh button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-weight:800;font-size:13px;color:var(--muted)}
+/* troféu */
+.trofeu-bg{position:fixed;inset:0;z-index:55;background:rgba(22,15,42,.6);display:grid;place-items:center;padding:20px}
+.trofeu{background:var(--surface);border-radius:28px;max-width:380px;width:100%;padding:26px 22px;display:grid;gap:8px;text-align:center;justify-items:center;animation:tin .5s cubic-bezier(.3,1.6,.5,1);border:3px solid var(--area)}
+.trofeu .copa{font-size:76px;line-height:1;animation:balanca 1.6s ease-in-out infinite}
+@keyframes balanca{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) scale(1.06)}}
+.trofeu small{font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--area);font-size:12px}
+.trofeu h3{font-size:24px}
+.trofeu p{margin:0;color:var(--muted);font-weight:700}
+.trofeu .btn{margin-top:8px}
+.estante{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.taca{background:var(--surface);border:1.5px solid var(--line);border-bottom:6px solid var(--area);border-radius:16px;padding:14px 12px 12px;display:grid;gap:4px;justify-items:center;text-align:center}
+.taca span{font-size:34px;line-height:1}
+.taca b{font-family:var(--display);font-weight:600;font-size:14.5px;line-height:1.2;overflow-wrap:anywhere}
+.taca small{color:var(--muted);font-size:12px;font-weight:700}
+.fab:active{transform:scale(.95)}
+.meta.concl{border-color:var(--area)}
+.meta-top{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px;width:100%;text-align:left;background:none;border:0}
+.meta-top .info{min-width:0;display:grid;gap:5px}
+.meta-top h4{margin:0;font-family:var(--display);font-weight:600;font-size:17px;line-height:1.2;overflow-wrap:anywhere}
+.meta-top .row{display:flex;gap:6px;flex-wrap:wrap}
+.ring{width:52px;height:52px;position:relative;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring b{font-size:12.5px;font-weight:800}
+.caret{color:var(--muted);transition:transform .2s;font-size:18px}
+.open .caret{transform:rotate(180deg)}
+.why{margin:0 14px 12px;padding:8px 12px;border-left:3px solid var(--area);background:color-mix(in srgb,var(--area) 7%,transparent);border-radius:0 10px 10px 0;font-size:13.5px;color:var(--ink);font-weight:600}
+.why::before{content:"por quê: ";color:var(--muted);font-weight:800}
+.nextl{margin:0 14px 14px;font-size:13px;color:var(--muted);font-weight:600}
+.nextl b{color:var(--ink)}
+.body{border-top:1.5px solid var(--line);padding:14px;display:grid;gap:14px;background:color-mix(in srgb,var(--surface2) 35%,var(--surface))}
+.marco{display:grid;gap:8px}
+.marco-h{display:flex;align-items:center;gap:8px}
+.marco-h b{font-family:var(--display);font-weight:600;font-size:15px;flex:1;min-width:0;overflow-wrap:anywhere}
+.marco-h small{font-weight:800;color:var(--muted);font-size:12px}
+.marco-h .flag{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:var(--surface2);color:var(--muted)}
+.marco.ok .flag{background:var(--area);color:var(--on-accent)}
+.marco .step{padding:7px 8px 7px 7px;border-radius:13px}
+.marco .chk{width:32px;height:32px;border-radius:10px}
+.marco .chk .st{width:17px;height:17px}
+.x{border:0;background:none;color:var(--muted);font-size:18px;line-height:1;padding:4px 6px;border-radius:8px}
+.x:hover{color:var(--verm)}
+.addrow{display:flex;gap:6px}
+.addrow input{flex:1;min-width:0}
+.field{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 11px;font-size:14px;min-height:40px}
+.field:focus{border-color:var(--roxo);outline:none}
+.btn{border:0;border-radius:12px;padding:9px 14px;font-weight:800;font-size:14px;background:var(--ink);color:var(--bg);min-height:40px;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn.ai{background:var(--roxo);color:var(--on-accent)}
+.btn.ai .st{color:var(--amar)}
+.btn.ghost{background:transparent;color:var(--muted);border:1.5px solid var(--line)}
+.btn.danger{background:var(--verm);color:#fff}
+.btn.red{background:var(--verm);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.aibox{border:2px dashed var(--roxo);border-radius:14px;padding:12px;display:grid;gap:10px;background:var(--surface)}
+.aibox h5{margin:0;font-family:var(--display);font-size:15px;font-weight:600;color:var(--roxo)}
+.aibox ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.aibox ul{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:13.5px}
+.thinking{display:flex;align-items:center;gap:8px;color:var(--muted);font-weight:700}
+.thinking .st{color:var(--verm);animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* recompensas */
+.rews{display:grid;gap:10px}
+.rew{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:14px;display:grid;grid-template-columns:1fr auto;gap:10px 12px;align-items:center}
+.rew h4{margin:0;font-family:var(--display);font-weight:600;font-size:16px;overflow-wrap:anywhere}
+.rew .cost{font-weight:800;color:var(--verm);font-size:13px}
+.rew .bar{grid-column:1/-1}
+.rew.ready{border-color:var(--amar);box-shadow:0 0 0 3px color-mix(in srgb,var(--amar) 30%,transparent)}
+.rew.used{opacity:.7}
+.form-card{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px}
+.form-row{display:flex;gap:8px;flex-wrap:wrap}
+.form-row .field{flex:1 1 180px}
+
+/* vitórias */
+.selo{background:var(--verm);color:#fff;border-radius:var(--r);padding:18px;display:grid;gap:2px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.selo small{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:11.5px;opacity:.9}
+.selo b{font-family:var(--display);font-size:46px;line-height:1;font-weight:700}
+.selo span{font-weight:700;opacity:.95}
+.selo .st{position:absolute;right:14px;top:50%;translate:0 -50%;width:90px;height:90px;color:#fff;opacity:.25}
+.heat-wrap{overflow-x:auto}
+.heat{display:grid;grid-template-rows:repeat(7,14px);grid-auto-flow:column;grid-auto-columns:14px;gap:4px}
+.heat i{border-radius:4px;background:var(--surface2)}
+.heat i[data-l="1"]{background:color-mix(in srgb,var(--verm) 35%,var(--surface2))}
+.heat i[data-l="2"]{background:color-mix(in srgb,var(--verm) 65%,var(--surface2))}
+.heat i[data-l="3"]{background:var(--verm)}
+.wins{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.wins li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:9px 12px}
+.wins .n{font-family:var(--display);font-weight:700;color:var(--verm);font-size:14px;white-space:nowrap}
+.wins .t{min-width:0}
+.wins .t b{display:block;font-weight:700;overflow-wrap:anywhere}
+.wins .t small{color:var(--muted);font-size:12.5px}
+
+/* abas */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-top:1.5px solid var(--line);
+  padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.tabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.tab{border:0;background:none;border-radius:14px;padding:6px 4px;display:grid;justify-items:center;gap:2px;font-size:11px;font-weight:800;color:var(--muted);min-width:0}
+.tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="page"]{color:var(--roxo);background:var(--surface2)}
+
+/* folha (modal) */
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(23,15,43,.45);display:grid;align-items:end;justify-items:center}
+.sheet .panel{background:var(--bg);width:100%;max-width:560px;border-radius:24px 24px 0 0;max-height:92vh;overflow:auto;
+  padding:18px max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:grid;gap:14px;animation:up .25s ease-out}
+@media (min-width:640px){.sheet{align-items:center}.sheet .panel{border-radius:24px}}
+@keyframes up{from{transform:translateY(30px);opacity:.4}}
+.sheet h3{font-size:22px}
+.lab{display:grid;gap:6px;font-weight:800;font-size:13px;color:var(--muted)}
+.lab .field{color:var(--ink);font-weight:600}
+textarea.field{resize:vertical;min-height:64px}
+
+/* agenda do Google */
+.ag-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ag-ev{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-left:5px solid var(--azul);border-radius:14px;padding:9px 12px}
+.ag-ev b{font-weight:700;overflow-wrap:anywhere;min-width:0}
+.ag-h{font-size:12.5px;font-weight:800;color:var(--muted)}
+.ag-ev.passou{opacity:.55}
+.ag-ev.agora{box-shadow:0 0 0 3px color-mix(in srgb,var(--azul) 24%,transparent)}
+.ag-ev.agora .ag-h{color:var(--azul)}
+.ag-livre{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center;border:1.5px dashed color-mix(in srgb,var(--verde) 55%,var(--line));border-radius:14px;padding:8px 12px;color:var(--verde);font-weight:800;font-size:13.5px}
+.ag-livre span{min-width:0}
+.ag-livre small{display:block;color:var(--muted);font-weight:600;font-size:12.5px;overflow-wrap:anywhere}
+.ag-dia{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.ag-card{background:var(--surface);border:1.5px dashed var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px;justify-items:start;color:var(--muted);font-weight:600}
+.ag-card p{margin:0}
+@media (max-width:420px){.ag-ev,.ag-livre{grid-template-columns:76px 1fr}}
+
+/* toast + fx */
+.toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));translate:-50% 0;z-index:50;background:var(--ink);color:var(--bg);border-radius:16px;padding:12px 14px;font-weight:800;display:flex;gap:12px;align-items:center;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);max-width:calc(100vw - 32px);width:max-content;animation:tin .35s cubic-bezier(.3,1.6,.5,1)}
+.toast.big{background:var(--verm);color:#fff;font-family:var(--display);font-size:18px;font-weight:600}
+.toast button{background:none;border:0;color:inherit;text-decoration:underline;font-weight:800;padding:0;opacity:.85}
+@keyframes tin{from{transform:translateY(16px) scale(.9);opacity:0}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60;width:100vw;height:100vh}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:420px){.stats{grid-template-columns:1fr 1fr}.pote .big{font-size:32px}.hello h1{font-size:26px}}
+
+/* ================= POP EM BLOCOS (desligado: a Isa não curtiu, aguardando escolha de opção) ================= */
+@media not all{
+html{background:var(--bg)}
+body{font-synthesis:none;background:var(--bg);
+  background-image:radial-gradient(color-mix(in srgb,var(--roxo) 22%,transparent) 1.2px,transparent 1.3px);background-size:18px 18px}
+/* tipografia: pôster condensado nos títulos, Archivo apertada nos subtítulos */
+h1,h2,.logo,.pote .big,.seq .big,.selo b,.lstats b{font-family:var(--poster);font-weight:400;text-transform:uppercase;letter-spacing:.01em}
+h3,h4,h5,.empty b,.marco-h b,.taca b,.rew h4,.meta-top h4,.toast.big,.fab,.agora .rh b,.relampago .rh b,.dobra>button>span:first-child{font-family:var(--display);font-weight:800;font-stretch:75%;letter-spacing:0}
+.hello h1{font-size:44px;line-height:.95}
+.hello h1 .st{color:var(--rosa)}
+.sec-h h2{font-size:26px;line-height:1}
+.desafio h3{font-size:22px}
+.logo{font-size:26px;color:var(--ink)}
+.logo .st{color:var(--rosa)}
+body,.btn,.chip,.tab,.field{font-stretch:95%}
+
+/* blocos: contorno preto grosso + sombra dura */
+.step,.livro,.area-card,.nivel,.seq,.meta,.rew,.form-card,.empty,.dobra,.meta-leit,.lstats div,.taca,.wins li,.ag-ev,.ag-card,.desafio,.relampago,.agora,.leit-hero,.pote,.selo,.trofeu,.sheet .panel{
+  border:2.5px solid var(--edge)!important;box-shadow:var(--shadow)}
+.step,.livro,.wins li,.ag-ev,.lstats div,.meta-leit,.area-card{box-shadow:var(--shadow-s)}
+.empty{border-style:dashed!important;box-shadow:none}
+.leit-hero .livro,.dobra .step,.agora .step,.relampago .step{box-shadow:var(--shadow-s)}
+.livro.lendo{border-color:var(--edge)!important}
+
+/* blocos de cor chapada */
+.pote{background:var(--verm);color:#0B0610}
+.pote .lbl{opacity:1;font-weight:800}
+.pote .st-bg{color:#0B0610;opacity:.18}
+.seq{background:var(--rosa);color:#0B0610}
+.seq .big{color:#0B0610}
+.seq .lbl{color:#0B0610;opacity:.8}
+.nivel{background:var(--surface)}
+.leit-hero{background:var(--roxo);color:#fff}
+.leit-hero h2{color:#fff;font-size:28px}
+.leit-hero p,.leit-hero .hint{color:#F3E8FF}
+.leit-hero .ver-tudo{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.leit-hero .livro,.leit-hero .meta-leit{background:var(--surface);color:var(--ink)}
+.agora{background:var(--rosa);color:#0B0610}
+.agora p,.agora .rh b{color:#0B0610}
+.agora p b{color:#0B0610;text-decoration:underline;text-decoration-thickness:2px}
+.agora .step{background:var(--surface);color:var(--ink)}
+.agora .rh button,.relampago .rh button{background:#0B0610;color:#fff;border:2px solid var(--edge)}
+.relampago{background:var(--rosa);color:#0B0610}
+.relampago .rh b{color:#0B0610}
+.relampago .step,.agora .step,.leit-hero .livro,.leit-hero .meta-leit{background:var(--surface);color:var(--ink)}
+.selo{background:var(--verm);color:#0B0610}
+.selo .st{color:#0B0610;opacity:.18}
+.desafio{background:var(--surface)}
+.desafio.venceu{background:color-mix(in srgb,var(--area) 22%,var(--surface))}
+
+/* barras e marcadores */
+.bar{height:14px;border-radius:6px;background:#0B0610;border:2px solid var(--edge)}
+.bar i{border-radius:3px;background:var(--roxo)}
+.leit-hero .bar i,.meta-leit .bar i{background:var(--rosa)!important}
+.week i{border-radius:4px;border:2px solid var(--edge);background:var(--surface2)}
+.week .on i{background:var(--rosa)}
+.heat i{border-radius:3px}
+.heat i[data-l="1"]{background:color-mix(in srgb,var(--roxo) 40%,var(--surface2))}
+.heat i[data-l="2"]{background:color-mix(in srgb,var(--roxo) 75%,var(--surface2))}
+.heat i[data-l="3"]{background:var(--rosa)}
+.chk{border-radius:8px;border-width:3px;background:#0B0610}
+.done .chk{background:var(--area,var(--roxo));color:#0B0610;border-color:var(--edge)}
+.hd,.dia{border:2px solid var(--edge);background:#0B0610;border-radius:8px}
+.hd.ok,.dia.ok{border-color:var(--edge);color:#0B0610}
+.hd.hoje,.dia.hoje{outline:2px solid var(--area);outline-offset:1px}
+.pts{color:var(--rosa)}
+.tmin{background:#0B0610;color:var(--ink);border-radius:6px}
+.tag{border-radius:6px;background:#0B0610;color:var(--muted)}
+.tag.area{background:var(--area);color:#0B0610}
+.tag.late{background:var(--verm);color:#0B0610}
+.nota,.estrelas button.on{color:var(--amar)}
+.estrelas button{color:var(--surface2)}
+.ring b{font-weight:900}
+
+/* botões */
+.btn{border:2.5px solid var(--edge);border-radius:10px;background:var(--roxo);color:#fff;box-shadow:var(--shadow-s);text-transform:uppercase;letter-spacing:.02em;font-weight:900;transition:transform .08s,box-shadow .08s}
+.btn:active:not(:disabled){transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.btn.ai{background:var(--rosa);color:#0B0610}
+.btn.ai .st{color:#0B0610}
+.btn.red,.btn.danger{background:var(--verm);color:#0B0610}
+.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--edge)}
+.leit-hero .btn:not(.ghost),.agora .btn:not(.ghost){background:#0B0610;color:#fff}
+.chip{border:2px solid var(--edge);border-radius:8px;background:var(--surface);color:var(--ink);font-weight:800}
+.chip[aria-pressed="true"]{background:var(--roxo);color:#fff;border-color:var(--edge);box-shadow:2px 2px 0 var(--edge)}
+.field{border:2px solid var(--edge);border-radius:10px;background:#120A1C;color:var(--ink)}
+.field:focus{border-color:var(--rosa);box-shadow:3px 3px 0 var(--rosa)}
+:focus-visible{outline:3px solid var(--rosa);border-radius:6px}
+.icon-btn{border:2px solid var(--edge);background:var(--surface);color:var(--ink);border-radius:8px;box-shadow:2px 2px 0 var(--edge)}
+.ver-tudo{color:var(--rosa);text-transform:uppercase;font-weight:900;letter-spacing:.03em}
+.del{border:2px solid var(--edge);border-radius:8px;background:#0B0610}
+.fab{background:var(--roxo);color:#fff;border:3px solid var(--edge);border-radius:12px;box-shadow:4px 4px 0 var(--edge);text-transform:uppercase}
+.fab:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--edge)}
+.seg{background:#0B0610;border:2.5px solid var(--edge);border-radius:12px;box-shadow:var(--shadow-s)}
+.seg button{border-radius:8px;text-transform:uppercase;font-weight:900;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--roxo);color:#fff;box-shadow:none}
+.ag-livre{border:2px dashed var(--rosa);color:var(--rosa)}
+.ag-livre .riscar{background:var(--rosa);color:#0B0610;border:2px solid var(--edge);border-radius:6px}
+.ag-ev{border-left:8px solid var(--roxo)!important}
+.ag-ev.agora{background:var(--roxo);color:#fff}
+.ag-ev.agora .ag-h{color:#fff}
+.aibox{border:2.5px dashed var(--rosa);border-radius:10px}
+.aibox h5{color:var(--rosa)}
+.why{border-left:4px solid var(--area);border-radius:0 8px 8px 0}
+
+/* abas: barra preta, aba ativa vira bloco roxo */
+.tabs{background:#0B0610;border-top:3px solid var(--edge);backdrop-filter:none}
+.tab{border-radius:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;font-weight:900;font-size:10.5px}
+.tab[aria-current="page"]{background:var(--roxo);color:#fff;box-shadow:2px 2px 0 #000;outline:2px solid #000}
+
+/* toast e modal */
+.toast{background:var(--ink);color:#0B0610;border:2.5px solid var(--edge);border-radius:12px;box-shadow:4px 4px 0 var(--roxo)}
+.toast.big{background:var(--rosa);color:#0B0610;box-shadow:5px 5px 0 var(--edge);text-transform:uppercase}
+.sheet .panel{background:var(--bg)}
+.trofeu{border-radius:16px;box-shadow:6px 6px 0 var(--area)}
+.banner{border:2px dashed var(--line);border-radius:10px;background:transparent}
+}
+
+/* ================= ADESIVINHOS · CEREJA E CREME ================= */
+html{background:var(--bg)}
+body{background:var(--bg)}
+h1,h2{font-weight:700}
+.hello h1{font-size:34px}
+.hello h1 .st,.logo .st{color:var(--rosa)}
+.logo{color:var(--ink)}
+/* cartões: redondinhos, sem contorno pesado */
+.step,.livro,.area-card,.nivel,.meta,.rew,.form-card,.dobra,.meta-leit,.lstats div,.taca,.wins li,.ag-ev,.desafio{border-color:var(--line);border-radius:20px}
+/* adesivos: borda branca grossa, levemente tortinhos */
+.pote,.seq{border:3px solid var(--sticker);border-radius:22px;box-shadow:var(--shadow)}
+.pote{background:var(--cereja);color:#fff;transform:rotate(-1.5deg)}
+.pote .st-bg{color:#fff;opacity:.22}
+.seq{background:var(--creme);transform:rotate(1.5deg)}
+.seq .big,.seq .lbl{color:var(--creme-ink)}
+.seq.vivo{border-color:var(--sticker)}
+.selo{background:var(--cereja);color:#fff;border:3px solid var(--sticker);border-radius:22px;transform:rotate(-1deg)}
+.leit-hero{background:var(--surface);border:3px solid var(--sticker);box-shadow:var(--shadow)}
+.leit-hero h2{color:var(--rosa)}
+.leit-hero .livro,.leit-hero .meta-leit{background:var(--surface2);border-color:transparent}
+.agora,.relampago{background:var(--cereja);color:#fff;border:3px solid var(--sticker);box-shadow:var(--shadow)}
+.agora p,.agora p b,.relampago .rh b,.agora .rh b{color:#fff}
+.agora .step,.relampago .step{background:var(--surface);color:var(--ink);border-color:transparent}
+.agora .rh button,.relampago .rh button{background:var(--creme);color:var(--creme-ink);border:2px solid var(--sticker)}
+.desafio{border:3px solid var(--area)}
+/* barras, marcadores e etiquetas */
+.bar{background:var(--bg)}
+.bar i{background:var(--creme)}
+.leit-hero .bar i,.meta-leit .bar i{background:var(--rosa)!important}
+.week .on i{background:var(--cereja)}
+.heat i[data-l="1"]{background:color-mix(in srgb,var(--cereja) 35%,var(--surface2))}
+.heat i[data-l="2"]{background:color-mix(in srgb,var(--cereja) 70%,var(--surface2))}
+.heat i[data-l="3"]{background:var(--cereja)}
+.chk{border-radius:50%;border-width:3px}
+.marco .chk{border-radius:50%}
+.done .chk{color:var(--on-accent)}
+.hd,.dia{border-radius:50%}
+.pts{color:var(--rosa)}
+.tag.area{color:var(--area)}
+.tag.late{color:#fff;background:var(--cereja)}
+/* botões: pílulas creme com borda branca */
+.btn{border-radius:99px;background:var(--creme);color:var(--creme-ink);border:2.5px solid var(--sticker)}
+.btn.ai{background:var(--rosa);color:var(--on-accent)}
+.btn.ai .st{color:var(--cereja)}
+.btn.red,.btn.danger{background:var(--cereja);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.chip{border-radius:99px}
+.chip[aria-pressed="true"]{background:var(--creme);border-color:var(--creme);color:var(--creme-ink)}
+.field{border-radius:14px}
+.field:focus{border-color:var(--rosa)}
+:focus-visible{outline-color:var(--creme)}
+.ver-tudo{color:var(--rosa)}
+.fab{background:var(--creme);color:var(--creme-ink);border:3px solid var(--sticker);box-shadow:var(--shadow)}
+.seg{background:var(--surface)}
+.seg button[aria-pressed="true"]{background:var(--creme);color:var(--creme-ink)}
+.ag-ev{border-left-color:var(--rosa)}
+.ag-ev.agora{box-shadow:0 0 0 3px color-mix(in srgb,var(--rosa) 35%,transparent)}
+.ag-livre{border-color:color-mix(in srgb,var(--creme) 50%,var(--line));color:var(--creme)}
+.ag-livre .riscar{background:var(--creme);color:var(--creme-ink);border-color:var(--sticker)}
+/* abas: barra vinho escura, aba ativa vira pílula cereja */
+.tabs{background:color-mix(in srgb,#1E0910 94%,transparent);border-top-color:var(--line)}
+.tab[aria-current="page"]{background:var(--cereja);color:#fff;border-radius:99px}
+.toast{background:var(--creme);color:var(--creme-ink);border:2.5px solid var(--sticker)}
+.toast.big{background:var(--cereja);color:#fff}
+.trofeu{border-color:var(--sticker)}
+@media (prefers-reduced-motion:reduce){.pote,.seq,.selo{transform:none}}
+</style>
+</head><body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo"><svg class="st" viewBox="0 0 24 24"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"/></svg>metas da isa</div>
+      <button class="icon-btn" id="somBtn" data-act="som" aria-label="Ligar ou desligar o som">som: on</button>
+    </div>
+    <div class="stats">
+      <div class="pote" id="pote">
+        <svg class="st st-bg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"/></svg>
+        <div><div class="big num" id="saldo">0</div><div class="lbl">estrelas no pote</div></div>
+      </div>
+      <div class="seq" id="seqBox"><div class="big num" id="seq">0 dias</div><div class="lbl" id="seqLbl">de sequência</div></div>
+    </div>
+    <div class="nivel"><div class="nivel-row"><span id="nivelNome">começando com tudo</span><span id="nivelProx" class="num"></span></div><div class="bar"><i id="nivelBar" style="width:0%"></i></div></div>
+  </header>
+  <main id="view"><div class="empty"><b>carregando suas metas…</b>já já aparece tudo aqui.</div></main>
+</div>
+
+<nav class="tabs" aria-label="Seções"><div class="in">
+  <button class="tab" data-tab="hoje" aria-current="page"><svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>hoje</button>
+  <button class="tab" data-tab="rotina"><svg viewBox="0 0 24 24"><path d="M3.5 6.5l2 2 3.5-3.5M3.5 14l2 2 3.5-3.5M12 7h8.5M12 14.5h8.5M5 20.5h.01M12 20.5h8.5"/></svg>rotina</button>
+  <button class="tab" data-tab="leituras"><svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 3.5 4.5v14c4.5 0 7 .5 8.5 2 1.5-1.5 4-2 8.5-2v-14c-4.5 0-7 .5-8.5 2z"/><path d="M12 6.5v14"/></svg>leituras</button>
+  <button class="tab" data-tab="metas"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg>metas</button>
+  <button class="tab" data-tab="pote"><svg viewBox="0 0 24 24"><path d="M7 4h10M8 4v3c-2 1-3 3-3 5v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6c0-2-1-4-3-5V4"/><path d="M12 11l1 2 2 .3-1.5 1.4.4 2.1-1.9-1-1.9 1 .4-2.1L9 13.3l2-.3z"/></svg>prêmios</button>
+</div></nav>
+
+<button class="fab" data-act="nova" aria-label="Adicionar nova meta"><b>+</b> meta</button>
+<div class="sheet" id="sheet" hidden></div>
+<div id="toastHost"></div>
+<div id="trofeuHost"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script type="application/json" id="exemplos">
+{"metas":[
+{"id":"ex-promocao","exemplo":true,"titulo":"Conquistar a promoção no trabalho","porque":"crescer onde eu já estou e ser reconhecida pelo que entrego","horizonte":"medio","area":"carreira","prazo":"2027-09-30","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Saber o que falta","passos":[{"titulo":"anotar o cargo que eu quero","tempo":5},{"titulo":"marcar uma conversa com a liderança","tempo":5},{"titulo":"perguntar o que falta pra eu chegar lá","tempo":60}]},
+ {"titulo":"Mostrar resultado","passos":[{"titulo":"criar uma nota de entregas da semana","tempo":5},{"titulo":"anotar 1 entrega boa toda sexta","tempo":5},{"titulo":"pedir feedback a cada mês","tempo":15}]},
+ {"titulo":"Crescer no que falta","passos":[{"titulo":"escolher 1 habilidade pra desenvolver","tempo":5},{"titulo":"achar um curso ou mentoria sobre ela","tempo":15}]},
+ {"titulo":"Pedir a promoção","passos":[{"titulo":"juntar as entregas num resumo de 1 página","tempo":60},{"titulo":"pedir a conversa de promoção","tempo":15}]}]},
+{"id":"ex-achadinhos","exemplo":true,"titulo":"Perfil de achadinhos rendendo R$ 500 por mês","porque":"uma renda minha, feita no meu tempo","horizonte":"medio","area":"carreira","prazo":"2027-06-30","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Saber de onde vem cada real","passos":[{"titulo":"anotar a comissão deste mês","tempo":5},{"titulo":"ver quais 5 produtos mais venderam","tempo":15}]},
+ {"titulo":"Dobrar o que funciona","passos":[{"titulo":"achar 5 produtos parecidos com os campeões","tempo":15},{"titulo":"postar um carrossel só com os campeões","tempo":60}]},
+ {"titulo":"Fechar o primeiro mês de R$ 500","passos":[{"titulo":"conferir a comissão toda sexta","tempo":5}]}]},
+{"id":"ex-blackfriday","exemplo":true,"titulo":"Black Friday e 12.12 com tudo","porque":"são os dias que mais vendem no ano","horizonte":"curto","area":"carreira","prazo":"2026-12-12","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Aquecimento (até 27/11)","passos":[{"titulo":"separar 10 achados com desconto real","tempo":15},{"titulo":"escrever 3 posts de contagem regressiva","tempo":15}]},
+ {"titulo":"Dia 28/11","passos":[{"titulo":"conferir os preços de manhã","tempo":15},{"titulo":"responder os pedidos de link","tempo":60}]},
+ {"titulo":"12.12","passos":[{"titulo":"escolher o tema da lista do 12.12","tempo":5}]}]},
+{"id":"ex-viagem","exemplo":true,"titulo":"Primeira viagem grande em família","porque":"criar memória boa com a minha filha","horizonte":"longo","area":"familia","prazo":"2027-12-31","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Escolher o destino","passos":[{"titulo":"listar 3 lugares que eu sonho conhecer","tempo":5},{"titulo":"ver o que é bom pra ir com criança pequena","tempo":15},{"titulo":"bater o martelo no destino","tempo":5}]},
+ {"titulo":"Juntar o dinheiro","passos":[{"titulo":"estimar quanto a viagem vai custar","tempo":15},{"titulo":"abrir uma caixinha só pra viagem","tempo":5},{"titulo":"guardar o primeiro valor","tempo":5}]},
+ {"titulo":"Reservar","passos":[{"titulo":"definir a data","tempo":5},{"titulo":"reservar hospedagem","tempo":60},{"titulo":"comprar as passagens","tempo":60}]}]},
+{"id":"ex-curso","exemplo":true,"titulo":"Começar um curso que me faça crescer","porque":"aprender algo novo me faz sentir eu de novo","horizonte":"medio","area":"eu","prazo":"2027-04-30","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Decidir o quê","passos":[{"titulo":"anotar 3 assuntos que me dão curiosidade","tempo":5},{"titulo":"pesquisar 2 cursos de cada assunto","tempo":60},{"titulo":"escolher um","tempo":5}]},
+ {"titulo":"Começar","passos":[{"titulo":"fazer a inscrição","tempo":15},{"titulo":"separar 2 horários fixos na semana","tempo":5},{"titulo":"assistir a primeira aula","tempo":60}]}]},
+{"id":"ex-concluir-curso","exemplo":true,"titulo":"Terminar um curso inteiro","porque":"provar pra mim que eu vou até o fim","horizonte":"longo","area":"eu","prazo":"2028-06-30","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Metade do curso","passos":[{"titulo":"ver quantas aulas o curso tem","tempo":5}]},
+ {"titulo":"Curso concluído","passos":[{"titulo":"baixar o certificado","tempo":5}]}]},
+{"id":"ex-ler","exemplo":true,"titulo":"Ler 6 livros em 2027","porque":"ler me descansa a cabeça","horizonte":"longo","area":"eu","prazo":"2027-12-31","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Primeiro livro","passos":[{"titulo":"escolher o primeiro livro","tempo":5},{"titulo":"ler 10 páginas antes de dormir","tempo":15}]},
+ {"titulo":"Três livros","passos":[{"titulo":"montar a lista dos próximos 5","tempo":15}]}]},
+{"id":"ex-horasominha","exemplo":true,"titulo":"1 hora só minha por semana","porque":"mãe descansada é mãe mais legal (e menos derrotada)","horizonte":"curto","area":"eu","prazo":"2027-01-31","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Achar a janela","passos":[{"titulo":"anotar em que horário a casa fica mais calma","tempo":5},{"titulo":"combinar quem fica com a pequena","tempo":5}]},
+ {"titulo":"Primeira hora de verdade","passos":[{"titulo":"escolher o que eu quero fazer","tempo":5},{"titulo":"fazer sem culpa","tempo":60}]}]},
+{"id":"ex-caminhar","exemplo":true,"titulo":"Me mexer 3 vezes por semana","porque":"mais energia pra dar conta do trabalho e correr atrás da pequena","horizonte":"curto","area":"saude","prazo":"2027-02-15","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Começar pequeno","passos":[{"titulo":"separar o tênis na porta","tempo":5},{"titulo":"caminhar 15 minutos","tempo":15},{"titulo":"fazer 10 agachamentos","tempo":5},{"titulo":"caminhar de novo","tempo":15}]},
+ {"titulo":"Achar meu jeito","passos":[{"titulo":"escolher 3 dias fixos na agenda","tempo":5},{"titulo":"testar um treino de 15 min em casa","tempo":15},{"titulo":"ver se tem academia perto do trabalho","tempo":15}]},
+ {"titulo":"Um mês seguido","passos":[{"titulo":"bater 3 vezes por 4 semanas","tempo":5},{"titulo":"aumentar pra 30 minutos","tempo":60}]}]},
+{"id":"ex-sono","exemplo":true,"titulo":"Dormir 7 horas na maioria das noites","porque":"tudo fica mais leve quando eu durmo","horizonte":"medio","area":"saude","prazo":"2027-03-31","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Entender meu sono","passos":[{"titulo":"anotar a hora que eu durmo hoje","tempo":5},{"titulo":"anotar por 7 dias seguidos","tempo":5}]},
+ {"titulo":"Rotina da noite","passos":[{"titulo":"definir um horário pra largar o celular","tempo":5},{"titulo":"deixar o quarto escuro e fresco","tempo":15},{"titulo":"colocar alarme de hora de dormir","tempo":5}]},
+ {"titulo":"Virar hábito","passos":[{"titulo":"dormir 7 horas em 5 noites da semana","tempo":5},{"titulo":"repetir por 4 semanas","tempo":5}]}]},
+{"id":"ex-agua","exemplo":true,"titulo":"Beber 2 litros de água por dia","porque":"o básico que eu sempre esqueço","horizonte":"curto","area":"saude","prazo":"2026-12-31","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Facilitar","passos":[{"titulo":"deixar uma garrafa cheia à vista","tempo":5},{"titulo":"colocar 3 lembretes no celular","tempo":5}]},
+ {"titulo":"Virar hábito","passos":[{"titulo":"bater a meta 5 dias seguidos","tempo":5}]}]},
+{"id":"ex-checkup","exemplo":true,"titulo":"Check-up em dia","porque":"cuidar de mim também é cuidar dela","horizonte":"curto","area":"saude","prazo":"2027-02-28","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Marcar","passos":[{"titulo":"listar os médicos que eu tô devendo","tempo":5},{"titulo":"marcar a primeira consulta","tempo":15}]},
+ {"titulo":"Ir","passos":[{"titulo":"fazer os exames pedidos","tempo":60}]}]},
+{"id":"ex-brincar","exemplo":true,"titulo":"Brincar sem celular todo dia","porque":"ela cresce rápido e eu quero estar presente","horizonte":"curto","area":"familia","prazo":"2027-01-31","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Primeira semana","passos":[{"titulo":"escolher o horário da brincadeira","tempo":5},{"titulo":"deixar o celular em outro cômodo","tempo":5},{"titulo":"brincar 20 minutos","tempo":15}]}]},
+{"id":"ex-album","exemplo":true,"titulo":"Álbum de fotos da minha filha","porque":"as fotos não podem morar só no celular","horizonte":"medio","area":"familia","prazo":"2027-06-30","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Separar as fotos","passos":[{"titulo":"criar uma pasta pro álbum","tempo":5},{"titulo":"escolher as fotos de um mês","tempo":15}]},
+ {"titulo":"Imprimir","passos":[{"titulo":"escolher onde imprimir","tempo":15},{"titulo":"fazer o pedido","tempo":15}]}]},
+{"id":"ex-casa","exemplo":true,"titulo":"Casa mais leve de cuidar","porque":"menos bagunça, mais tempo livre","horizonte":"medio","area":"familia","prazo":"2027-05-31","criadoEm":"2026-11-16T12:00:00.000Z","marcos":[
+ {"titulo":"Destralhar","passos":[{"titulo":"esvaziar uma gaveta","tempo":5},{"titulo":"separar uma sacola de doação","tempo":15}]},
+ {"titulo":"Rotina","passos":[{"titulo":"definir 15 minutos de arrumação por dia","tempo":5}]}]}
+],
+"recompensas":[
+ {"id":"ex-r1","titulo":"café quente tomado inteiro, sozinha","custo":15},
+ {"id":"ex-r2","titulo":"um livro novo","custo":40},
+ {"id":"ex-r3","titulo":"uma tarde livre só pra mim","custo":60},
+ {"id":"ex-r4","titulo":"tarde de spa em casa","custo":90},
+ {"id":"ex-r5","titulo":"um presente grande (eu escolho)","custo":250}
+]}
+</script>
+
+<script>
+(() => {
+const STAR = '<svg class="st" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"/></svg>';
+const H = {curto:{nome:'curto prazo',sub:'até 3 meses'},medio:{nome:'médio prazo',sub:'3 a 12 meses'},longo:{nome:'longo prazo',sub:'1 a 5 anos'}};
+const AREAS = {carreira:{nome:'carreira e grana',cor:'var(--a-carreira)'},saude:{nome:'saúde e corpo',cor:'var(--a-saude)'},familia:{nome:'família',cor:'var(--a-familia)'},eu:{nome:'eu, mente e lazer',cor:'var(--a-eu)'}};
+const AREA_ANTIGA = {uptoisa:'carreira',grana:'carreira',mae:'familia',casa:'familia'};
+const PTS = {5:1,15:2,60:3};
+const TLBL = {5:'5 min',15:'15 min',60:'1 h'};
+const NIVEIS = [[0,'começando com tudo'],[30,'pegando o ritmo'],[90,'mulher que resolve'],[200,'PARA TUDO.'],[400,'imparável'],[800,'lenda viva']];
+const VIVAS = ['riscado. que delícia riscar 🤏','mais uma pro pote ✦','comemorem comigo 😭','tô derrotada mas tô vencendo 🫠','passinho dado, mundo salvo 💃','olha ela 🥹','socorro, que mulher 🤣','feito é melhor que perfeito ✦','a pequena mexe em tudo e você mexe nas metas 😂','vitória registrada, pode respirar 🥲','uma a menos. orgulho 🥹','alguém segura essa mulher 🤣','é isso, um passinho de cada vez 💃'];
+const FRASES = ['não precisa dar conta de tudo. precisa dar um passinho.','meta grande se come pelas beiradas 🤏','5 minutos no cochilo também contam.','feito é melhor que perfeito.','hoje vale até o passinho mais bobo.','você não tá atrasada, tá no seu tempo 🥹','não deixa o foguinho apagar hoje 🔥'];
+const EX = JSON.parse(document.getElementById('exemplos').textContent);
+
+const state = {metas:{}, habitos:{}, tarefas:{}, livros:{}, geral:null, loaded:{metas:false,geral:false}, mode:'loading', slow:false};
+const ui = {tab:'hoje', tempo:0, horiz:'todos', area:'todas', open:new Set(), confirm:null, ai:{}, edit:null};
+let som = true; try{ som = localStorage.getItem('metas-som') !== 'off'; }catch(e){}
+
+/* ---------- utils ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const dk = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+const clone = o => JSON.parse(JSON.stringify(o));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const defGeral = () => ({estrelas:0,total:0,vitorias:0,historico:{},ultimas:[],recompensas:[]});
+function norm(m){
+  m = clone(m); m.marcos = Array.isArray(m.marcos) ? m.marcos : [];
+  if(!AREAS[m.area]) m.area = AREA_ANTIGA[m.area] || 'eu';
+  m.marcos.forEach((k,i) => { k.id = k.id || ('k'+i); k.passos = Array.isArray(k.passos) ? k.passos : [];
+    k.passos.forEach((p,j) => { p.id = p.id || (k.id+'p'+j); p.tempo = [5,15,60].includes(+p.tempo) ? +p.tempo : 15; }); });
+  return m;
+}
+function prog(m){ let n=0,d=0; m.marcos.forEach(k=>k.passos.forEach(p=>{n++; if(p.feito) d++;})); return {n,d,pct:n?Math.round(d/n*100):0}; }
+function diasAte(prazo){ if(!prazo) return null; const t = new Date(prazo+'T23:59:59'); return Math.ceil((t - new Date())/864e5); }
+function prazoTxt(m){
+  if(m.concluidaEm) return '<span class="tag" style="background:color-mix(in srgb,var(--verde) 18%,transparent);color:var(--verde)">concluída ✦</span>';
+  const d = diasAte(m.prazo); if(d===null) return '';
+  if(d<0) return `<span class="tag late">passou do prazo</span>`;
+  if(d===0) return `<span class="tag late">é hoje!</span>`;
+  const txt = d>60 ? `faltam ${Math.round(d/30)} meses` : `faltam ${d} dia${d>1?'s':''}`;
+  return `<span class="tag num">${txt}</span>`;
+}
+function streak(h){
+  const d = new Date(); if(!(h[dk(d)]>0)) d.setDate(d.getDate()-1);
+  let s=0,gap=0; for(let i=0;i<500;i++){ if(h[dk(d)]>0){s++;gap=0;} else { gap++; if(gap>1) break; } d.setDate(d.getDate()-1); }
+  return s;
+}
+function nivel(total){ let i=0; while(i<NIVEIS.length-1 && total>=NIVEIS[i+1][0]) i++; const cur=NIVEIS[i], nx=NIVEIS[i+1]; return {nome:cur[1], pct: nx ? (total-cur[0])/(nx[0]-cur[0])*100 : 100, falta: nx ? nx[0]-total : 0, prox: nx && nx[1]}; }
+const metasArr = () => Object.values(state.metas).map(norm);
+
+/* ---------- store ---------- */
+let db = null; const LS = 'metas-da-isa-v1';
+const chains = {}, dirty = {}, pend = {};
+function queueWrite(key, run){
+  if(pend[key]) return; pend[key] = true; dirty[key] = (dirty[key]||0)+1;
+  chains[key] = (chains[key]||Promise.resolve()).then(() => { pend[key]=false; return run(); })
+    .catch(e => { console.error(e); toast(e && e.code==='quota_exceeded' ? 'o espaço encheu. apague metas antigas pra continuar.' : 'não consegui salvar agora. tenta de novo daqui a pouco.'); })
+    .finally(() => { dirty[key]--; });
+}
+function saveLocal(){ try{ localStorage.setItem(LS, JSON.stringify({metas:state.metas, habitos:state.habitos, tarefas:state.tarefas, livros:state.livros, geral:state.geral})); }catch(e){} }
+function saveDoc(col, id){
+  if(state.mode==='local') return saveLocal();
+  queueWrite(col+'/'+id, () => state[col][id] ? db.doc(col+'/'+id).set(clone(state[col][id])) : db.doc(col+'/'+id).delete());
+}
+function watchCol(col){
+  db.collection(col).onSnapshot(snap => {
+    const cur = state[col], next = {};
+    snap.docs.forEach(d => { next[d.id] = dirty[col+'/'+d.id]>0 && cur[d.id] ? cur[d.id] : d.data(); });
+    Object.keys(cur).forEach(id => { if(dirty[col+'/'+id]>0 && !next[id] && cur[id]) next[id] = cur[id]; });
+    state[col] = next; render();
+  }, e => console.error(e));
+}
+function saveMeta(id){
+  if(state.mode==='local') return saveLocal();
+  queueWrite('metas/'+id, () => state.metas[id] ? db.doc('metas/'+id).set(clone(state.metas[id])) : db.doc('metas/'+id).delete());
+}
+function saveGeral(){
+  if(state.mode==='local') return saveLocal();
+  queueWrite('estado/geral', () => db.doc('estado/geral').set(clone(state.geral)));
+}
+function startLocal(){
+  state.mode='local'; let saved=null; try{ saved = JSON.parse(localStorage.getItem(LS)||'null'); }catch(e){}
+  if(saved){ state.habitos = saved.habitos || {}; state.tarefas = saved.tarefas || {}; state.livros = saved.livros || {}; }
+  if(saved && saved.metas){ state.metas = saved.metas; state.geral = Object.assign(defGeral(), saved.geral||{}); }
+  else { EX.metas.forEach(m => state.metas[m.id] = clone(m)); state.geral = Object.assign(defGeral(), {recompensas: clone(EX.recompensas).map(r=>({...r,exemplo:true}))}); }
+  state.loaded = {metas:true, geral:true}; render();
+}
+/* ---------- Supabase: login + banco ---------- */
+const SB_URL = 'https://oojnqitywbasfxuispiw.supabase.co', SB_KEY = 'sb_publishable_BuWlm09MZg6kgfcoqhpBpQ_OMkEsxGX';
+const VAPID_PUB = 'BDyrkITDaVBYeMkJBJKxk-qSOxRN2z0Z5SzMRebs2RorXpIvJD9uB0R1kY6oGFkJz8RETS9lje_eq2-WJKoYuwk';
+const sb = window.supabase ? window.supabase.createClient(SB_URL, SB_KEY, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}}) : null;
+let eu = null; const login = {msg:'', busy:false, recup:false};
+function sbDb(uidv){
+  const T = 'metas_docs', cache = {}, subs = {}, loading = {};
+  const emit = col => (subs[col]||[]).forEach(fn => { try{ fn(); }catch(e){ console.error(e); } });
+  function load(col){
+    if(loading[col]) return loading[col];
+    loading[col] = sb.from(T).select('id,dados').eq('colecao', col).then(({data, error}) => {
+      loading[col] = null; if(error) throw error;
+      const m = new Map(); (data||[]).forEach(r => m.set(r.id, r.dados)); cache[col] = m; emit(col);
+    });
+    return loading[col];
+  }
+  const recarrega = {}; const agenda = col => { clearTimeout(recarrega[col]); recarrega[col] = setTimeout(() => load(col).catch(console.error), 250); };
+  sb.channel('metas-docs-'+uidv).on('postgres_changes', {event:'*', schema:'public', table:T}, p => {
+    const r = (p.new && p.new.colecao) ? p.new : p.old; if(r && r.colecao && subs[r.colecao]) agenda(r.colecao);
+  }).subscribe();
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) Object.keys(subs).forEach(agenda); });
+  const listen = (col, fn, err) => { (subs[col] = subs[col]||[]).push(fn); if(cache[col]) fn(); else load(col).catch(e => err && err({code: e.code || e.message || 'erro'})); };
+  return {
+    collection: col => ({ onSnapshot(cb, err){ listen(col, () => cb({docs:[...cache[col]].map(([id,d]) => ({id, data:() => d})), metadata:{fromCache:false}}), err); } }),
+    doc(path){ const [col, id] = path.split('/'); return {
+      async set(d){ const {error} = await sb.from(T).upsert({user_id:uidv, colecao:col, id, dados:d, atualizado:new Date().toISOString()}); if(error) throw error; if(cache[col]) cache[col].set(id, d); },
+      async delete(){ const {error} = await sb.from(T).delete().eq('colecao', col).eq('id', id); if(error) throw error; if(cache[col]) cache[col].delete(id); },
+      async get(){ const {data, error} = await sb.from(T).select('dados').eq('colecao', col).eq('id', id).maybeSingle(); if(error) throw error; return data ? data.dados : null; },
+      onSnapshot(cb, err){ listen(col, () => { const m = cache[col]; cb({exists: m.has(id), data:() => m.get(id), metadata:{fromCache:false}}); }, err); }
+    }; }
+  };
+}
+function vLogin(){
+  if(login.recup) return `<form class="login" data-form="novaSenha"><h2>crie uma senha nova</h2>
+    <input class="field" id="lg-n" type="password" autocomplete="new-password" placeholder="senha nova (mín. 6 letras)" minlength="6" required>
+    <button class="btn red" ${login.busy?'disabled':''}>salvar senha</button>${login.msg?`<p class="msg">${esc(login.msg)}</p>`:''}</form>`;
+  return `<form class="login" data-form="login"><h2>oi, isa ★</h2><p class="msg">entra com o mesmo e-mail e senha do Supabase do uptoisa.</p>
+    <input class="field" id="lg-e" type="email" autocomplete="email" inputmode="email" placeholder="e-mail" required>
+    <input class="field" id="lg-s" type="password" autocomplete="current-password" placeholder="senha" required>
+    <button class="btn red" ${login.busy?'disabled':''}>${login.busy?'entrando…':'entrar'}</button>
+    <button type="button" class="btn ghost" data-act="esqueci">esqueci a senha</button>
+    ${login.msg?`<p class="msg">${esc(login.msg)}</p>`:''}</form>`;
+}
+async function entrar(email, senha){
+  login.busy = true; login.msg = ''; render();
+  const {data, error} = await sb.auth.signInWithPassword({email, password:senha});
+  login.busy = false;
+  if(error){ login.msg = /invalid/i.test(error.message) ? 'e-mail ou senha não batem. confere e tenta de novo.' : 'não consegui entrar agora: ' + error.message; render(); return; }
+  iniciar(data.user);
+}
+async function esqueci(){
+  const el = document.getElementById('lg-e'); const email = el ? el.value.trim() : '';
+  if(!email){ login.msg = 'escreve seu e-mail primeiro ✦'; render(); return; }
+  const {error} = await sb.auth.resetPasswordForEmail(email, {redirectTo: location.origin + location.pathname});
+  login.msg = error ? 'não deu pra mandar agora: ' + error.message : 'mandei um link pro seu e-mail. abre ele, cria a senha nova e depois volta pro app.'; render();
+}
+async function novaSenha(s){
+  login.busy = true; render(); const {data, error} = await sb.auth.updateUser({password:s}); login.busy = false;
+  if(error){ login.msg = 'não deu: ' + error.message; render(); return; }
+  login.recup = false; toast('senha nova salva ✦'); iniciar(data.user);
+}
+let iniciado = false;
+function iniciar(user){
+  if(iniciado || !user) return; iniciado = true; eu = user; state.mode = 'loading'; render();
+  startDb(user.id); startAgenda(); avisosInit();
+}
+async function boot(){
+  render();
+  if(!sb){ state.mode = 'login'; login.msg = 'não consegui carregar. confere a internet e abre de novo.'; render(); return; }
+  sb.auth.onAuthStateChange((ev, session) => {
+    if(ev === 'PASSWORD_RECOVERY'){ login.recup = true; state.mode = 'login'; render(); return; }
+    if(ev === 'SIGNED_OUT'){ location.reload(); }
+  });
+  const {data:{session}} = await sb.auth.getSession();
+  if(session && !login.recup) iniciar(session.user); else { state.mode = 'login'; render(); }
+}
+function startDb(uidv){
+  db = sbDb(uidv); state.mode = 'db';
+  const timer = setTimeout(() => { state.slow = true; render(); }, 10000);
+  const settle = () => { if(state.loaded.metas && state.loaded.geral){ clearTimeout(timer); state.slow=false; } };
+  db.collection('metas').onSnapshot(snap => {
+    const next = {};
+    snap.docs.forEach(d => { const k='metas/'+d.id; next[d.id] = dirty[k]>0 && state.metas[d.id] ? state.metas[d.id] : d.data(); });
+    Object.keys(state.metas).forEach(id => { if(dirty['metas/'+id]>0 && !next[id] && state.metas[id]) next[id]=state.metas[id]; });
+    state.metas = next; if(!snap.metadata.fromCache) state.loaded.metas = true; settle(); render();
+  }, e => { clearTimeout(timer); state.err = e.code; render(); });
+  db.doc('estado/geral').onSnapshot(snap => {
+    if(!(dirty['estado/geral']>0)) state.geral = snap.exists ? Object.assign(defGeral(), snap.data()) : (state.geral || defGeral());
+    if(!snap.metadata.fromCache) state.loaded.geral = true; settle(); render();
+  }, e => { clearTimeout(timer); state.err = e.code; render(); });
+  watchCol('habitos'); watchCol('tarefas'); watchCol('livros');
+}
+
+/* ---------- ações ---------- */
+function addVitoria(g, meta, passo){
+  g.vitorias = (g.vitorias||0)+1; const k = dk(); g.historico = g.historico||{}; g.historico[k] = (g.historico[k]||0)+1;
+  const ks = Object.keys(g.historico).sort(); while(ks.length>400) delete g.historico[ks.shift()];
+  g.ultimas = [{n:g.vitorias, t:passo.titulo, meta:meta.titulo, pid:passo.id, em:new Date().toISOString()}, ...(g.ultimas||[])].slice(0,40);
+}
+function toggle(mid, kid, pid, fromUndo){
+  const raw = state.metas[mid]; if(!raw) return;
+  const m = norm(raw), k = m.marcos.find(x=>x.id===kid), p = k && k.passos.find(x=>x.id===pid); if(!p) return;
+  const g = clone(state.geral || defGeral());
+  if(!p.feito){
+    p.feito = true; p.feitoEm = new Date().toISOString();
+    let pts = PTS[p.tempo]||1, msg = pick(VIVAS), big = 0;
+    addVitoria(g, m, p);
+    const bonus = Math.random() < 0.15; if(bonus){ pts += 3; msg = 'estrela surpresa! +3 ✦ o universo tá do seu lado hoje'; }
+    if(!k.feito && k.passos.every(x=>x.feito)){ k.feito = true; pts += 5; big = 1; msg = 'PARA TUDO. marco concluído 💃 +5 de bônus'; }
+    if(!m.concluidaEm && m.marcos.length && m.marcos.every(x=>x.passos.length && x.passos.every(y=>y.feito))){ m.concluidaEm = new Date().toISOString(); pts += 20; big = 2; msg = 'META CONCLUÍDA. chora, comemora, posta 😭 +20'; }
+    p.pts = pts; g.estrelas += pts; g.total += pts;
+    state.metas[mid] = m; state.geral = g; saveMeta(mid); saveGeral();
+    celebrate(big, bonus); render(); bump();
+    if(big===2) trofeu(m, pts);
+    else toast(`${msg}  ·  +${pts} ${STAR}`, {big: big>0, undo: fromUndo ? null : () => toggle(mid,kid,pid,true)});
+  } else {
+    const pts = p.pts || PTS[p.tempo] || 1;
+    p.feito = false; const dia = p.feitoEm ? dk(new Date(p.feitoEm)) : null; delete p.feitoEm; delete p.pts;
+    k.feito = false; delete m.concluidaEm;
+    g.estrelas = Math.max(0, g.estrelas - pts); g.total = Math.max(0, g.total - pts);
+    g.vitorias = Math.max(0,(g.vitorias||0)-1);
+    if(dia && g.historico && g.historico[dia]) { g.historico[dia]--; if(!g.historico[dia]) delete g.historico[dia]; }
+    g.ultimas = (g.ultimas||[]).filter(u => u.pid !== pid);
+    state.metas[mid] = m; state.geral = g; saveMeta(mid); saveGeral(); render();
+    if(fromUndo) toast('desfeito. o passinho voltou pra lista.');
+  }
+}
+function trofeu(m, pts){
+  const pr = prog(m); const dias = m.criadoEm ? Math.max(1, Math.round((Date.now() - new Date(m.criadoEm))/864e5)) : null;
+  $('#trofeuHost').innerHTML = `<div class="trofeu-bg" data-act="fecharTrofeu"><div class="trofeu" role="dialog" aria-modal="true" aria-label="Meta concluída" style="--area:${areaVar(m)}" data-act="noop">
+    <div class="copa" aria-hidden="true">🏆</div><small>meta concluída</small><h3>${esc(m.titulo)}</h3>
+    <p class="num">${pr.n} passinhos${dias?` · ${dias} dia${dias>1?'s':''} de dedicação`:''} · +${pts} ${STAR}</p>
+    <p>${esc(pick(['chora, comemora, respira 😭','PARA TUDO. olha o que você fez 💃','alguém segura essa mulher 🤣','isso aqui é história, viu? 🥹']))}</p>
+    <button class="btn red" data-act="fecharTrofeu">guardar na estante 🏆</button></div></div>`;
+  setTimeout(() => celebrate(2,false), 700);
+}
+function addPasso(mid, kid, titulo, tempo){
+  const m = norm(state.metas[mid]); const k = m.marcos.find(x=>x.id===kid); if(!k||!titulo.trim()) return;
+  k.passos.push({id:uid('p'), titulo:titulo.trim().slice(0,140), tempo:+tempo||15}); k.feito=false; delete m.concluidaEm;
+  state.metas[mid] = m; saveMeta(mid); render();
+}
+function addMarco(mid, titulo){
+  const m = norm(state.metas[mid]); if(!titulo.trim()) return;
+  m.marcos.push({id:uid('k'), titulo:titulo.trim().slice(0,120), passos:[]}); delete m.concluidaEm;
+  state.metas[mid] = m; saveMeta(mid); render();
+}
+function delPasso(mid,kid,pid){ const m=norm(state.metas[mid]); const k=m.marcos.find(x=>x.id===kid); if(!k) return; k.passos=k.passos.filter(p=>p.id!==pid); state.metas[mid]=m; saveMeta(mid); render(); }
+function delMarco(mid,kid){ const m=norm(state.metas[mid]); m.marcos=m.marcos.filter(k=>k.id!==kid); state.metas[mid]=m; saveMeta(mid); render(); }
+function delMeta(mid){
+  const copia = state.metas[mid]; if(!copia) return;
+  delete state.metas[mid]; ui.open.delete(mid); saveMeta(mid); render();
+  toast('meta apagada.', {undo: () => { state.metas[mid] = copia; saveMeta(mid); render(); toast('voltou ✦'); }});
+}
+
+/* Claude quebra a meta */
+async function quebrar(mid){
+  const m = norm(state.metas[mid]); ui.ai[mid] = {status:'loading'}; render();
+  let sample = null; try{ sample = window.claude && window.claude.use ? await window.claude.use('sample') : null; }catch(e){}
+  if(!sample){ ui.ai[mid] = {status:'error', msg:'o Claude só ajuda quando o app é aberto pelo claude.ai. enquanto isso, dá pra quebrar na mão aqui embaixo.'}; render(); return; }
+  const existentes = m.marcos.length ? 'Ela já tem estes marcos (não repita, continue a partir deles): ' + m.marcos.map(k=>k.titulo).join('; ') + '.' : '';
+  const prompt = `Você ajuda a Isa a quebrar metas grandes em passinhos pequenos, pra ela sentir progresso todo dia.
+Contexto dela: mãe de uma menina pequena (por volta de 1 ano e meio, fase de mexer em tudo, sem telas). Organiza metas de carreira e dinheiro, saúde e corpo, família, e de si mesma (estudos, leitura, lazer). Tem pouco tempo livre e encaixa as coisas nos intervalos (cochilo da filha, à noite). Abre o app várias vezes no dia pra riscar passinhos, então passinhos curtos funcionam melhor. Gosta de humor e linguagem solta.
+Meta: "${m.titulo}"
+Por que importa: "${m.porque||'-'}"
+Horizonte: ${H[m.horizonte]?.nome||m.horizonte} (${H[m.horizonte]?.sub||''}). Prazo: ${m.prazo||'sem prazo'}. Área: ${AREAS[m.area]?.nome||m.area}.
+${existentes}
+Crie de 3 a 5 marcos em ordem. Cada marco tem de 3 a 5 passinhos concretos que começam com verbo no infinitivo, com no máximo 60 caracteres, em português do Brasil informal e em minúsculas. Cada passinho cabe em 5, 15 ou 60 minutos. O primeiro passinho do primeiro marco tem que ser ridiculamente fácil (5 min). Não invente fatos da vida dela.
+Responda só com JSON neste formato: {"marcos":[{"titulo":"...","passos":[{"titulo":"...","tempo":5}]}]}`;
+  try{
+    const r = await sample.json(prompt, {cache:false});
+    const marcos = (r && Array.isArray(r.marcos) ? r.marcos : []).slice(0,6).map(k => ({titulo:String(k.titulo||'marco').slice(0,120), passos:(Array.isArray(k.passos)?k.passos:[]).slice(0,7).map(p=>({titulo:String(p.titulo||'').slice(0,140), tempo:[5,15,60].includes(+p.tempo)?+p.tempo:15})).filter(p=>p.titulo)})).filter(k=>k.passos.length);
+    if(!marcos.length) throw {code:'empty'};
+    ui.ai[mid] = {status:'done', marcos};
+  }catch(e){
+    const msgs = {not_granted:'tudo bem, sem Claude por aqui. dá pra quebrar na mão.', rate_limited:'muitas perguntas seguidas. tenta de novo daqui a pouco.', sampling_disabled:'o Claude não tá disponível nessa conta.', refused:'o Claude não quis responder essa. tenta reescrever a meta.'};
+    ui.ai[mid] = {status:'error', msg: msgs[e && e.code] || 'não deu certo agora. toca em tentar de novo.'};
+  }
+  render();
+}
+function usarAI(mid){
+  const a = ui.ai[mid]; if(!a || !a.marcos) return; const m = norm(state.metas[mid]);
+  a.marcos.forEach(k => m.marcos.push({id:uid('k'), titulo:k.titulo, passos:k.passos.map(p=>({id:uid('p'), ...p}))}));
+  delete m.concluidaEm; state.metas[mid] = m; delete ui.ai[mid]; saveMeta(mid); render();
+  toast('pronto! agora é só ir riscando ✦');
+}
+
+/* hábitos e tarefas */
+const DN = ['seg','ter','qua','qui','sex','sáb','dom'];
+const VIVAS_HAB = ['hábito marcado ✦','olha a constância 🥹','mais um dia pra conta 💃','é de pouquinho em pouquinho ✦','foguinho aceso 🔥'];
+function histAdd(g, dia, delta){
+  if(!dia) return; g.historico = g.historico||{}; g.historico[dia] = (g.historico[dia]||0) + delta;
+  if(g.historico[dia] <= 0) delete g.historico[dia];
+  const ks = Object.keys(g.historico).sort(); while(ks.length>400) delete g.historico[ks.shift()];
+}
+function addStars(g, n){ g.estrelas = Math.max(0,(g.estrelas||0)+n); g.total = Math.max(0,(g.total||0)+n); }
+function habArr(){ return Object.values(state.habitos).filter(h=>h && h.titulo && !h.arquivado).sort((a,b)=>String(a.criadoEm||'').localeCompare(String(b.criadoEm||''))); }
+function habSemana(h, sk = semanaKey()){ const ini = new Date(sk+'T12:00'); let n=0; for(let i=0;i<7;i++){ const x=new Date(ini); x.setDate(x.getDate()+i); if((h.dias||{})[dk(x)]) n++; } return n; }
+function habStreak(h){ const m={}; Object.keys(h.dias||{}).forEach(k=>m[k]=1); return streak(m); }
+function toggleHab(id, dia){
+  dia = dia || dk(); const raw = state.habitos[id]; if(!raw || dia > dk()) return;
+  const h = clone(raw); h.dias = h.dias||{}; h.bonus = h.bonus||{};
+  const g = clone(state.geral || defGeral()); const sk = semanaKey(new Date(dia+'T12:00')); const meta = +h.metaSemana || 7;
+  if(h.dias[dia]){
+    if(h.dias[dia] === true) addStars(g, -1);
+    delete h.dias[dia]; histAdd(g, dia, -1);
+    if(h.bonus[sk] && habSemana(h, sk) < meta){ delete h.bonus[sk]; addStars(g, -3); }
+    state.habitos[id] = h; state.geral = g; saveDoc('habitos', id); saveGeral(); render(); return;
+  }
+  h.dias[dia] = true; histAdd(g, dia, 1); let pts = 1, big = 0, msg = pick(VIVAS_HAB);
+  const n = habSemana(h, sk);
+  if(!h.bonus[sk] && n >= meta){ h.bonus[sk] = true; pts += 3; big = 1; msg = meta>=7 ? 'semana perfeita nesse hábito 💃 +3 de bônus' : `meta da semana batida: ${n} de ${meta} 💃 +3 de bônus`; }
+  addStars(g, pts); state.habitos[id] = h; state.geral = g; saveDoc('habitos', id); saveGeral();
+  celebrate(big, false); render(); bump();
+  toast(`${esc(h.titulo)}: ${msg} · +${pts} ${STAR}`, {big: !!big, undo: () => toggleHab(id, dia)});
+}
+function addHab(titulo, area, meta){
+  titulo = titulo.trim(); if(!titulo) return; const id = uid('h');
+  state.habitos[id] = {id, titulo:titulo.slice(0,80), area: AREAS[area] ? area : 'saude', metaSemana: Math.max(1,Math.min(7,+meta||7)), criadoEm:new Date().toISOString(), dias:{}};
+  saveDoc('habitos', id); render(); toast('hábito novo na área ✦ começa pequeno, tá?');
+}
+function delHab(id){
+  const c = state.habitos[id]; if(!c) return; delete state.habitos[id]; saveDoc('habitos', id); render();
+  toast(`"${esc(c.titulo)}" apagado.`, {undo: () => { state.habitos[id] = c; saveDoc('habitos', id); render(); }});
+}
+function tarArr(){ return Object.values(state.tarefas).filter(t=>t && t.titulo); }
+function ordTar(ts){ const far = '9999'; return ts.sort((a,b) => (!!b.foco - !!a.foco) || String(a.data||far).localeCompare(String(b.data||far)) || String(a.criadoEm||'').localeCompare(String(b.criadoEm||''))); }
+const fmtD = k => new Date(k+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.','');
+function toggleTar(id, fromUndo){
+  const raw = state.tarefas[id]; if(!raw) return; const t = clone(raw); const g = clone(state.geral || defGeral());
+  if(!t.feita){
+    const pts = t.foco ? 2 : 1; t.feita = true; t.feitaEm = dk(); t.pts = pts;
+    addStars(g, pts); addVitoria(g, {titulo:'tarefa'}, {titulo:t.titulo, id:'t:'+id});
+    state.tarefas[id] = t; state.geral = g; saveDoc('tarefas', id); saveGeral();
+    celebrate(0, false); render(); bump();
+    toast(`${pick(VIVAS)} · +${pts} ${STAR}`, {undo: fromUndo ? null : () => toggleTar(id, true)});
+  } else {
+    const pts = 'pts' in t ? +t.pts||0 : 1; const dia = t.feitaEm;
+    t.feita = false; delete t.feitaEm; delete t.pts; addStars(g, -pts);
+    if(pts){ histAdd(g, dia, -1); g.vitorias = Math.max(0,(g.vitorias||0)-1); g.ultimas = (g.ultimas||[]).filter(u => u.pid !== 't:'+id); }
+    state.tarefas[id] = t; state.geral = g; saveDoc('tarefas', id); saveGeral(); render();
+    if(fromUndo) toast('desfeito. a tarefa voltou pra lista.');
+  }
+}
+function focoTar(id){ const t = clone(state.tarefas[id]); if(!t) return; t.foco = !t.foco; state.tarefas[id] = t; saveDoc('tarefas', id); render(); }
+function addTar(titulo, area, data){
+  titulo = titulo.trim(); if(!titulo) return; const id = uid('t');
+  state.tarefas[id] = {id, titulo:titulo.slice(0,140), area: AREAS[area] ? area : 'eu', data: data || '', foco:false, feita:false, criadoEm:new Date().toISOString()};
+  saveDoc('tarefas', id); render(); toast('anotada ✦ agora sai da sua cabeça');
+}
+function delTar(id){
+  const c = state.tarefas[id]; if(!c) return; delete state.tarefas[id]; saveDoc('tarefas', id); render();
+  toast('tarefa apagada.', {undo: () => { state.tarefas[id] = c; saveDoc('tarefas', id); render(); }});
+}
+
+/* leituras */
+const SENS = ['Tensão','Surpresa','Amor','Risadas','Choro','Transtornada','Indiferença','Decepção'];
+const RESP = {pace:'ritmo', writing:'escrita', ending:'final', recommend:'recomendo', reread:'releria'};
+function livArr(){ return Object.values(state.livros).filter(l=>l && l.titulo); }
+const mesTxt = m => m ? new Date(String(m).slice(0,7)+'-15T12:00').toLocaleDateString('pt-BR',{month:'short',year:'numeric'}).replace('.','').replace(' de ',' ') : '';
+function saveLiv(l){ state.livros[l.id] = l; saveDoc('livros', l.id); }
+/* progresso sempre em % (Kindle). livros antigos em páginas viram % na primeira leitura */
+function pctLiv(l){
+  if(l.pct !== undefined && l.pct !== null && !isNaN(+l.pct)) return Math.max(0, Math.min(100, Math.round(+l.pct)));
+  return l.paginas ? Math.min(100, Math.round((+l.paginaAtual||0)/l.paginas*100)) : 0;
+}
+/* ritmo, previsão e meta diária de leitura */
+const diasEntre = (a, b) => Math.round((new Date(b+'T12:00') - new Date(a+'T12:00'))/864e5);
+const metaLeit = g => Math.max(1, Math.min(50, +((g||{}).metaLeitura) || 3));
+function ganhoLiv(l, hoje = dk()){ return l.diaRef === hoje ? Math.max(0, pctLiv(l) - (+l.baseHoje||0)) : 0; }
+function ganhoHoje(trocado){ return livArr().map(l => trocado && l.id === trocado.id ? trocado : l).reduce((a,l) => a + ganhoLiv(l), 0); }
+function leitStreak(g){
+  const ds = (g||{}).leituraDias || {}; const d = new Date(); if(!ds[dk(d)]) d.setDate(d.getDate()-1);
+  let n = 0; while(ds[dk(d)]){ n++; d.setDate(d.getDate()-1); } return n;
+}
+function ritmoLiv(l){
+  const d0 = l.rDia || l.inicio; if(!d0) return 0;
+  const p0 = l.rDia ? (+l.rPct||0) : (+l.pctInicio||0);
+  const dias = Math.max(1, diasEntre(d0, dk()) + (l.rDia ? 0 : 1)), r = (pctLiv(l) - p0) / dias;
+  return r > 0 ? r : 0;
+}
+function previsaoLiv(l){
+  const pct = pctLiv(l), r = ritmoLiv(l); if(pct >= 100) return 'chegou no fim ✦';
+  if(!r) return l.rDia === dk() ? 'anotado! a partir de amanhã eu calculo quando você termina' : 'anota seu % pra eu calcular quando termina';
+  const dias = Math.ceil((100 - pct) / r); if(dias > 365) return 'no ritmo de agora, mais de um ano 😅';
+  const f = new Date(); f.setDate(f.getDate() + dias);
+  return `no seu ritmo, termina em ~${dias} dia${dias===1?'':'s'} (${f.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.','')})`;
+}
+/* registra um novo % e cuida de estrela, sequência e meta do dia */
+function registraPct(id, novo){
+  const l = clone(state.livros[id]); if(!l) return; const g = clone(state.geral || defGeral()); const hoje = dk();
+  const antes = pctLiv(l); novo = Math.max(0, Math.min(100, Math.round(novo)));
+  if(l.diaRef !== hoje){ l.diaRef = hoje; l.baseHoje = antes; }
+  /* primeiro % anotado de um livro que já vinha sendo lido: vira ponto de partida, não conta como leitura de hoje */
+  const primeira = !l.hist || !Object.keys(l.hist).length;
+  if(primeira && novo > antes && ((l.inicio && l.inicio < hoje) || novo - antes > 25)){ l.rDia = hoje; l.rPct = novo; l.baseHoje = novo; }
+  l.pct = novo; l.hist = Object.assign({}, l.hist || {}); l.hist[hoje] = novo;
+  const ks = Object.keys(l.hist).sort(); while(ks.length > 90) delete l.hist[ks.shift()];
+  let estrelas = 0, bateu = false;
+  if(novo > antes){
+    g.leituraDias = Object.assign({}, g.leituraDias || {}); g.leituraDias[hoje] = true;
+    const kd = Object.keys(g.leituraDias).sort(); while(kd.length > 400) delete g.leituraDias[kd.shift()];
+    if(l.estrelaDia !== hoje){ l.estrelaDia = hoje; estrelas += 1; }
+    if(g.leituraMetaDia !== hoje && ganhoHoje(l) >= metaLeit(g)){ g.leituraMetaDia = hoje; estrelas += 2; bateu = true; }
+    if(estrelas){ addStars(g, estrelas); histAdd(g, hoje, 1); }
+  }
+  saveLiv(l); state.geral = g; saveGeral();
+  if(bateu){ celebrate(1,false); render(); bump(); toast(`META DE LEITURA DO DIA BATIDA 📚 +${metaLeit(g)}% hoje · 🔥 ${leitStreak(g)} dia${leitStreak(g)===1?'':'s'} seguidos · +${estrelas} ${STAR}`, {big:true}); return; }
+  if(estrelas){ celebrate(0,false); bump(); }
+  render();
+  const falta = Math.max(0, metaLeit(g) - ganhoHoje());
+  toast(novo >= 100 ? 'chegou nos 100%! toca em "terminei" 🥹' : novo > antes ? `${novo}% 📖 ${falta ? `faltam ${falta}% pra meta de hoje` : pick(['a cabeça agradece','um capítulo de paz','leitora raiz ✦'])}${estrelas?` · +${estrelas} ${STAR}`:''}` : `anotado: ${novo}% 📖`);
+}
+function setPagina(id, val){
+  const v = +String(val).replace(',','.').replace('%',''); if(val==='' || isNaN(v)) return;
+  registraPct(id, v);
+}
+function mais10(id){ const l = state.livros[id]; if(!l) return; registraPct(id, pctLiv(l) + 5); }
+function setMetaLeit(n){ const g = clone(state.geral || defGeral()); g.metaLeitura = Math.max(1, Math.min(50, +n || 3)); state.geral = g; saveGeral(); render(); toast(`meta de leitura: ${g.metaLeitura}% por dia ✦`); }
+function terminar(id){
+  if(pctLiv(state.livros[id] || {}) < 100) registraPct(id, 100);
+  const l = clone(state.livros[id]); if(!l) return; const g = clone(state.geral || defGeral());
+  l.status = 'lido'; l.fim = dk().slice(0,7); l.fimDia = dk(); l.pct = 100;
+  addStars(g, 10); addVitoria(g, {titulo:'leitura'}, {titulo:'terminei "'+l.titulo+'"', id:'l:'+id});
+  saveLiv(l); state.geral = g; saveGeral(); ui.livro = id; celebrate(1,false); render(); bump();
+  toast(`LIVRO TERMINADO 📚 +10 ${STAR} agora me conta: quantas estrelas ele merece?`, {big:true});
+}
+function comecar(id){ const l = clone(state.livros[id]); if(!l) return; l.status = 'lendo'; l.inicio = dk(); l.pct = pctLiv(l); l.pctInicio = l.pct; saveLiv(l); render(); toast('bora ler ✦ começou hoje'); }
+function salvarLivro(id){
+  const l = clone(state.livros[id]); if(!l) return; const v = s => (document.getElementById(s+id) || {}).value;
+  const t = String(v('le-t')||'').trim(); if(!t){ toast('o livro precisa de um título.'); return; }
+  l.titulo = t.slice(0,160); l.autor = String(v('le-a')||'').trim().slice(0,100);
+  l.estilo = String(v('le-g')||'').trim().toLowerCase().slice(0,40); l.paginas = Math.max(0, parseInt(v('le-p'))||0);
+  const ini = String(v('le-i')||'');
+  if(/^\d{4}-\d{2}-\d{2}$/.test(ini) && ini !== l.inicio && ini <= dk()){
+    /* data de início corrigida à mão: o ritmo passa a contar dela, a partir do 0% */
+    l.inicio = ini; l.pctInicio = 0; delete l.rDia; delete l.rPct; l.hist = Object.assign({[ini]: 0}, l.hist || {});
+  }
+  /* % corrigido aqui é ajuste, não conta como leitura de hoje */
+  const pv = v('le-x');
+  if(pv !== undefined && pv !== '' && !isNaN(+pv)){
+    const antes = pctLiv(l), novo = Math.max(0, Math.min(100, Math.round(+pv)));
+    if(novo !== antes){ l.pct = novo; if(l.diaRef === dk()) l.baseHoje = (+l.baseHoje||0) + (novo - antes); if(l.rDia) l.rPct = (+l.rPct||0) + (novo - antes); }
+  }
+  saveLiv(l); ui.editLiv = null; render(); toast('livro atualizado ✦');
+}
+function statusLiv(id, s){ const l = clone(state.livros[id]); if(!l || !['quero','lendo','lido'].includes(s)) return; l.status = s; if(s==='lido' && !l.fim){ l.fim = dk().slice(0,7); l.fimDia = dk(); } if(s==='lendo' && !l.inicio){ l.inicio = dk(); l.pctInicio = pctLiv(l); } saveLiv(l); render(); }
+function notaLiv(id, n){ const l = clone(state.livros[id]); if(!l) return; l.nota = +l.nota === +n ? 0 : +n; saveLiv(l); render(); }
+function sensLiv(id, s){ const l = clone(state.livros[id]); if(!l) return; l.sensacao = l.sensacao === s ? '' : s; saveLiv(l); render(); }
+function notasLiv(id){ const el = document.getElementById('ln-'+id); const l = clone(state.livros[id]); if(!l || !el) return; l.notas = el.value.slice(0,4000); saveLiv(l); render(); toast('anotações salvas ✦'); }
+function addLiv(t, a, p, s, gen){
+  t = t.trim(); if(!t) return; const id = uid('l');
+  saveLiv({id, titulo:t.slice(0,160), autor:a.trim().slice(0,100), estilo:String(gen||'').trim().toLowerCase().slice(0,40), paginas: Math.max(0, parseInt(p)||0), paginaAtual:0, pct: s==='lido' ? 100 : 0, status: ['quero','lendo','lido'].includes(s) ? s : 'quero', inicio: s==='lendo' ? dk() : '', fim: s==='lido' ? dk().slice(0,7) : '', nota:0, criadoEm:new Date().toISOString()});
+  render(); toast('livro na estante ✦');
+}
+async function buscarLivro(){
+  const tEl = document.getElementById('lf-t'); const q = tEl ? tEl.value.trim() : '';
+  if(!q){ ui.busca = {status:'error', msg:'digita o nome do livro primeiro ✦'}; render(); return; }
+  ui.busca = {status:'loading', msg:`procurando "${q}"…`}; render();
+  let sample = null; try{ sample = window.claude && window.claude.use ? await window.claude.use('sample') : null; }catch(e){}
+  if(!sample) return buscarGoogleBooks(q);
+  const prompt = `Identifique o livro a partir do que a pessoa digitou: "${q}".
+Responda só com JSON: {"encontrado":true|false,"titulo":"título como é publicado no Brasil (ou o original, se não houver edição brasileira)","autor":"nome do(a) autor(a)","paginas":número de páginas da edição brasileira mais comum (ou da original),"edicao":"editora e ano dessa edição, se souber","estilo":"o estilo/gênero do livro em 1 a 3 palavras, em minúsculas, em português (ex: romance de época, fantasia, suspense, não ficção, autoajuda)"}.
+Se não tiver certeza razoável de qual livro é, responda {"encontrado":false}. Não invente livros. Se não souber o número de páginas, use 0.`;
+  try{
+    const r = await sample.json(prompt, {modelTier:'quick'});
+    if(!r || !r.encontrado || !r.titulo){ ui.busca = {status:'error', msg:'não achei esse livro. confere o nome ou preenche na mão.'}; render(); return; }
+    const set = (id, v) => { const el = document.getElementById(id); if(el && v) el.value = v; };
+    set('lf-t', String(r.titulo).slice(0,160)); set('lf-a', String(r.autor||'').slice(0,100));
+    const pg = parseInt(r.paginas)||0; if(pg>0) set('lf-p', String(pg));
+    const est = String(r.estilo||'').toLowerCase().slice(0,40); set('lf-g', est);
+    ui.busca = {status:'done', msg:`achei: ${r.titulo}${r.autor?' · '+r.autor:''}${est?' · '+est:''}${pg?` · ~${pg} páginas`:''}${r.edicao?` (${r.edicao})`:''}. confere antes de adicionar, as páginas podem ser de outra edição.`};
+  }catch(e){
+    const msgs = {not_granted:'tudo bem, sem busca por aqui. dá pra preencher na mão.', rate_limited:'muitas buscas seguidas. tenta de novo daqui a pouco.', sampling_disabled:'a busca não tá disponível nessa conta.'};
+    ui.busca = {status:'error', msg: msgs[e && e.code] || 'não deu certo agora. tenta de novo.'};
+  }
+  render();
+}
+const CAT_PT = {fiction:'ficção', 'juvenile fiction':'juvenil', 'young adult fiction':'jovem adulto', 'biography & autobiography':'biografia', history:'história', 'self-help':'autoajuda', psychology:'psicologia', 'business & economics':'negócios', 'family & relationships':'família', poetry:'poesia', religion:'religião', philosophy:'filosofia', cooking:'culinária', 'health & fitness':'saúde', 'literary criticism':'ensaio', 'social science':'ciências sociais', science:'ciência', 'comics & graphic novels':'quadrinhos', romance:'romance', fantasy:'fantasia', 'true crime':'true crime', education:'educação'};
+const SUBJ_PT = [[/fantasy|fantasia/i,'fantasia'],[/romance|love stor/i,'romance'],[/thriller|suspense|mystery|detective|crime/i,'suspense'],[/science fiction|ficção científica/i,'ficção científica'],[/horror|terror/i,'terror'],[/biograph/i,'biografia'],[/self-help|autoajuda/i,'autoajuda'],[/history|história/i,'história'],[/poetry|poesia/i,'poesia'],[/young adult|juvenil/i,'jovem adulto'],[/historical fiction|romance histórico/i,'ficção histórica'],[/fiction|ficção|novel/i,'ficção']];
+async function buscarOpenLibrary(q){
+  const r = await fetch('https://openlibrary.org/search.json?limit=8&fields=title,subtitle,author_name,number_of_pages_median,subject,language,first_publish_year&q=' + encodeURIComponent(q));
+  if(!r.ok) throw new Error(r.status);
+  const docs = ((await r.json()).docs || []).filter(d => d.title);
+  if(!docs.length) return false;
+  const d = docs[0];
+  const titulo = d.title + (d.subtitle && d.subtitle.length < 40 ? ': ' + d.subtitle : '');
+  const autor = (d.author_name||[])[0] || '', pg = +d.number_of_pages_median || 0;
+  const subj = (d.subject||[]).join(' | '); const est = (SUBJ_PT.find(([re]) => re.test(subj)) || [])[1] || '';
+  const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
+  set('lf-t', titulo.slice(0,160)); set('lf-a', autor.slice(0,100)); if(pg) set('lf-p', String(pg)); set('lf-g', est);
+  ui.busca = {status:'done', msg:`achei: ${titulo}${autor?' · '+autor:''}${est?' · '+est:''}${pg?` · ~${pg} páginas`:''}${d.first_publish_year?` (${d.first_publish_year})`:''}. confere antes de adicionar, pode ser de outra edição.`};
+  return true;
+}
+async function buscarGoogleBooks(q){
+  try{ if(await buscarOpenLibrary(q)){ render(); return; } }catch(e){ console.warn('openlibrary', e); }
+  try{
+    const r = await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=8&printType=books&q=' + encodeURIComponent(q));
+    if(!r.ok) throw new Error(r.status);
+    const its = ((await r.json()).items || []).map(i => i.volumeInfo || {}).filter(v => v.title);
+    if(!its.length){ ui.busca = {status:'error', msg:'não achei esse livro. confere o nome ou preenche na mão.'}; render(); return; }
+    const v = its.find(x => x.language === 'pt' && x.pageCount) || its.find(x => x.pageCount) || its[0];
+    const titulo = v.title + (v.subtitle && v.subtitle.length < 40 ? ': ' + v.subtitle : '');
+    const cat = String((v.categories||[])[0]||'').toLowerCase(), est = CAT_PT[cat] || '';
+    const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
+    set('lf-t', titulo.slice(0,160)); set('lf-a', (v.authors||[]).join(', ').slice(0,100)); if(v.pageCount) set('lf-p', String(v.pageCount)); set('lf-g', est);
+    const ed = [v.publisher, (v.publishedDate||'').slice(0,4)].filter(Boolean).join(', ');
+    ui.busca = {status:'done', msg:`achei: ${titulo}${v.authors?' · '+v.authors.join(', '):''}${est?' · '+est:''}${v.pageCount?` · ~${v.pageCount} páginas`:''}${ed?` (${ed})`:''}. confere antes de adicionar, pode ser de outra edição.`};
+  }catch(e){ ui.busca = {status:'error', msg:'a busca não respondeu agora. tenta de novo ou preenche na mão.'}; }
+  render();
+}
+function delLiv(id){
+  const c = state.livros[id]; if(!c) return; delete state.livros[id]; saveDoc('livros', id); ui.livro = null; render();
+  toast(`"${esc(c.titulo)}" saiu da estante.`, {undo: () => { saveLiv(c); render(); }});
+}
+
+/* recompensas */
+function resgatar(rid){
+  const g = clone(state.geral); const r = g.recompensas.find(x=>x.id===rid); if(!r || g.estrelas < r.custo) return;
+  g.estrelas -= r.custo; r.resgatadaEm = new Date().toISOString(); r.vezes = (r.vezes||0)+1;
+  state.geral = g; saveGeral(); celebrate(2,false); render(); bump();
+  toast(`resgatado: ${esc(r.titulo)}. vai lá curtir, você mereceu 💃`, {big:true});
+}
+function repetir(rid){ const g=clone(state.geral); const r=g.recompensas.find(x=>x.id===rid); if(!r) return; delete r.resgatadaEm; state.geral=g; saveGeral(); render(); }
+function addRew(t,c){ if(!t.trim()) return; const g=clone(state.geral||defGeral()); g.recompensas.push({id:uid('r'), titulo:t.trim().slice(0,100), custo:Math.max(1,Math.min(9999,parseInt(c)||20))}); state.geral=g; saveGeral(); render(); }
+function delRew(rid){ const g=clone(state.geral); g.recompensas=g.recompensas.filter(r=>r.id!==rid); state.geral=g; saveGeral(); render(); }
+
+/* ---------- agenda do Google Calendar ---------- */
+const GCAL = 'Google Calendar';
+const ag = {mcp:null, st:'off', evs:[], at:0, err:'', dia:'', unsub:null};
+const pad2 = n => String(n).padStart(2,'0');
+const hm = d => pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+function agInput(){
+  const d = new Date(); d.setHours(0,0,0,0); const e = new Date(d); e.setDate(e.getDate()+1);
+  return {startTime: dk(d)+'T00:00:00', endTime: dk(e)+'T00:00:00', orderBy:'startTime', pageSize:50};
+}
+function agData(res){
+  const p = res && res.payload; const evs = (p && typeof p === 'object' && Array.isArray(p.events)) ? p.events : [];
+  ag.evs = evs.filter(e => e && e.status !== 'cancelled').map(e => {
+    const s = e.start || {}, f = e.end || {}, t = String(e.summary || '(sem título)').slice(0,160);
+    if(s.dateTime){ const ini = new Date(s.dateTime), fim = new Date(f.dateTime || s.dateTime); return {t, ini, fim, livre: e.transparency === 'transparent'}; }
+    return {t, dia:true};
+  }).filter(e => e.dia || !isNaN(e.ini));
+  ag.at = res && res.cache ? res.cache.storedAt : Date.now(); ag.st = 'ok'; ag.err = ''; render();
+}
+function agErr(e){
+  const c = (e && e.code) || 'upstream_error';
+  if(['not_granted','capability_disabled','capability_removed','user_changed'].includes(c)){ ag.st = 'off'; ag.evs = []; }
+  else if(['approval_required','not_in_manifest','consent_required'].includes(c)){ ag.st = 'pedir'; ag.evs = []; }
+  else if(['needs_reauth','server_not_connected','blocked_by_policy','selection_required','server_not_found'].includes(c)){ ag.st = 'erro'; ag.err = c; ag.evs = []; }
+  else if(ag.st !== 'ok'){ ag.st = 'erro'; ag.err = c; }
+  render();
+}
+/* a agenda vem do "endereço secreto iCal" do Google Agenda, lido por uma função no Supabase */
+let agBusy = false;
+async function agFetch(){
+  if(agBusy || !sb) return; agBusy = true;
+  try{
+    const d = new Date(); d.setHours(0,0,0,0); const e = new Date(d); e.setDate(e.getDate()+1);
+    const {data, error} = await sb.functions.invoke('metas-agenda', {body:{ini:d.toISOString(), fim:e.toISOString(), dia:dk(d)}});
+    if(error) throw error;
+    if(data && data.semUrl){ ag.st = 'pedir'; ag.evs = []; render(); return; }
+    if(!data || data.erro) throw {code: data && data.codigo || 'ics'};
+    agData({payload:{events:data.events}}); ag.dia = dk();
+  }catch(e){ console.warn('agenda', e); if(ag.st !== 'ok'){ ag.st = 'erro'; ag.err = (e && e.code) || 'rede'; render(); } }
+  finally{ agBusy = false; }
+}
+async function salvarIcs(url){
+  if(!/^https:\/\/\S+/.test(url) || !/ics|ical/i.test(url)){ toast('esse não parece o endereço iCal. ele termina com "basic.ics".'); return; }
+  ag.st = 'carregando'; render();
+  try{ await db.doc('config/agenda').set({ics:url}); }catch(e){ ag.st = 'pedir'; render(); toast('não consegui salvar agora. tenta de novo.'); return; }
+  await agFetch(); if(ag.st === 'ok') toast('agenda conectada ✦');
+}
+function agPermitir(){ ag.st = 'pedir'; render(); }
+function startAgenda(){
+  ag.mcp = {}; ag.st = 'carregando'; agFetch();
+  setInterval(agFetch, 5*60*1000);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) agFetch(); });
+}
+function agLivres(){
+  const agora = new Date(), ini = new Date(), fimDia = new Date(); ini.setHours(7,0,0,0); fimDia.setHours(22,0,0,0);
+  let cur = agora > ini ? new Date(Math.ceil(agora.getTime()/3e5)*3e5) : ini; const out = [];
+  ag.evs.filter(e => !e.dia && !e.livre).sort((a,b) => a.ini - b.ini).forEach(e => {
+    if(e.ini > cur){ const fim = e.ini < fimDia ? e.ini : fimDia; if(fim - cur >= 15*6e4) out.push({ini:new Date(cur), fim}); }
+    if(e.fim > cur) cur = new Date(e.fim);
+  });
+  if(fimDia - cur >= 15*6e4) out.push({ini:cur, fim:fimDia});
+  return out;
+}
+const durTxt = min => min >= 60 ? `${Math.floor(min/60)}h${min%60?pad2(min%60):''}` : `${min} min`;
+function emQuanto(d){ const m = Math.max(1, Math.round((d - new Date())/6e4)); return m < 60 ? `em ${m} min` : `em ${durTxt(m)}`; }
+function candPassos(){ return metasArr().filter(m => !m.concluidaEm).map(m => { for(const k of m.marcos){ const p = k.passos.find(p => !p.feito); if(p) return [m,k,p]; } return null; }).filter(Boolean); }
+const agOk = () => !!(ag.mcp && ag.st === 'ok');
+/* card "agora": junta a agenda com as metas e sugere um passinho que cabe no próximo tempo livre */
+function vAgora(){
+  const agora = new Date();
+  if(agOk()){
+    const timed = ag.evs.filter(e => !e.dia && !e.livre);
+    const atual = timed.find(e => e.ini <= agora && e.fim > agora);
+    const prox = timed.filter(e => e.ini > agora).sort((a,b) => a.ini - b.ini)[0];
+    const linha = atual ? `agora: <b>${esc(atual.t)}</b> até ${hm(atual.fim)}${prox ? ` · depois: <b>${esc(prox.t)}</b> às ${hm(prox.ini)}` : ''}`
+      : prox ? `próximo compromisso: <b>${esc(prox.t)}</b> às ${hm(prox.ini)} (${emQuanto(prox.ini)})` : 'nada mais na agenda hoje ✦';
+    const slot = agLivres()[0];
+    if(!slot) return `<section class="agora"><div class="rh"><b>🕒 sem tempo livre até as 22h</b></div><p>${linha}</p></section>`;
+    const min = Math.round((slot.fim - slot.ini)/6e4), ja = slot.ini <= new Date(agora.getTime() + 5*6e4);
+    const fit = candPassos().filter(x => x[2].tempo <= min).sort((a,b) => b[2].tempo - a[2].tempo);
+    const head = ja ? `🕒 você tem ${durTxt(min)} livre agora` : `🕒 das ${hm(slot.ini)} às ${hm(slot.fim)} você tá livre`;
+    if(!fit.length) return `<section class="agora"><div class="rh"><b>${head}</b></div><p>${linha}</p><p>nenhum passinho pendente cabe nesse tempo. que tal ler um pouco? 📚</p></section>`;
+    const [m,k,p] = fit[(ui.rel||0) % fit.length];
+    return `<section class="agora"><div class="rh"><b>${head}</b>${fit.length>1?'<button data-act="outroRel">outro ↻</button>':''}</div><p>${linha}</p><p>cabe esse passinho:</p><ul class="steps">${stepRow(m,k,p,{ctx:1})}</ul></section>`;
+  }
+  const rs = relampagos(); if(!rs.length) return '';
+  const [m,k,p] = rs[(ui.rel||0) % rs.length];
+  return `<section class="relampago"><div class="rh"><b>⚡ tem 5 minutinhos? risca esse</b>${rs.length>1?'<button data-act="outroRel">outro ↻</button>':''}</div><ul class="steps">${stepRow(m,k,p,{ctx:1})}</ul></section>`;
+}
+function vAgenda(semTitulo){
+  if(!ag.mcp || ag.st === 'off') return '';
+  const head = extra => semTitulo ? (extra||'') : `<div class="sec-h"><div><h2>sua agenda hoje</h2>${extra||''}</div></div>`;
+  if(ag.st === 'pedir') return `<section>${head()}<form class="ag-card" data-form="ics"><p>pra ver seus compromissos aqui, cola o <b>endereço secreto da sua agenda</b>. ele só se pega pelo computador:</p>
+    <ol><li>abre calendar.google.com</li><li>⚙️ Configurações → clica na sua agenda (na esquerda)</li><li>em "Integrar agenda", copia o <b>Endereço secreto no formato iCal</b></li></ol>
+    <input class="field" id="ag-ics" type="url" inputmode="url" placeholder="https://calendar.google.com/…/basic.ics" required>
+    <button class="btn">conectar agenda</button><p style="font-size:13px;color:var(--muted)">esse endereço é como uma senha: fica guardado só na sua conta.</p></form></section>`;
+  if(ag.st === 'erro'){
+    const msg = {ics:'não consegui ler sua agenda. confere se o endereço iCal tá certo.', ics_404:'o Google não achou esse endereço da agenda. pode ser que ele tenha sido trocado.'}[ag.err] || 'não consegui ler a agenda agora. tento de novo sozinha daqui a pouco.';
+    return `<section>${head()}<div class="ag-card"><p>${esc(msg)}</p><button class="btn ghost" data-act="agTrocar">trocar endereço da agenda</button></div></section>`;
+  }
+  if(ag.st !== 'ok') return `<section>${head()}<div class="ag-card"><p>olhando sua agenda…</p></div></section>`;
+  const agora = new Date(), diaTodo = ag.evs.filter(e => e.dia), timed = ag.evs.filter(e => !e.dia);
+  const livres = agLivres();
+  const cands = candPassos();
+  const usados = new Set();
+  const itens = [...timed.map(e => ({at:e.ini, ev:e})), ...livres.map(l => ({at:l.ini, lv:l}))].sort((a,b) => a.at - b.at);
+  const linhas = itens.map(it => {
+    if(it.ev){ const e = it.ev, cls = e.fim <= agora ? 'passou' : e.ini <= agora ? 'agora' : '';
+      return `<li class="ag-ev ${cls}"><span class="ag-h num">${hm(e.ini)}–${hm(e.fim)}</span><b>${esc(e.t)}</b></li>`; }
+    const l = it.lv, min = Math.round((l.fim - l.ini)/6e4);
+    const c = cands.filter(x => !usados.has(x[2].id) && x[2].tempo <= min).sort((a,b) => b[2].tempo - a[2].tempo)[0];
+    if(c) usados.add(c[2].id);
+    const dur = `${durTxt(min)} livre`;
+    return `<li class="ag-livre"><span class="num">${hm(l.ini)}–${hm(l.fim)}</span><span>${dur}${c ? `<small>cabe um passinho: ${esc(c[2].titulo)} · ${TLBL[c[2].tempo]}</small><button class="riscar" data-act="toggle" data-m="${esc(c[0].id)}" data-k="${esc(c[1].id)}" data-p="${esc(c[2].id)}">${STAR} riscar</button>` : ''}</span></li>`;
+  }).join('');
+  const quando = ag.at ? `<p class="hint">atualizado às ${hm(new Date(ag.at))}</p>` : '';
+  return `<section>${semTitulo ? '' : head(quando)}
+    ${diaTodo.length ? `<div class="ag-dia">${diaTodo.map(e => `<span class="tag">${esc(e.t)}</span>`).join('')}</div>` : ''}
+    ${linhas ? `<ul class="ag-list">${linhas}</ul>` : `<div class="empty"><b>nada marcado hoje</b>dia livre na agenda ✦</div>`}
+  </section>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  // guarda o que estava sendo digitado
+  const keep = {}; document.querySelectorAll('#view input[id], #view select[id]').forEach(el => keep[el.id] = el.value);
+  const focusId = document.activeElement && document.activeElement.id;
+  renderTop();
+  const v = $('#view');
+  if(state.mode==='login'){ v.innerHTML = vLogin(); document.body.dataset.view = 'login';
+    Object.entries(keep).forEach(([id,val]) => { const el = document.getElementById(id); if(el) el.value = val; }); return; }
+  if(state.mode==='loading' || (!state.loaded.metas || !state.loaded.geral) && !Object.keys(state.metas).length && !state.err){
+    v.innerHTML = `<div class="empty"><b>${state.slow?'ainda não consegui carregar':'carregando suas metas…'}</b>${state.slow?'a conexão tá lenta. se nada aparecer, recarregue a página.':'já já aparece tudo aqui.'}</div>`;
+  } else {
+    let html = '';
+    if(state.err) html += `<div class="banner">não consegui ler suas metas (${esc(state.err)}). só a dona do app consegue ver e editar.</div>`;
+    if(state.mode==='local') html += `<div class="banner">modo de teste: isso fica salvo só neste navegador. abrindo pelo claude.ai, fica salvo de verdade.</div>`;
+    if(state.slow) html += `<div class="banner">a conexão tá lenta, pode ser que algo esteja desatualizado.</div>`;
+    if(ui.tab === 'vitorias'){ ui.tab = 'pote'; ui.premio = 'vit'; }
+    html += ({hoje:vHoje, rotina:vRotina, leituras:vLeituras, metas:vMetas, pote:vPremios}[ui.tab] || vHoje)();
+    v.innerHTML = html;
+  }
+  Object.entries(keep).forEach(([id,val]) => { const el = document.getElementById(id); if(el) el.value = val; });
+  if(focusId){ const el = document.getElementById(focusId); if(el && el.closest('#view')) el.focus(); }
+  document.querySelectorAll('.tab').forEach(t => { if(t.dataset.tab===ui.tab) t.setAttribute('aria-current','page'); else t.removeAttribute('aria-current'); });
+  $('#somBtn').textContent = som ? 'som: on' : 'som: off';
+  document.body.dataset.view = ui.tab;
+}
+function habRow(h, full){
+  const hoje = dk(), feito = !!(h.dias||{})[hoje], cor = (AREAS[h.area]||AREAS.saude).cor, meta = +h.metaSemana || 7, n = habSemana(h), s = habStreak(h);
+  const sub = `${meta>=7?'todo dia':meta+'x por semana'} · <span class="num">${n}/${meta}</span> nesta semana${s>1?` · 🔥 ${s} dias`:''}`;
+  let dots = '';
+  if(full){ const ini = new Date(semanaKey()+'T12:00');
+    dots = '<div class="hdots">' + DN.map((nm,i) => { const x = new Date(ini); x.setDate(x.getDate()+i); const k = dk(x); const ok = (h.dias||{})[k];
+      return `<button class="hd ${ok?'ok':''} ${k===hoje?'hoje':''}" data-act="habDia" data-id="${esc(h.id)}" data-d="${k}" ${k>hoje?'disabled':''} aria-pressed="${!!ok}" aria-label="${esc(h.titulo)}, ${nm}">${nm[0].toUpperCase()}</button>`; }).join('') + '</div>'; }
+  return `<li class="step hab ${feito?'done':''}" style="--area:${cor}">
+    <button class="chk" data-act="hab" data-id="${esc(h.id)}" aria-pressed="${feito}" aria-label="${feito?'Desmarcar hoje':'Marcar hoje'}: ${esc(h.titulo)}">${STAR}</button>
+    <div class="txt"><b>${esc(h.titulo)}</b><small>${sub}</small>${dots}</div>
+    ${full ? `<button class="x" data-act="delHab" data-id="${esc(h.id)}" aria-label="Apagar hábito ${esc(h.titulo)}">×</button>` : `<span class="pts">${feito?'feito':'+1'}</span>`}
+  </li>`;
+}
+function tarRow(t){
+  const cor = (AREAS[t.area]||AREAS.eu).cor, hoje = dk(); let quando = '';
+  if(t.feita) quando = t.feitaEm ? `<span class="tag num">feita ${fmtD(t.feitaEm)}</span>` : '';
+  else if(t.data) quando = t.data < hoje ? `<span class="tag late">atrasada · ${fmtD(t.data)}</span>` : t.data === hoje ? `<span class="tag late">é hoje</span>` : `<span class="tag num">${fmtD(t.data)}</span>`;
+  return `<li class="step tar ${t.feita?'done':''}" style="--area:${cor}">
+    <button class="chk" data-act="tar" data-id="${esc(t.id)}" aria-pressed="${!!t.feita}" aria-label="${t.feita?'Desmarcar':'Marcar como feita'}: ${esc(t.titulo)}">${STAR}</button>
+    <div class="txt"><b>${esc(t.titulo)}</b><small><span class="tag area">${esc((AREAS[t.area]||AREAS.eu).nome)}</span>${quando}</small></div>
+    <div class="tbtns">${t.feita ? '' : `<button class="foco ${t.foco?'on':''}" data-act="focoTar" data-id="${esc(t.id)}" aria-pressed="${!!t.foco}" aria-label="${t.foco?'Tirar do foco':'Colocar no foco'}: ${esc(t.titulo)}">★</button>`}<button class="x" data-act="delTar" data-id="${esc(t.id)}" aria-label="Apagar tarefa ${esc(t.titulo)}">×</button></div>
+  </li>`;
+}
+const areaOpts = sel => Object.entries(AREAS).map(([k,v]) => `<option value="${k}" ${k===sel?'selected':''}>${v.nome}</option>`).join('');
+function vRotina(){ return vDiaADia(); }
+function vLeituraHoje(){
+  const ls = livArr(), lendo = ls.filter(l=>l.status==='lendo');
+  const fila = ls.filter(l=>l.status==='quero').sort((a,b)=>String(a.criadoEm||'').localeCompare(String(b.criadoEm||'')));
+  const ano = String(new Date().getFullYear()), noAno = ls.filter(l=>l.status==='lido' && String(l.fim||'').startsWith(ano)).length;
+  let corpo = '';
+  if(lendo.length) corpo = vMetaLeit() + `<div class="livros">${lendo.map(l => { const pct = pctLiv(l);
+    return `<article class="livro lendo"><div class="livro-top"><span><b>${esc(l.titulo)}</b><small class="num">${pct}% lido · ${esc(previsaoLiv(l))}</small></span><button class="btn" data-act="mais10" data-id="${esc(l.id)}" style="min-height:34px;padding:6px 12px">+5%</button></div><div class="bar"><i style="width:${Math.max(3,pct)}%;background:var(--a-eu)"></i></div><form class="pagf" data-form="pag" data-id="${esc(l.id)}"><input class="field" type="number" min="0" max="100" inputmode="numeric" id="lp-${esc(l.id)}" placeholder="tô em …% no Kindle" aria-label="Porcentagem lida"><button class="btn ghost" type="submit">ok</button></form></article>`; }).join('')}</div>`;
+  else if(fila.length) corpo = `<p>nenhum livro aberto agora. o próximo da fila é <b>${esc(fila[0].titulo)}</b>.</p><div class="actions"><button class="btn" data-act="comecar" data-id="${esc(fila[0].id)}">começar hoje</button></div>`;
+  else corpo = `<p>a estante tá vazia. anota o próximo livro que você quer ler.</p>`;
+  return `<section class="leit-hero"><div class="sec-h" style="margin:0"><div><h2>📚 leitura de hoje</h2><p class="hint num">${noAno} lido${noAno===1?'':'s'} em ${ano}</p></div><button class="ver-tudo" data-act="irLivros">estante →</button></div>${corpo}</section>`;
+}
+function vMetaLeit(chips){
+  const g = state.geral || defGeral(), meta = metaLeit(g), feito = ganhoHoje(), s = leitStreak(g), ok = feito >= meta;
+  return `<div class="meta-leit ${ok?'ok':''}"><div class="nivel-row"><span>${ok ? 'meta de hoje batida ✦' : 'meta de hoje'} · <b class="num">+${feito}% de ${meta}%</b></span><span class="num">${s ? `🔥 ${s} dia${s===1?'':'s'} lendo` : 'comece a sequência hoje'}</span></div>
+    <div class="bar"><i style="width:${Math.max(3, Math.min(100, feito/meta*100))}%;background:var(--a-eu)"></i></div>
+    ${chips ? `<div class="chips" style="margin-top:8px"><span class="hint" style="margin:0 4px 0 0">meta por dia:</span>${[1,2,3,5,10].map(n=>`<button class="chip" data-act="metaLeit" data-n="${n}" aria-pressed="${meta===n}">${n}%</button>`).join('')}</div>` : ''}</div>`;
+}
+const estrelasTxt = n => n ? '★'.repeat(n) + '☆'.repeat(5-n) : '';
+const GENEROS = ['romance','romance de época','fantasia','ficção científica','suspense','terror','mistério','drama','comédia romântica','não ficção','autoajuda','biografia','negócios','maternidade','clássico','poesia','infantil'];
+function livroEditForm(l){
+  const id = esc(l.id);
+  return `<form class="form-row addf" data-form="editLiv" data-id="${id}" style="margin-top:10px">
+    <label class="lab" style="flex:1 1 100%">título<input class="field" id="le-t${id}" maxlength="160" value="${esc(l.titulo)}"></label>
+    <label class="lab" style="flex:1 1 160px">autor(a)<input class="field" id="le-a${id}" maxlength="100" value="${esc(l.autor||'')}"></label>
+    <label class="lab" style="flex:1 1 160px">estilo<input class="field" id="le-g${id}" maxlength="40" list="lf-gl" value="${esc(l.estilo||'')}" placeholder="ex: romance"></label>
+    <label class="lab" style="flex:1 1 110px">nº de páginas<input class="field" type="number" min="0" inputmode="numeric" id="le-p${id}" value="${+l.paginas||''}"></label>
+    ${l.status!=='quero' ? `<label class="lab" style="flex:1 1 110px">% lido<input class="field" type="number" min="0" max="100" inputmode="numeric" id="le-x${id}" value="${pctLiv(l)}"></label>
+    <label class="lab" style="flex:1 1 150px">comecei em<input class="field" type="date" id="le-i${id}" value="${esc(l.inicio||'')}"></label>` : ''}
+    <div class="lrow" style="flex:1 1 100%"><button class="btn" type="submit">salvar</button><button class="btn ghost" type="button" data-act="editLivNao">cancelar</button></div>
+  </form>`;
+}
+function livroPainel(l){
+  const id = esc(l.id), resp = l.respostas || {};
+  if(ui.editLiv === l.id) return livroEditForm(l);
+  const tags = Object.entries(RESP).filter(([k])=>resp[k] && resp[k]!=='Não sei' && resp[k]!=='Não se aplica').map(([k,lb])=>`<span class="tag">${lb}: ${esc(String(resp[k]).toLowerCase())}</span>`).join('');
+  return `<div class="lab">status</div><div class="chips">${[['quero','quero ler'],['lendo','lendo'],['lido','lido']].map(([k,lb])=>`<button class="chip" data-act="statusLiv" data-id="${id}" data-s="${k}" aria-pressed="${l.status===k}">${lb}</button>`).join('')}</div>
+    ${l.status==='lido' ? `<div class="lab">minha nota</div><div class="estrelas">${[1,2,3,4,5].map(n=>`<button class="${n<=(+l.nota||0)?'on':''}" data-act="notaLiv" data-id="${id}" data-n="${n}" aria-label="${n} estrela${n>1?'s':''}" aria-pressed="${+l.nota===n}">★</button>`).join('')}</div>
+    <div class="lab">o que eu senti</div><div class="chips">${SENS.map(s=>`<button class="chip" data-act="sensLiv" data-id="${id}" data-s="${esc(s)}" aria-pressed="${l.sensacao===s}">${esc(s.toLowerCase())}</button>`).join('')}</div>` : ''}
+    ${tags ? `<div class="tags">${tags}</div>` : ''}
+    <div class="lab">anotações</div><textarea class="field" id="ln-${id}" maxlength="4000" placeholder="o que achou, plot twist, frase que marcou…">${esc(l.notas||'')}</textarea>
+    <div class="lrow"><button class="btn" data-act="notasLiv" data-id="${id}">salvar anotações</button><button class="btn ghost" data-act="editLiv" data-id="${id}">✎ editar livro</button><button class="btn ghost" data-act="delLiv" data-id="${id}">tirar da estante</button></div>`;
+}
+function livroCard(l){
+  const open = ui.livro === l.id, id = esc(l.id);
+  const sub = [l.autor, l.estilo, l.status==='lido' && mesTxt(l.fim), l.status==='lido' && l.sensacao && l.sensacao.toLowerCase()].filter(Boolean).map(esc).join(' · ');
+  let prog = '';
+  if(l.status==='lendo'){ const pct = pctLiv(l);
+    prog = `<div class="bar"><i style="width:${Math.max(3,pct)}%"></i></div><small class="num">${pct}% lido${l.inicio?` · desde ${fmtD(l.inicio)}`:''}</small><small class="num" style="color:var(--a-eu);font-weight:700">${esc(previsaoLiv(l))}</small>
+    <div class="lrow"><button class="btn" data-act="mais10" data-id="${id}">+5%</button><form class="pagf" data-form="pag" data-id="${id}"><input class="field" type="number" min="0" max="100" inputmode="numeric" id="lp-${id}" placeholder="tô em …%" aria-label="Porcentagem lida"><button class="btn ghost" type="submit">ok</button></form><button class="btn red" data-act="terminar" data-id="${id}">terminei! 📚</button></div>`; }
+  const acao = l.status==='quero' ? `<button class="btn ghost" data-act="comecar" data-id="${id}" style="min-height:34px;padding:6px 12px">começar</button>` : `<span class="nota" aria-label="${+l.nota||0} estrelas">${estrelasTxt(+l.nota||0)}</span>`;
+  return `<article class="livro ${l.status}">
+    <div class="livro-top"><button class="livro-top" data-act="abrirLivro" data-id="${id}" aria-expanded="${open}"><span><b>${esc(l.titulo)}</b>${sub?`<small>${sub}</small>`:''}</span></button>${acao}</div>
+    ${prog}${open ? livroPainel(l) : ''}
+  </article>`;
+}
+function vLeituras(){
+  const ls = livArr(), ano = String(new Date().getFullYear());
+  const lendo = ls.filter(l=>l.status==='lendo'), quero = ls.filter(l=>l.status==='quero').sort((a,b)=>String(a.criadoEm||'').localeCompare(String(b.criadoEm||'')));
+  const lidos = ls.filter(l=>l.status==='lido').sort((a,b)=>String(b.fim||'').localeCompare(String(a.fim||'')) || String(b.criadoEm||'').localeCompare(String(a.criadoEm||'')));
+  const noAno = lidos.filter(l=>String(l.fim||'').startsWith(ano)).length;
+  const pag = lidos.filter(l=>String(l.fim||'').startsWith(ano)).reduce((a,l)=>a+(+l.paginas||0),0);
+  const bloco = (t, arr, vazio) => `<section><div class="sec-h"><h2>${t}</h2><span class="hint num">${arr.length}</span></div>${arr.length ? `<div class="livros">${arr.map(livroCard).join('')}</div>` : `<div class="empty">${vazio}</div>`}</section>`;
+  const g = state.geral || defGeral(), seq = leitStreak(g);
+  const durs = lidos.filter(l=>l.inicio && l.fimDia).map(l=>Math.max(1, diasEntre(l.inicio, l.fimDia)+1));
+  const media = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : 0;
+  return `<div class="lstats"><div><b class="num">${noAno}</b><small>lidos em ${ano}</small></div><div><b class="num">${pag.toLocaleString('pt-BR')}</b><small>páginas em ${ano}</small></div><div><b class="num">${seq ? '🔥 '+seq : '0'}</b><small>dia${seq===1?'':'s'} lendo seguidos</small></div><div><b class="num">${media || '–'}</b><small>${media ? `dias por livro (média)` : 'dias por livro: aparece no 1º terminado'}</small></div></div>
+  <section style="margin-bottom:14px">${vMetaLeit(true)}</section>
+  ${bloco('lendo agora', lendo, 'nenhum livro aberto. escolhe um da fila e toca em "começar".')}
+  ${bloco('quero ler', quero, 'a fila tá vazia. anota o próximo aqui embaixo.')}
+  ${bloco('lidos', lidos, 'quando terminar um livro, ele vem pra cá.')}
+  <section><div class="sec-h"><h2>novo livro</h2></div>
+    <form class="form-row addf" data-form="liv"><div style="display:flex;gap:6px;flex:1 1 100%"><input class="field" id="lf-t" maxlength="160" placeholder="título" style="flex:1;min-width:0"><button class="btn ai" type="button" data-act="buscarLivro" ${ui.busca && ui.busca.status==='loading'?'disabled':''}>${STAR} buscar</button></div>${ui.busca ? `<p class="hint" style="flex-basis:100%;margin:0" role="status">${esc(ui.busca.msg)}</p>` : ''}<input class="field" id="lf-a" maxlength="100" placeholder="autor(a)"><input class="field" id="lf-g" maxlength="40" list="lf-gl" placeholder="estilo, ex: romance"><datalist id="lf-gl">${GENEROS.map(g=>`<option value="${g}">`).join('')}</datalist><input class="field" type="number" min="0" inputmode="numeric" id="lf-p" placeholder="nº de páginas (opcional)" style="flex:1 1 110px"><select class="field" id="lf-s" aria-label="Status"><option value="quero">quero ler</option><option value="lendo">lendo</option><option value="lido">já li</option></select><button class="btn" type="submit">+ livro</button></form>
+  </section>`;
+}
+function vDiaADia(){
+  const hs = habArr(), ts = tarArr(), hoje = dk();
+  const pend = ordTar(ts.filter(t=>!t.feita)), feitas = ts.filter(t=>t.feita).sort((a,b)=>String(b.feitaEm||'').localeCompare(String(a.feitaEm||'')));
+  const hojeN = hs.filter(h=>(h.dias||{})[hoje]).length;
+  return `
+  <section><div class="sec-h"><div><h2>hábitos</h2><p class="hint">a estrela marca hoje. as letrinhas são os dias desta semana: esqueceu de marcar ontem, toca nela. +1 por dia, +3 quando bate a meta da semana.</p></div><span class="hint num">${hojeN} de ${hs.length} hoje</span></div>
+    ${hs.length ? `<ul class="steps">${hs.map(h=>habRow(h,true)).join('')}</ul>` : `<div class="empty"><b>nenhum hábito ainda</b>comece com um bem pequeno, tipo beber água.</div>`}
+    <form class="form-row addf" data-form="hab"><input class="field" id="hf-t" maxlength="80" placeholder="novo hábito, ex: alongar 5 min"><select class="field" id="hf-a" aria-label="Área do hábito">${areaOpts('saude')}</select><select class="field" id="hf-m" aria-label="Quantas vezes por semana">${[7,6,5,4,3,2,1].map(n=>`<option value="${n}">${n===7?'todo dia':n+'x por semana'}</option>`).join('')}</select><button class="btn" type="submit">+ hábito</button></form>
+  </section>
+  <section><div class="sec-h"><div><h2>tarefas</h2><p class="hint">a ★ coloca a tarefa no foco, e ela aparece na tela "hoje". tarefa feita vale +1, a de foco vale +2.</p></div><span class="hint num">${pend.length} pra fazer</span></div>
+    <form class="form-row addf" data-form="tar" style="margin:0 0 10px"><input class="field" id="tf-t" maxlength="140" placeholder="nova tarefa, ex: pagar a escola"><select class="field" id="tf-a" aria-label="Área da tarefa">${areaOpts('eu')}</select><input class="field" type="date" id="tf-d" aria-label="Data (opcional)"><button class="btn" type="submit">+ tarefa</button></form>
+    ${pend.length ? `<ul class="steps">${pend.map(tarRow).join('')}</ul>` : `<div class="empty"><b>lista zerada</b>que mulher 💃</div>`}
+    ${feitas.length ? `<div style="margin-top:12px"><button class="chip" data-act="verFeitas" aria-expanded="${!!ui.feitas}">${ui.feitas?'esconder as feitas':`ver as ${feitas.length} feitas`}</button></div>${ui.feitas ? `<ul class="steps" style="margin-top:8px">${feitas.slice(0,60).map(tarRow).join('')}</ul>` : ''}` : ''}
+  </section>`;
+}
+function vRotinaHoje(){
+  const hs = habArr(), hoje = dk();
+  const ts = ordTar(tarArr().filter(t => !t.feita && (t.foco || (t.data && t.data <= hoje)))).slice(0,6);
+  let out = '';
+  if(hs.length){ const n = hs.filter(h=>(h.dias||{})[hoje]).length;
+    out += `<section><div class="sec-h"><h2>hábitos de hoje</h2><span class="hint num">${n} de ${hs.length}${n===hs.length?' · tudo feito 💃':''}</span></div><ul class="steps">${hs.map(h=>habRow(h,false)).join('')}</ul></section>`; }
+  if(ts.length) out += `<section><div class="sec-h"><h2>tarefas no foco</h2><button class="ver-tudo" data-act="irRotina">ver todas →</button></div><ul class="steps">${ts.map(tarRow).join('')}</ul></section>`;
+  return out;
+}
+function renderTop(){
+  const g = state.geral || defGeral();
+  $('#saldo').textContent = g.estrelas||0;
+  const s = streak(g.historico||{}); $('#seq').innerHTML = (s ? '<span class="fogo" aria-hidden="true">🔥</span>' : '') + s + (s===1?' dia':' dias');
+  $('#seqBox').classList.toggle('vivo', s>0);
+  $('#seqLbl').textContent = (g.historico||{})[dk()] ? 'de sequência ✦ hoje já foi' : s ? 'de sequência · falta o de hoje' : 'de sequência';
+  const n = nivel(g.total||0); $('#nivelNome').textContent = 'nível: ' + n.nome;
+  $('#nivelProx').textContent = n.prox ? `${n.falta} pra "${n.prox}"` : 'nível máximo ✦';
+  $('#nivelBar').style.width = Math.max(3,Math.min(100,n.pct)) + '%';
+}
+function areaVar(m){ return (AREAS[m.area]||AREAS.eu).cor; }
+function stepRow(m,k,p,opts={}){
+  return `<li class="step ${p.feito?'done':''}" style="--area:${areaVar(m)}">
+    <button class="chk" data-act="toggle" data-m="${esc(m.id)}" data-k="${esc(k.id)}" data-p="${esc(p.id)}" aria-pressed="${!!p.feito}" aria-label="${p.feito?'Desmarcar':'Marcar como feito'}: ${esc(p.titulo)}">${STAR}</button>
+    <div class="txt"><b>${esc(p.titulo)}</b>${opts.ctx?`<small>${esc(m.titulo)} · ${esc(k.titulo)}</small>`:''}</div>
+    <div style="display:flex;align-items:center;gap:4px"><span class="tmin">${TLBL[p.tempo]}</span>${opts.del?`<button class="x" data-act="delPasso" data-m="${esc(m.id)}" data-k="${esc(k.id)}" data-p="${esc(p.id)}" aria-label="Apagar passinho">×</button>`:`<span class="pts">+${PTS[p.tempo]}</span>`}</div>
+  </li>`;
+}
+function proximos(){
+  const ord = {curto:0,medio:1,longo:2}; const lim = ui.tempo || 999; const out = [];
+  metasArr().filter(m=>!m.concluidaEm).sort((a,b)=>(ord[a.horizonte]-ord[b.horizonte]) || String(a.prazo||'9').localeCompare(String(b.prazo||'9'))).forEach(m => {
+    for(const k of m.marcos){ const p = k.passos.find(p=>!p.feito && p.tempo<=lim); if(p){ out.push([m,k,p]); break; } if(!ui.tempo && k.passos.some(p=>!p.feito)) break; }
+  });
+  return out;
+}
+/* desafio de 7 dias */
+const DESAFIOS = [
+  {t:'caminhar 15 minutos',a:'saude'},{t:'largar o celular 30 min antes de dormir',a:'saude'},
+  {t:'anotar 1 entrega do trabalho que deu certo',a:'carreira'},{t:'brincar 20 minutos sem celular com a pequena',a:'familia'},
+  {t:'dormir antes das 23h',a:'saude'},{t:'aprender 10 minutos de algo novo',a:'eu'},
+  {t:'fazer 10 agachamentos',a:'saude'},{t:'ler 5% do livro no Kindle',a:'eu'},
+  {t:'alongar 5 minutos ao acordar',a:'saude'},{t:'pedir ou dar um feedback no trabalho',a:'carreira'},
+  {t:'5 minutos de arrumação relâmpago',a:'familia'},{t:'beber 2 litros de água',a:'saude'},
+  {t:'subir escada em vez de elevador',a:'saude'},{t:'5 minutos só meus, sem culpa',a:'eu'}];
+function semanaKey(d = new Date()){ const x = new Date(d); x.setDate(x.getDate() - (x.getDay()+6)%7); return dk(x); }
+function desafioAtual(g){
+  const sk = semanaKey();
+  if(g.desafio && g.desafio.semana === sk) return g.desafio;
+  const sem = Math.floor((new Date(sk+'T12:00') - new Date('2026-01-05T12:00'))/(7*864e5));
+  return {semana:sk, idx:((sem % DESAFIOS.length)+DESAFIOS.length) % DESAFIOS.length, dias:{}, vencido:false, novo:true};
+}
+function salvaDesafio(g, de){ delete de.novo; de.titulo = DESAFIOS[de.idx % DESAFIOS.length].t; g.desafio = de; }
+function diaDesafio(dia){
+  const g = clone(state.geral || defGeral()); const de = clone(desafioAtual(g)); de.dias = de.dias || {};
+  if(dia > dk()) return;
+  if(de.dias[dia]){
+    delete de.dias[dia]; g.estrelas = Math.max(0,g.estrelas-2); g.total = Math.max(0,g.total-2);
+    if(g.historico && g.historico[dia]){ g.historico[dia]--; if(!g.historico[dia]) delete g.historico[dia]; }
+    if(de.vencido && Object.keys(de.dias).length < 5){ de.vencido = false; g.estrelas = Math.max(0,g.estrelas-10); g.total = Math.max(0,g.total-10); g.desafiosVencidos = Math.max(0,(g.desafiosVencidos||0)-1); }
+    salvaDesafio(g, de); state.geral = g; saveGeral(); render(); return;
+  }
+  de.dias[dia] = true; g.estrelas += 2; g.total += 2; g.historico = g.historico||{}; g.historico[dia] = (g.historico[dia]||0)+1;
+  const n = Object.keys(de.dias).length; let big = false;
+  if(!de.vencido && n >= 5){ de.vencido = true; g.estrelas += 10; g.total += 10; g.desafiosVencidos = (g.desafiosVencidos||0)+1; big = true; }
+  salvaDesafio(g, de); state.geral = g; saveGeral();
+  celebrate(big?1:0, false); render(); bump();
+  toast(big ? `DESAFIO VENCIDO 💃 ${n} de 7 dias · +12 ${STAR}` : `${n} de 7 ✦ ${n>=4?'falta pouco!':'bora manter'} · +2 ${STAR}`, {big});
+}
+function trocarDesafio(){
+  const g = clone(state.geral || defGeral()); const de = clone(desafioAtual(g));
+  if(Object.keys(de.dias||{}).length) return;
+  de.idx = (de.idx + 1) % DESAFIOS.length; salvaDesafio(g, de); state.geral = g; saveGeral(); render();
+}
+function vDesafio(g){
+  const de = desafioAtual(g), d = DESAFIOS[de.idx % DESAFIOS.length], cor = AREAS[d.a].cor, n = Object.keys(de.dias||{}).length;
+  const ini = new Date(de.semana+'T12:00'), hoje = dk(), nomes = ['seg','ter','qua','qui','sex','sáb','dom'];
+  const dias = nomes.map((nm,i) => { const x = new Date(ini); x.setDate(x.getDate()+i); const k = dk(x); const ok = de.dias && de.dias[k];
+    return `<button class="dia ${ok?'ok':''} ${k===hoje?'hoje':''}" data-act="diaDesafio" data-d="${k}" ${k>hoje?'disabled':''} aria-pressed="${!!ok}" aria-label="${nm}">${ok?'✓':nm}</button>`; }).join('');
+  return `<section class="desafio ${de.vencido?'venceu':''}" style="--area:${cor}">
+    <div class="d-top"><small>desafio da semana · ${esc(AREAS[d.a].nome)}</small>${n ? '' : '<button data-act="trocarDesafio">trocar</button>'}</div>
+    <h3>${esc(d.t)}</h3>
+    <div class="dias">${dias}</div>
+    <div class="d-foot"><span><b class="num">${n} de 7</b> ${de.vencido ? '· vencido! 💃' : `· vence com 5 (faltam ${Math.max(0,5-n)})`}</span><span>+2 por dia · +10 ao vencer</span></div>
+  </section>`;
+}
+function relampagos(){
+  const out = []; metasArr().filter(m=>!m.concluidaEm).forEach(m => { for(const k of m.marcos){ const p = k.passos.find(p=>!p.feito && p.tempo===5); if(p){ out.push([m,k,p]); break; } } });
+  return out;
+}
+/* ---------- avisos no iPhone (web push) ---------- */
+const av = {st:'?'};
+const b64u = s => { const p = '='.repeat((4 - s.length % 4) % 4); const r = atob((s + p).replace(/-/g,'+').replace(/_/g,'/')); return Uint8Array.from(r, c => c.charCodeAt(0)); };
+const instalado = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+async function avisosInit(){
+  if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)){ av.st = instalado() ? 'semSuporte' : 'instalar'; render(); return; }
+  if(Notification.permission === 'denied'){ av.st = 'negado'; render(); return; }
+  try{
+    const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription();
+    if(sub && Notification.permission === 'granted'){ av.st = 'on'; salvarInscricao(sub); } else av.st = 'off';
+  }catch(e){ av.st = 'off'; }
+  render();
+}
+async function salvarInscricao(sub){
+  const j = sub.toJSON();
+  await sb.from('metas_push').upsert({endpoint:j.endpoint, user_id:eu.id, inscricao:j, fuso:Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Sao_Paulo'});
+}
+async function avisosLigar(){
+  try{
+    const p = await Notification.requestPermission();
+    if(p !== 'granted'){ av.st = p === 'denied' ? 'negado' : 'off'; render(); return; }
+    const reg = await navigator.serviceWorker.ready;
+    const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64u(VAPID_PUB)});
+    await salvarInscricao(sub); av.st = 'on'; render(); toast('avisos ligados 🔔 vou te cutucar só quando fizer sentido');
+  }catch(e){ console.error(e); toast('não consegui ligar os avisos agora. tenta de novo.'); }
+}
+function vAvisos(){
+  let nao = false; try{ nao = localStorage.getItem('metas-avisos-nao') === '1'; }catch(_){}
+  if(nao || av.st === 'on' || av.st === '?' || av.st === 'semSuporte') return '';
+  if(av.st === 'instalar') return '';
+  if(av.st === 'negado') return '';
+  return `<section class="ag-card avisos-card"><b>🔔 quer que eu te avise?</b><p style="margin:0">meta de leitura que ainda falta, sequência em risco e passinho que cabe no seu tempo livre.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn red" data-act="avisosOn">ligar avisos</button><button class="btn ghost" data-act="avisosNao">agora não</button></div></section>`;
+}
+function vHoje(){
+  const g = state.geral || defGeral(); const hoje = dk(); const feitosHoje = (g.historico||{})[hoje]||0;
+  const di = Math.floor(Date.now()/864e5); const frase = FRASES[di % FRASES.length];
+  const lista = proximos().slice(0,7);
+  const feitos = metasArr().flatMap(m=>m.marcos.flatMap(k=>k.passos.filter(p=>p.feito && p.feitoEm && dk(new Date(p.feitoEm))===hoje).map(p=>[m,k,p])));
+  const prox = (g.recompensas||[]).filter(r=>!r.resgatadaEm).sort((a,b)=>a.custo-b.custo).find(r=>r.custo>(g.estrelas||0)) || null;
+  const pronta = (g.recompensas||[]).filter(r=>!r.resgatadaEm && r.custo<=(g.estrelas||0)).sort((a,b)=>b.custo-a.custo)[0];
+  const sem = []; const d0 = new Date(); for(let i=6;i>=0;i--){ const d=new Date(d0); d.setDate(d.getDate()-i); sem.push([d, (g.historico||{})[dk(d)]||0]); }
+  const maxS = Math.max(3,...sem.map(s=>s[1]));
+  const dn = ['dom','seg','ter','qua','qui','sex','sáb'];
+  const nMetas = Object.keys(state.metas).length;
+  return `
+  <section class="hello"><h1>oi, isa ${STAR}</h1><p>${feitosHoje ? `hoje você já riscou ${feitosHoje} coisinha${feitosHoje>1?'s':''}. ${feitosHoje>=3?'tá voando 💃':'bora mais um?'}` : esc(frase)}</p></section>
+  ${vAgora()}
+  ${vAvisos()}
+  ${ag.mcp && (ag.st === 'pedir' || ag.st === 'erro') ? vAgenda() : ''}
+  ${vLeituraHoje()}
+  ${vRotinaHoje()}
+  ${pronta ? `<div class="rew ready"><div><h4>${STAR} dá pra resgatar: ${esc(pronta.titulo)}</h4><span class="cost">${pronta.custo} estrelas</span></div><button class="btn red" data-act="resgatar" data-r="${esc(pronta.id)}">resgatar</button></div>` : ''}
+  <section>
+    <div class="sec-h"><div><h2>próximos passinhos</h2><p class="hint">um por meta. quanto tempo você tem agora?</p></div>
+      <div class="chips">${[[0,'tudo'],[5,'5 min'],[15,'15 min'],[60,'1 h']].map(([t,l])=>`<button class="chip" data-act="tempo" data-t="${t}" aria-pressed="${ui.tempo===t}">${l}</button>`).join('')}</div></div>
+    ${lista.length ? `<ul class="steps">${lista.slice(0, ui.maisPassos ? 7 : 3).map(([m,k,p])=>stepRow(m,k,p,{ctx:1})).join('')}</ul>${lista.length > 3 ? `<div style="margin-top:8px"><button class="chip" data-act="maisPassos" aria-expanded="${!!ui.maisPassos}">${ui.maisPassos ? 'mostrar menos' : `ver mais ${lista.length-3}`}</button></div>` : ''}`
+      : nMetas ? `<div class="empty"><b>nada nesse tempo</b>escolha outro tempo ou quebre uma meta em passinhos menores.</div>`
+      : `<div class="empty"><b>nenhuma meta ainda</b>comece por uma, pequena mesmo.<div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn" data-act="nova">+ criar minha primeira meta</button>${state.mode==='db'?'<button class="btn ghost" data-act="exemplos">ver exemplos</button>':''}</div></div>`}
+  </section>
+  ${agOk() || (ag.mcp && ag.st === 'carregando') ? dobra('agenda', '📅 agenda completa do dia', agOk() ? `${ag.evs.filter(e=>!e.dia).length} compromisso${ag.evs.filter(e=>!e.dia).length===1?'':'s'}${ag.at?' · atualizado às '+hm(new Date(ag.at)):''}` : 'carregando…', () => vAgenda(true)) : ''}
+  ${(() => { const de = desafioAtual(g), n = Object.keys(de.dias||{}).length; return dobra('desafio', '🏁 desafio da semana', `${n} de 7${de.vencido?' · vencido 💃':''}`, () => vDesafio(g)); })()}
+  ${dobra('progresso', '📈 progresso da semana', `${sem.reduce((a,s)=>a+s[1],0)} riscadas em 7 dias`, () => `
+  ${prox && !pronta ? `<div class="nivel"><div class="nivel-row"><span>próxima recompensa: ${esc(prox.titulo)}</span><span class="num">faltam ${prox.custo-(g.estrelas||0)} ${STAR}</span></div><div class="bar"><i style="width:${Math.min(100,(g.estrelas||0)/prox.custo*100)}%"></i></div></div>` : ''}
+  ${nMetas ? `<section><div class="sec-h"><h2>progresso por área</h2></div><div class="areas">${Object.entries(AREAS).map(([a,info]) => {
+      const ms = metasArr().filter(m=>m.area===a); let n=0,d=0; ms.forEach(m=>{const p=prog(m); n+=p.n; d+=p.d;}); const pct = n?Math.round(d/n*100):0;
+      return `<button class="area-card" style="--area:${info.cor}" data-act="irArea" data-a="${a}"><div class="nivel-row"><span>${esc(info.nome)}</span><span class="num">${pct}%</span></div><div class="bar"><i style="width:${Math.max(pct?4:0,pct)}%"></i></div><small class="num">${ms.length} meta${ms.length===1?'':'s'} · ${d}/${n} passinhos</small></button>`; }).join('')}</div></section>` : ''}
+  ${feitos.length ? `<section><div class="sec-h"><h2>riscados hoje</h2></div><ul class="steps">${feitos.map(([m,k,p])=>stepRow(m,k,p,{ctx:1})).join('')}</ul></section>` : ''}
+  <section><div class="sec-h"><h2>sua semana</h2></div>
+    <div class="week">${sem.map(([d,n])=>`<div class="${n?'on':''} ${dk(d)===hoje?'hoje':''}"><i style="height:${Math.max(8,n/maxS*64)}px"></i>${dn[d.getDay()]}</div>`).join('')}</div>
+    <p class="hint">a sequência perdoa um dia de respiro. tem dia que não dá, e tá tudo bem.</p></section>`)}`;
+}
+/* seções do "hoje" que ficam fechadas até você abrir (lembra o que ficou aberto) */
+const dobras = (() => { try{ return new Set(JSON.parse(localStorage.getItem('metas-dobras') || '[]')); }catch(e){ return new Set(); } })();
+function dobra(id, titulo, sub, corpo){
+  const open = dobras.has(id);
+  return `<div class="dobra"><button data-act="dobra" data-id="${id}" aria-expanded="${open}"><span>${titulo}<br><small>${sub}</small></span><span class="caret" aria-hidden="true">▾</span></button>${open ? `<div class="dobra-in">${corpo()}</div>` : ''}</div>`;
+}
+function ring(pct, cor){ const c = 2*Math.PI*21; return `<div class="ring"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="21" fill="none" stroke="var(--surface2)" stroke-width="6"/><circle cx="26" cy="26" r="21" fill="none" stroke="${cor}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct/100)}" style="transition:stroke-dashoffset .6s"/></svg><b class="num">${pct}%</b></div>`; }
+function metaCard(m){
+  const pr = prog(m), open = ui.open.has(m.id), cor = areaVar(m), a = ui.ai[m.id];
+  let next = null; for(const k of m.marcos){ const p = k.passos.find(p=>!p.feito); if(p){ next=p; break; } }
+  return `<article class="meta ${open?'open':''} ${m.concluidaEm?'concl':''}" style="--area:${cor}">
+    <button class="meta-top" data-act="open" data-m="${esc(m.id)}" aria-expanded="${open}">
+      ${ring(pr.pct, cor)}
+      <div class="info"><h4>${esc(m.titulo)}</h4><div class="row"><span class="tag area">${esc((AREAS[m.area]||AREAS.eu).nome)}</span>${prazoTxt(m)}${m.exemplo?'<span class="tag ex">exemplo</span>':''}<span class="tag num">${pr.d}/${pr.n} passinhos</span></div></div>
+      <span class="caret" aria-hidden="true" style="align-self:end">▾</span>
+    </button>
+    <button class="del" data-act="apagar" data-m="${esc(m.id)}" aria-label="Apagar a meta ${esc(m.titulo)}"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>
+    ${ui.confirm===m.id ? `<div class="confirm"><span>apagar "${esc(m.titulo)}"?</span><button class="btn danger" data-act="apagarSim" data-m="${esc(m.id)}">apagar</button><button class="btn ghost" data-act="apagarNao">cancelar</button></div>` : ''}
+    ${m.porque && open ? `<p class="why">${esc(m.porque)}</p>` : ''}
+    ${!open ? (next ? `<p class="nextl">próximo: <b>${esc(next.titulo)}</b></p>` : !m.marcos.length ? `<p class="nextl">ainda sem passinhos. abre e quebra ela ✦</p>` : '') : `
+    <div class="body">
+      ${m.exemplo ? `<p class="hint" style="margin:0">esta é uma meta de exemplo. edite do seu jeito ou apague.</p>` : ''}
+      ${m.marcos.map((k,i) => { const d = k.passos.filter(p=>p.feito).length; const ok = k.passos.length && d===k.passos.length; return `
+        <div class="marco ${ok?'ok':''}">
+          <div class="marco-h"><span class="flag" aria-hidden="true">${ok?'✓':i+1}</span><b>${esc(k.titulo)}</b><small class="num">${d}/${k.passos.length}</small><button class="x" data-act="delMarco" data-m="${esc(m.id)}" data-k="${esc(k.id)}" aria-label="Apagar marco">×</button></div>
+          ${k.passos.length?`<ul class="steps">${k.passos.map(p=>stepRow(m,k,p,{del:1})).join('')}</ul>`:''}
+          <form class="addrow" data-form="passo" data-m="${esc(m.id)}" data-k="${esc(k.id)}">
+            <input class="field" id="np-${esc(m.id)}-${esc(k.id)}" placeholder="+ passinho (começa com verbo)" maxlength="140" aria-label="Novo passinho">
+            <select class="field" id="nt-${esc(m.id)}-${esc(k.id)}" aria-label="Tempo"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="60">1 h</option></select>
+            <button class="btn" type="submit">ok</button>
+          </form>
+        </div>`; }).join('')}
+      <form class="addrow" data-form="marco" data-m="${esc(m.id)}"><input class="field" id="nm-${esc(m.id)}" placeholder="+ novo marco (uma etapa da meta)" maxlength="120" aria-label="Novo marco"><button class="btn ghost" type="submit">adicionar</button></form>
+      ${a ? `<div class="aibox">${a.status==='loading' ? `<div class="thinking">${STAR} o Claude tá quebrando sua meta em passinhos…</div>`
+        : a.status==='error' ? `<p style="margin:0;font-weight:600">${esc(a.msg)}</p><div class="actions"><button class="btn ai" data-act="ai" data-m="${esc(m.id)}">tentar de novo</button><button class="btn ghost" data-act="aiNo" data-m="${esc(m.id)}">fechar</button></div>`
+        : `<h5>${STAR} sugestão do Claude</h5><ol>${a.marcos.map(k=>`<li><b>${esc(k.titulo)}</b><ul>${k.passos.map(p=>`<li>${esc(p.titulo)} · ${TLBL[p.tempo]}</li>`).join('')}</ul></li>`).join('')}</ol>
+           <div class="actions"><button class="btn red" data-act="aiSim" data-m="${esc(m.id)}">usar esses passinhos</button><button class="btn ghost" data-act="ai" data-m="${esc(m.id)}">outra ideia</button><button class="btn ghost" data-act="aiNo" data-m="${esc(m.id)}">descartar</button></div>`}</div>` : ''}
+      <div class="actions">
+        ${window.claude && (!a || a.status!=='loading') ? `<button class="btn ai" data-act="ai" data-m="${esc(m.id)}">${STAR} quebrar com o Claude</button>` : ''}
+        <button class="btn ghost" data-act="editar" data-m="${esc(m.id)}">editar</button>
+        <button class="btn ghost" data-act="apagar" data-m="${esc(m.id)}">apagar meta</button>
+      </div>
+    </div>`}
+  </article>`;
+}
+function vMetas(){
+  const all = metasArr().filter(m => ui.area==='todas' || m.area===ui.area); const hs = ui.horiz==='todos' ? ['curto','medio','longo'] : [ui.horiz];
+  return `<section>
+    <div class="sec-h"><div><h2>suas metas</h2><p class="hint">grande no papel, pequena no passo. toque numa meta pra abrir.</p></div><button class="btn red" data-act="nova">+ nova meta</button></div>
+    <div class="chips" style="margin-bottom:8px">${[['todas','todas as áreas'],...Object.entries(AREAS).map(([k,v])=>[k,v.nome])].map(([a,l])=>`<button class="chip" data-act="area" data-a="${a}" aria-pressed="${ui.area===a}" ${a!=='todas'?`style="${ui.area===a?`background:${AREAS[a].cor};border-color:${AREAS[a].cor};color:#fff`:`color:${AREAS[a].cor}`}"`:''}>${l}</button>`).join('')}</div>
+    <div class="chips" style="margin-bottom:6px">${[['todos','todo prazo'],['curto','curto'],['medio','médio'],['longo','longo']].map(([h,l])=>`<button class="chip" data-act="horiz" data-h="${h}" aria-pressed="${ui.horiz===h}">${l}</button>`).join('')}</div>
+    ${hs.map(h => { const ms = all.filter(m=>(m.horizonte||'curto')===h).sort((a,b)=>(!!a.concluidaEm - !!b.concluidaEm) || String(a.prazo||'9').localeCompare(String(b.prazo||'9')));
+      return `<div class="horiz"><div class="horiz-h"><h3>${H[h].nome}</h3><span>${H[h].sub}</span></div>
+      ${ms.length ? ms.map(metaCard).join('') : `<div class="empty" style="padding:14px">nenhuma meta de ${H[h].nome} ainda. <button class="btn ghost" style="margin-top:8px" data-act="nova" data-h="${h}">+ criar</button></div>`}</div>`; }).join('')}
+  </section>`;
+}
+function vPote(){
+  const g = state.geral || defGeral(); const rs = (g.recompensas||[]);
+  const ativas = rs.filter(r=>!r.resgatadaEm).sort((a,b)=>a.custo-b.custo), usadas = rs.filter(r=>r.resgatadaEm);
+  return `<section><div class="sec-h"><div><h2>recompensas</h2><p class="hint">o pote serve pra isso: trocar estrela por coisa boa de verdade. passinho de 5 min vale 1, de 15 min vale 2, de 1 h vale 3. marco concluído dá +5, meta concluída +20.</p></div></div>
+    <div class="rews">${ativas.length ? ativas.map(r => { const ok = (g.estrelas||0) >= r.custo; return `<div class="rew ${ok?'ready':''}">
+      <div><h4>${esc(r.titulo)}</h4><span class="cost num">${r.custo} estrelas ${r.exemplo?'· <span class="tag ex">exemplo</span>':''}</span></div>
+      <div style="display:flex;gap:4px;align-items:center"><button class="btn ${ok?'red':'ghost'}" data-act="resgatar" data-r="${esc(r.id)}" ${ok?'':'disabled'}>${ok?'resgatar':`faltam ${r.custo-(g.estrelas||0)}`}</button><button class="x" data-act="delRew" data-r="${esc(r.id)}" aria-label="Apagar recompensa">×</button></div>
+      <div class="bar"><i style="width:${Math.min(100,(g.estrelas||0)/r.custo*100)}%"></i></div></div>`; }).join('') : `<div class="empty"><b>nenhuma recompensa ainda</b>pense em coisas pequenas e boas: um café em paz, um banho demorado.</div>`}</div>
+  </section>
+  <form class="form-card" data-form="rew"><h3 style="font-size:17px">nova recompensa</h3>
+    <div class="form-row"><input class="field" id="rw-t" placeholder="ex: banho demorado sem ninguém bater na porta" maxlength="100" aria-label="Recompensa"><input class="field num" id="rw-c" type="number" min="1" max="9999" value="20" style="flex:0 1 110px" aria-label="Custo em estrelas"></div>
+    <button class="btn" type="submit">adicionar ao pote</button></form>
+  ${usadas.length ? `<section><div class="sec-h"><h2>já curti</h2></div><div class="rews">${usadas.map(r=>`<div class="rew used"><div><h4>${esc(r.titulo)}</h4><span class="cost">resgatada em ${new Date(r.resgatadaEm).toLocaleDateString('pt-BR')}${r.vezes>1?` · ${r.vezes}x`:''}</span></div><button class="btn ghost" data-act="repetir" data-r="${esc(r.id)}">quero de novo</button></div>`).join('')}</div></section>` : ''}`;
+}
+/* prêmios = recompensas + vitórias numa aba só */
+function vPremios(){
+  const sub = ui.premio === 'vit' ? 'vit' : 'rew';
+  return `<div class="seg" role="group" aria-label="Prêmios"><button data-act="premio" data-s="rew" aria-pressed="${sub==='rew'}">🎁 recompensas</button><button data-act="premio" data-s="vit" aria-pressed="${sub==='vit'}">🏆 vitórias</button></div>${sub === 'vit' ? vVitorias() : vPote()}`;
+}
+function vVitorias(){
+  const g = state.geral || defGeral(); const h = g.historico||{};
+  const cells = []; const end = new Date(); const start = new Date(end); start.setDate(start.getDate() - (7*12 - 1) - end.getDay());
+  for(let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){ const n = h[dk(d)]||0; cells.push(`<i data-l="${n>=5?3:n>=3?2:n>=1?1:0}" title="${dk(d)}: ${n}"></i>`); }
+  const concl = metasArr().filter(m=>m.concluidaEm);
+  return `<div class="selo">${STAR}<small>vitória nº</small><b class="num">${g.vitorias||0}</b><span>${g.total||0} estrelas ganhas no total</span></div>
+  <section><div class="sec-h"><h2>últimas 12 semanas</h2><span class="hint">cada quadradinho é um dia</span></div><div class="heat-wrap"><div class="heat">${cells.join('')}</div></div></section>
+  <section><div class="sec-h"><h2>estante de conquistas</h2><span class="hint num">${concl.length} troféu${concl.length===1?'':'s'} · ${g.desafiosVencidos||0} desafio${(g.desafiosVencidos||0)===1?'':'s'} vencido${(g.desafiosVencidos||0)===1?'':'s'}</span></div>
+    ${concl.length ? `<div class="estante">${concl.sort((a,b)=>String(b.concluidaEm).localeCompare(String(a.concluidaEm))).map(m=>`<div class="taca" style="--area:${areaVar(m)}"><span aria-hidden="true">🏆</span><b>${esc(m.titulo)}</b><small>${new Date(m.concluidaEm).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</small></div>`).join('')}</div>`
+      : `<div class="empty"><b>a estante tá esperando o primeiro troféu</b>cada meta concluída vira uma taça aqui.</div>`}</section>
+  <section><div class="sec-h"><h2>mural de vitórias</h2></div>${(g.ultimas||[]).length ? `<ul class="wins">${g.ultimas.map(u=>`<li><span class="n num">nº ${u.n}</span><div class="t"><b>${esc(u.t)}</b><small>${esc(u.meta)} · ${new Date(u.em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}</small></div></li>`).join('')}</ul>` : `<div class="empty"><b>o mural tá esperando</b>cada passinho riscado vira uma vitória numerada aqui.</div>`}</section>`;
+}
+
+/* ---------- folha de meta ---------- */
+function openSheet(mid, hz){
+  const m = mid ? norm(state.metas[mid]) : {titulo:'',porque:'',horizonte:hz||'curto',area:(ui.area!=='todas'&&ui.area)||'eu',prazo:''};
+  ui.edit = mid || null; const s = $('#sheet');
+  s.innerHTML = `<form class="panel" data-form="meta" role="dialog" aria-modal="true" aria-labelledby="sh-t">
+    <h3 id="sh-t">${mid?'editar meta':'nova meta'} ${STAR}</h3>
+    <label class="lab">qual é a meta?<input class="field" id="f-titulo" required maxlength="120" value="${esc(m.titulo)}" placeholder="ex: viajar com a família no fim de 2027"></label>
+    <label class="lab">por que ela importa pra você?<textarea class="field" id="f-porque" maxlength="200" placeholder="isso aparece no card pra te lembrar nos dias difíceis">${esc(m.porque)}</textarea></label>
+    <div class="lab">prazo<div class="chips">${Object.entries(H).map(([k,v])=>`<button type="button" class="chip" data-act="fh" data-h="${k}" aria-pressed="${m.horizonte===k}">${v.nome} · ${v.sub}</button>`).join('')}</div></div>
+    <div class="form-row"><label class="lab" style="flex:1 1 160px">área<select class="field" id="f-area">${Object.entries(AREAS).map(([k,v])=>`<option value="${k}" ${m.area===k?'selected':''}>${v.nome}</option>`).join('')}</select></label>
+    <label class="lab" style="flex:1 1 160px">data limite<input class="field" type="date" id="f-prazo" value="${esc(m.prazo||'')}"></label></div>
+    <input type="hidden" id="f-h" value="${esc(m.horizonte)}">
+    <div class="actions"><button class="btn red" type="submit">${mid?'salvar':'criar meta'}</button><button class="btn ghost" type="button" data-act="fechar">cancelar</button></div>
+  </form>`;
+  s.hidden = false; setTimeout(()=>$('#f-titulo').focus(), 50);
+}
+function closeSheet(){ $('#sheet').hidden = true; $('#sheet').innerHTML=''; ui.edit=null; }
+
+/* ---------- eventos ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tab]'); if(t){ ui.tab = t.dataset.tab; ui.confirm=null; render(); window.scrollTo({top:0}); return; }
+  const b = e.target.closest('[data-act]'); if(!b) { if(e.target.id==='sheet') closeSheet(); return; }
+  const {act, m, k, p, r} = b.dataset;
+  if(!['apagar','apagarSim'].includes(act)) ui.confirm = null;
+  switch(act){
+    case 'toggle': toggle(m,k,p); break;
+    case 'agPermitir': agPermitir(); break;
+    case 'buscarLivro': buscarLivro(); break;
+    case 'hab': toggleHab(b.dataset.id); break;
+    case 'habDia': toggleHab(b.dataset.id, b.dataset.d); break;
+    case 'delHab': delHab(b.dataset.id); break;
+    case 'tar': toggleTar(b.dataset.id); break;
+    case 'focoTar': focoTar(b.dataset.id); break;
+    case 'delTar': delTar(b.dataset.id); break;
+    case 'verFeitas': ui.feitas = !ui.feitas; render(); break;
+    case 'irRotina': ui.tab = 'rotina'; ui.rot = 'dia'; render(); window.scrollTo({top:0}); break;
+    case 'irLivros': ui.tab = 'leituras'; ui.livro = null; render(); window.scrollTo({top:0}); break;
+    case 'rot': ui.rot = b.dataset.r; ui.livro = null; render(); break;
+    case 'abrirLivro': ui.livro = ui.livro === b.dataset.id ? null : b.dataset.id; render(); break;
+    case 'mais10': mais10(b.dataset.id); break;
+    case 'metaLeit': setMetaLeit(b.dataset.n); break;
+    case 'maisPassos': ui.maisPassos = !ui.maisPassos; render(); break;
+    case 'editLiv': ui.editLiv = b.dataset.id; render(); break;
+    case 'editLivNao': ui.editLiv = null; render(); break;
+    case 'premio': ui.premio = b.dataset.s; render(); break;
+    case 'dobra': { const d = b.dataset.id; dobras.has(d) ? dobras.delete(d) : dobras.add(d); try{ localStorage.setItem('metas-dobras', JSON.stringify([...dobras])); }catch(_){} render(); break; }
+    case 'terminar': terminar(b.dataset.id); break;
+    case 'comecar': comecar(b.dataset.id); break;
+    case 'statusLiv': statusLiv(b.dataset.id, b.dataset.s); break;
+    case 'notaLiv': notaLiv(b.dataset.id, b.dataset.n); break;
+    case 'sensLiv': sensLiv(b.dataset.id, b.dataset.s); break;
+    case 'notasLiv': notasLiv(b.dataset.id); break;
+    case 'delLiv': delLiv(b.dataset.id); break;
+    case 'tempo': ui.tempo = +b.dataset.t; render(); break;
+    case 'horiz': ui.horiz = b.dataset.h; render(); break;
+    case 'area': ui.area = b.dataset.a; render(); break;
+    case 'diaDesafio': diaDesafio(b.dataset.d); break;
+    case 'trocarDesafio': trocarDesafio(); break;
+    case 'outroRel': ui.rel = (ui.rel||0) + 1; render(); break;
+    case 'fecharTrofeu': $('#trofeuHost').innerHTML = ''; break;
+    case 'irArea': ui.area = b.dataset.a; ui.horiz = 'todos'; ui.tab = 'metas'; render(); window.scrollTo({top:0}); break;
+    case 'open': ui.open.has(m) ? ui.open.delete(m) : ui.open.add(m); render(); break;
+    case 'delPasso': delPasso(m,k,p); break;
+    case 'delMarco': delMarco(m,k); break;
+    case 'apagar': ui.confirm = m; render(); break;
+    case 'apagarSim': ui.confirm = null; delMeta(m); break;
+    case 'apagarNao': ui.confirm = null; render(); break;
+    case 'editar': openSheet(m); break;
+    case 'nova': openSheet(null, b.dataset.h); break;
+    case 'fechar': closeSheet(); break;
+    case 'fh': document.querySelectorAll('[data-act="fh"]').forEach(x=>x.setAttribute('aria-pressed', x===b)); $('#f-h').value = b.dataset.h; break;
+    case 'esqueci': esqueci(); break;
+    case 'avisosOn': avisosLigar(); break;
+    case 'avisosNao': try{ localStorage.setItem('metas-avisos-nao', '1'); }catch(_){} render(); break;
+    case 'agTrocar': ag.st = 'pedir'; render(); break;
+    case 'sair': sb.auth.signOut(); break;
+    case 'ai': quebrar(m); break;
+    case 'aiSim': usarAI(m); break;
+    case 'aiNo': delete ui.ai[m]; render(); break;
+    case 'resgatar': resgatar(r); break;
+    case 'repetir': repetir(r); break;
+    case 'delRew': delRew(r); break;
+    case 'som': som = !som; try{ localStorage.setItem('metas-som', som?'on':'off'); }catch(_){} render(); if(som) plim(0); break;
+    case 'exemplos': EX.metas.forEach(x => { state.metas[x.id] = clone(x); saveMeta(x.id); }); { const g = clone(state.geral||defGeral()); if(!g.recompensas.length) g.recompensas = clone(EX.recompensas).map(r=>({...r,exemplo:true})); state.geral=g; saveGeral(); } ui.tab='metas'; render(); break;
+  }
+});
+document.addEventListener('submit', e => {
+  const f = e.target.closest('[data-form]'); if(!f) return; e.preventDefault();
+  const {form, m, k} = f.dataset;
+  if(form==='passo'){ const i = $(`#np-${CSS.escape(m)}-${CSS.escape(k)}`), s = $(`#nt-${CSS.escape(m)}-${CSS.escape(k)}`); const v=i.value; i.value=''; addPasso(m,k,v,s.value); const ni=document.getElementById(i.id); if(ni) ni.focus(); }
+  if(form==='marco'){ const i = $(`#nm-${CSS.escape(m)}`); const v=i.value; i.value=''; addMarco(m,v); }
+  if(form==='login'){ entrar($('#lg-e').value.trim(), $('#lg-s').value); }
+  if(form==='novaSenha'){ novaSenha($('#lg-n').value); }
+  if(form==='ics'){ salvarIcs($('#ag-ics').value.trim()); }
+  if(form==='editLiv'){ salvarLivro(f.dataset.id); }
+  if(form==='pag'){ const i = document.getElementById('lp-'+f.dataset.id); if(i){ const v = i.value; i.value=''; setPagina(f.dataset.id, v); } }
+  if(form==='liv'){ const t=$('#lf-t'), a=$('#lf-a'), p=$('#lf-p'), gn=$('#lf-g'); const tv=t.value, av=a.value, pv=p.value, gv=gn?gn.value:''; t.value=''; a.value=''; p.value=''; if(gn) gn.value=''; ui.busca = null; addLiv(tv, av, pv, $('#lf-s').value, gv); }
+  if(form==='hab'){ const t=$('#hf-t'); const v=t.value; t.value=''; addHab(v, $('#hf-a').value, $('#hf-m').value); const n=$('#hf-t'); if(n) n.focus(); }
+  if(form==='tar'){ const t=$('#tf-t'), d=$('#tf-d'); const v=t.value, dv=d.value; t.value=''; d.value=''; addTar(v, $('#tf-a').value, dv); const n=$('#tf-t'); if(n) n.focus(); }
+  if(form==='rew'){ const t=$('#rw-t'), c=$('#rw-c'); const tv=t.value; t.value=''; addRew(tv,c.value); }
+  if(form==='meta'){
+    const titulo = $('#f-titulo').value.trim(); if(!titulo) return;
+    const data = {titulo, porque:$('#f-porque').value.trim(), horizonte:$('#f-h').value||'curto', area:$('#f-area').value, prazo:$('#f-prazo').value};
+    let id = ui.edit; const isNew = !id;
+    if(id){ const mm = norm(state.metas[id]); Object.assign(mm, data); delete mm.exemplo; state.metas[id] = mm; }
+    else { id = uid('m'); state.metas[id] = {id, ...data, criadoEm:new Date().toISOString(), marcos:[]}; ui.open.add(id); ui.horiz='todos'; }
+    saveMeta(id); closeSheet(); ui.tab='metas'; render();
+    toast(isNew ? 'meta criada! agora quebra ela em passinhos ✦' : 'salvo ✦');
+  }
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape' && !$('#sheet').hidden) closeSheet(); });
+
+/* ---------- dopamina: toast, som, confete ---------- */
+let toastT;
+function toast(html, o={}){
+  const host = $('#toastHost'); clearTimeout(toastT);
+  host.innerHTML = `<div class="toast ${o.big?'big':''}" role="status"><span>${html}</span>${o.undo?'<button id="undoBtn">desfazer</button>':''}</div>`;
+  if(o.undo) $('#undoBtn').onclick = () => { host.innerHTML=''; o.undo(); };
+  toastT = setTimeout(()=>host.innerHTML='', o.big ? 4200 : 3200);
+}
+function bump(){ const p = $('#pote'); p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop'); }
+let actx;
+function plim(level){
+  if(!som) return; try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const notes = level===2 ? [523,659,784,1047,1319] : level===1 ? [659,784,1047] : [784,1175];
+    notes.forEach((f,i) => { const o = actx.createOscillator(), g = actx.createGain(); o.type='triangle'; o.frequency.value=f;
+      const t = actx.currentTime + i*0.07; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.18,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.35);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t+0.4); });
+  }catch(e){}
+}
+const fx = $('#fx'), cx = fx.getContext('2d'); let parts = [], raf = 0;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function celebrate(level, bonus){
+  plim(level); try{ navigator.vibrate && navigator.vibrate(level ? [20,40,20] : 15); }catch(e){}
+  if(reduce) return;
+  const dpr = devicePixelRatio||1; fx.width = innerWidth*dpr; fx.height = innerHeight*dpr; cx.setTransform(dpr,0,0,dpr,0,0);
+  const css = getComputedStyle(document.documentElement);
+  const cores = ['--verm','--roxo','--amar','--rosa','--verde','--azul'].map(v=>css.getPropertyValue(v).trim());
+  const n = level===2 ? 160 : level===1 ? 90 : bonus ? 60 : 28;
+  const ox = level ? innerWidth/2 : innerWidth*0.5, oy = level ? innerHeight*0.35 : innerHeight*0.55;
+  for(let i=0;i<n;i++){ const a = Math.random()*Math.PI*2, sp = (level?7:4.5) + Math.random()*(level?8:5);
+    parts.push({x:ox,y:oy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-(level?5:3),r:Math.random()*6.28,vr:(Math.random()-.5)*.3,s:4+Math.random()*(level?9:6),c:cores[i%cores.length],star:Math.random()<.45,life:1}); }
+  if(!raf) raf = requestAnimationFrame(tick);
+}
+function drawStar(s){ cx.beginPath(); cx.moveTo(0,-s); cx.quadraticCurveTo(s*.15,-s*.15,s,0); cx.quadraticCurveTo(s*.15,s*.15,0,s); cx.quadraticCurveTo(-s*.15,s*.15,-s,0); cx.quadraticCurveTo(-s*.15,-s*.15,0,-s); cx.fill(); }
+function tick(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  parts.forEach(p => { p.vy += .32; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life -= .011;
+    cx.save(); cx.globalAlpha = Math.max(0,p.life); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillStyle = p.c;
+    if(p.star) drawStar(p.s); else cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); cx.restore(); });
+  parts = parts.filter(p => p.life>0 && p.y < innerHeight+40);
+  raf = parts.length ? requestAnimationFrame(tick) : (cx.clearRect(0,0,innerWidth,innerHeight), 0);
+}
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.warn('sw', e));
+boot();
+})();
+</script>
+
+</body></html>
