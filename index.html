@@ -1127,7 +1127,8 @@ async function buscarGoogleBooks(q){
     return nada();
   }
   try{
-    const v = its.find(x => x.language === 'pt' && x.pageCount) || its.find(x => x.language === 'pt') || its.find(x => x.pageCount) || its[0];
+    const pt = x => String(x.language||'').startsWith('pt');
+    const v = its.find(x => pt(x) && x.pageCount) || its.find(pt) || its.find(x => x.pageCount) || its[0];
     const titulo = v.title + (v.subtitle && v.subtitle.length < 40 ? ': ' + v.subtitle : '');
     const cat = String((v.categories||[])[0]||'').toLowerCase(), est = CAT_PT[cat] || '';
     const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
