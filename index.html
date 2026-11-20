@@ -1090,12 +1090,19 @@ Se não tiver certeza razoável de qual livro é, responda {"encontrado":false}.
 }
 const CAT_PT = {fiction:'ficção', 'juvenile fiction':'juvenil', 'young adult fiction':'jovem adulto', 'biography & autobiography':'biografia', history:'história', 'self-help':'autoajuda', psychology:'psicologia', 'business & economics':'negócios', 'family & relationships':'família', poetry:'poesia', religion:'religião', philosophy:'filosofia', cooking:'culinária', 'health & fitness':'saúde', 'literary criticism':'ensaio', 'social science':'ciências sociais', science:'ciência', 'comics & graphic novels':'quadrinhos', romance:'romance', fantasy:'fantasia', 'true crime':'true crime', education:'educação'};
 const SUBJ_PT = [[/fantasy|fantasia/i,'fantasia'],[/romance|love stor/i,'romance'],[/thriller|suspense|mystery|detective|crime/i,'suspense'],[/science fiction|ficção científica/i,'ficção científica'],[/horror|terror/i,'terror'],[/biograph/i,'biografia'],[/self-help|autoajuda/i,'autoajuda'],[/history|história/i,'história'],[/poetry|poesia/i,'poesia'],[/young adult|juvenil/i,'jovem adulto'],[/historical fiction|romance histórico/i,'ficção histórica'],[/fiction|ficção|novel/i,'ficção']];
+const normTxt = s => String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]+/g,' ');
+function combina(q, alvo){
+  const ws = normTxt(q).split(' ').filter(w => w.length >= 3); if(!ws.length) return true;
+  const t = ' ' + normTxt(alvo) + ' ';
+  return ws.filter(w => t.includes(' ' + w)).length >= Math.ceil(ws.length * 0.6);
+}
 async function buscarOpenLibrary(q){
   const r = await fetch('https://openlibrary.org/search.json?limit=8&fields=title,subtitle,author_name,number_of_pages_median,subject,language,first_publish_year&q=' + encodeURIComponent(q));
   if(!r.ok) throw new Error(r.status);
   const docs = ((await r.json()).docs || []).filter(d => d.title);
-  if(!docs.length) return false;
-  const d = docs[0];
+  /* só aceita resultado que tenha de verdade as palavras buscadas (a Open Library devolve qualquer coisa parecida) */
+  const d = docs.find(x => combina(q, [x.title, x.subtitle, ...(x.author_name||[])].join(' ')));
+  if(!d) return false;
   const titulo = d.title + (d.subtitle && d.subtitle.length < 40 ? ': ' + d.subtitle : '');
   const autor = (d.author_name||[])[0] || '', pg = +d.number_of_pages_median || 0;
   const subj = (d.subject||[]).join(' | '); const est = (SUBJ_PT.find(([re]) => re.test(subj)) || [])[1] || '';
@@ -1110,7 +1117,7 @@ async function buscarGoogleBooks(q){
     const r = await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=8&printType=books&q=' + encodeURIComponent(q));
     if(!r.ok) throw new Error(r.status);
     const its = ((await r.json()).items || []).map(i => i.volumeInfo || {}).filter(v => v.title);
-    if(!its.length){ ui.busca = {status:'error', msg:'não achei esse livro. confere o nome ou preenche na mão.'}; render(); return; }
+    if(!its.length){ ui.busca = {status:'error', msg:'não achei esse livro na base. tenta pelo título original (em inglês) ou preenche na mão.'}; render(); return; }
     const v = its.find(x => x.language === 'pt' && x.pageCount) || its.find(x => x.pageCount) || its[0];
     const titulo = v.title + (v.subtitle && v.subtitle.length < 40 ? ': ' + v.subtitle : '');
     const cat = String((v.categories||[])[0]||'').toLowerCase(), est = CAT_PT[cat] || '';
@@ -1118,7 +1125,7 @@ async function buscarGoogleBooks(q){
     set('lf-t', titulo.slice(0,160)); set('lf-a', (v.authors||[]).join(', ').slice(0,100)); if(v.pageCount) set('lf-p', String(v.pageCount)); set('lf-g', est);
     const ed = [v.publisher, (v.publishedDate||'').slice(0,4)].filter(Boolean).join(', ');
     ui.busca = {status:'done', msg:`achei: ${titulo}${v.authors?' · '+v.authors.join(', '):''}${est?' · '+est:''}${v.pageCount?` · ~${v.pageCount} páginas`:''}${ed?` (${ed})`:''}. confere antes de adicionar, pode ser de outra edição.`};
-  }catch(e){ ui.busca = {status:'error', msg:'a busca não respondeu agora. tenta de novo ou preenche na mão.'}; }
+  }catch(e){ ui.busca = {status:'error', msg:'não achei esse livro na base. tenta pelo título original (em inglês) ou preenche na mão.'}; }
   render();
 }
 function delLiv(id){
