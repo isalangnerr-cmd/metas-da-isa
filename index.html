@@ -1111,21 +1111,30 @@ async function buscarOpenLibrary(q){
   ui.busca = {status:'done', msg:`achei: ${titulo}${autor?' · '+autor:''}${est?' · '+est:''}${pg?` · ~${pg} páginas`:''}${d.first_publish_year?` (${d.first_publish_year})`:''}. confere antes de adicionar, pode ser de outra edição.`};
   return true;
 }
+/* chave do Google Livros: só funciona a partir de isalangnerr-cmd.github.io e só pra Books API */
+const GBOOKS_KEY = 'AIzaSyC3hmOZoEU0G1-QQVfXRG-PFZMpECPyHbs';
 async function buscarGoogleBooks(q){
-  try{ if(await buscarOpenLibrary(q)){ render(); return; } }catch(e){ console.warn('openlibrary', e); }
+  const nada = () => { ui.busca = {status:'error', msg:'não achei esse livro. confere o nome ou preenche na mão.'}; render(); };
+  let its = [];
+  /* 1º Google Livros (tem as edições brasileiras); 2º Open Library */
   try{
-    const r = await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=8&printType=books&q=' + encodeURIComponent(q));
+    const r = await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=15&printType=books&key=' + GBOOKS_KEY + '&q=' + encodeURIComponent(q));
     if(!r.ok) throw new Error(r.status);
-    const its = ((await r.json()).items || []).map(i => i.volumeInfo || {}).filter(v => v.title);
-    if(!its.length){ ui.busca = {status:'error', msg:'não achei esse livro na base. tenta pelo título original (em inglês) ou preenche na mão.'}; render(); return; }
-    const v = its.find(x => x.language === 'pt' && x.pageCount) || its.find(x => x.pageCount) || its[0];
+    its = ((await r.json()).items || []).map(i => i.volumeInfo || {}).filter(v => v.title && combina(q, [v.title, v.subtitle, ...(v.authors||[])].join(' ')));
+  }catch(e){ console.warn('google livros', e); }
+  if(!its.length){
+    try{ if(await buscarOpenLibrary(q)){ render(); return; } }catch(e){ console.warn('openlibrary', e); }
+    return nada();
+  }
+  try{
+    const v = its.find(x => x.language === 'pt' && x.pageCount) || its.find(x => x.language === 'pt') || its.find(x => x.pageCount) || its[0];
     const titulo = v.title + (v.subtitle && v.subtitle.length < 40 ? ': ' + v.subtitle : '');
     const cat = String((v.categories||[])[0]||'').toLowerCase(), est = CAT_PT[cat] || '';
     const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
     set('lf-t', titulo.slice(0,160)); set('lf-a', (v.authors||[]).join(', ').slice(0,100)); if(v.pageCount) set('lf-p', String(v.pageCount)); set('lf-g', est);
     const ed = [v.publisher, (v.publishedDate||'').slice(0,4)].filter(Boolean).join(', ');
     ui.busca = {status:'done', msg:`achei: ${titulo}${v.authors?' · '+v.authors.join(', '):''}${est?' · '+est:''}${v.pageCount?` · ~${v.pageCount} páginas`:''}${ed?` (${ed})`:''}. confere antes de adicionar, pode ser de outra edição.`};
-  }catch(e){ ui.busca = {status:'error', msg:'não achei esse livro na base. tenta pelo título original (em inglês) ou preenche na mão.'}; }
+  }catch(e){ return nada(); }
   render();
 }
 function delLiv(id){
