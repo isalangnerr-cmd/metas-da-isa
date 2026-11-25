@@ -36,10 +36,10 @@ export function LogoMark({ size = 40, className = '' }: { size?: number; classNa
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-2 select-none">
-      <LogoMark size={compact ? 32 : 40} />
+      <LogoMark size={compact ? 30 : 34} />
       <div className="leading-none">
-        <div className="h-pixel text-[20px] font-bold tracking-wide">Roda do Tempo</div>
-        {!compact && <div className="hud text-[9px] text-muted mt-1">Mesmo time · dentro e fora do jogo</div>}
+        <div className="font-bold text-[17px] tracking-tight">Roda do Tempo</div>
+        {!compact && <div className="pixel text-[11px] text-muted mt-0.5">Mesmo time · dentro e fora do jogo</div>}
       </div>
     </div>
   );

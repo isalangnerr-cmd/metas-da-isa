@@ -10,5 +10,5 @@ export function applyTheme(p: UserPrefs) {
   const dark = p.theme === 'dark' || (p.theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   document.documentElement.dataset.motion = p.reduceMotion ? 'reduce' : 'auto';
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#1E1914' : '#F6EFE1');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0F1115' : '#F7F7F5');
 }

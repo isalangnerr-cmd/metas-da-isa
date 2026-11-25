@@ -17,7 +17,7 @@ export function AssigneeSelect({ value, onChange, includeKids = false }: { value
     <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Responsável">
       {opts.map((o) => (
         <button type="button" key={o.v} role="radio" aria-checked={value === o.v} onClick={() => onChange(o.v)}
-          className={`flex items-center gap-2 pl-1 pr-3 py-1 min-h-[44px] rounded-[6px] border-2 ${value === o.v ? 'border-line bg-sun/70 shadow-pxs' : 'border-line/30 bg-panel'}`}>
+          className={`flex items-center gap-2 pl-1 pr-3 py-1 min-h-[44px] rounded-xl border-2 ${value === o.v ? 'border-sky bg-sky/10 text-sky' : 'border-line/30 bg-panel'}`}>
           {o.m ? <MemberAvatar m={o.m} size={32} ring={false} /> : <span className="grid place-items-center w-8 h-8"><Icon name={o.v === 'both' ? 'heart' : 'users'} size={18} /></span>}
           <span className="text-sm font-semibold">{o.label}</span>
         </button>
@@ -32,12 +32,12 @@ export function MemberMulti({ value, onChange, includeFamily = true }: { value: 
   return (
     <div className="flex flex-wrap gap-2">
       {includeFamily && (
-        <button type="button" aria-pressed={value.includes('family')} onClick={() => toggle('family')} className={`flex items-center gap-2 px-3 min-h-[44px] rounded-[6px] border-2 ${value.includes('family') ? 'border-line bg-sun/70' : 'border-line/30 bg-panel'}`}>
+        <button type="button" aria-pressed={value.includes('family')} onClick={() => toggle('family')} className={`flex items-center gap-2 px-3 min-h-[44px] rounded-xl border-2 ${value.includes('family') ? 'border-sky bg-sky/10' : 'border-line/30 bg-panel'}`}>
           <Icon name="users" size={18} /><span className="text-sm font-semibold">Família toda</span>
         </button>
       )}
       {members.map((m) => (
-        <button type="button" key={m.id} aria-pressed={value.includes(m.id)} onClick={() => toggle(m.id)} className={`flex items-center gap-2 pl-1 pr-3 py-1 min-h-[44px] rounded-[6px] border-2 ${value.includes(m.id) ? 'border-line bg-sun/70' : 'border-line/30 bg-panel'}`}>
+        <button type="button" key={m.id} aria-pressed={value.includes(m.id)} onClick={() => toggle(m.id)} className={`flex items-center gap-2 pl-1 pr-3 py-1 min-h-[44px] rounded-xl border-2 ${value.includes(m.id) ? 'border-sky bg-sky/10' : 'border-line/30 bg-panel'}`}>
           <MemberAvatar m={m} size={30} ring={false} /><span className="text-sm font-semibold">{m.nickname || m.name}</span>
         </button>
       ))}
@@ -82,7 +82,7 @@ export function ImagePicker({ value, onChange, label = 'Imagem' }: { value?: str
     <div>
       <span className="label">{label}</span>
       <div className="flex items-center gap-3">
-        {value ? <Photo path={value} className="w-20 h-20 object-cover rounded-[4px] border-2 border-line" /> : <div className="w-20 h-20 grid place-items-center rounded-[4px] border-2 border-dashed border-line/40 text-muted"><Icon name="image" size={24} /></div>}
+        {value ? <Photo path={value} className="w-20 h-20 object-cover rounded-lg border border-line" /> : <div className="w-20 h-20 grid place-items-center rounded-lg border-2 border-dashed border-line/40 text-muted"><Icon name="image" size={24} /></div>}
         <div className="flex flex-col gap-2">
           <button type="button" className="btn-ghost btn-sm" disabled={busy} onClick={() => ref.current?.click()}><Icon name="camera" size={14} />{busy ? 'Enviando…' : value ? 'Trocar' : 'Escolher'}</button>
           {value && <button type="button" className="btn-ghost btn-sm" onClick={() => onChange(null)}>Remover</button>}

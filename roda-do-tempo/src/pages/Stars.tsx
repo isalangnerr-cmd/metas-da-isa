@@ -38,7 +38,7 @@ export function Stars() {
       {tab === 'realizados' && (done.length ? (
         <ol className="space-y-3">{done.map((w) => (
           <li key={w.id} className="px-box p-4 flex items-center gap-4">
-            <span className="grid place-items-center w-12 h-12 rounded-[4px] border-[3px] border-line bg-sun text-[rgb(58_42_30)]"><Icon name="trophy" size={24} /></span>
+            <span className="grid place-items-center w-12 h-12 rounded-lg border border-line bg-sun/20 text-[#B7791F]"><Icon name="trophy" size={24} /></span>
             <button className="flex-1 text-left" onClick={() => setEdit(w)}><div className="h-pixel text-lg">{w.title}</div><div className="text-xs text-muted">Realizado em {fmtDate(w.achieved_at)} · {catOf(WISH_CATS, w.category).label}</div></button>
           </li>
         ))}</ol>

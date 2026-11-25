@@ -10,8 +10,8 @@ import { nowParts } from '@/lib/dates';
 
 const S = 3; // escala do pixel
 const W = 760; // largura do mundo (px lógicos)
-const H = 84;  // altura lógica
-const GROUND = 70;
+const H = 90;  // altura lógica
+const GROUND = 76;
 
 export interface POI { x: number; w: number; label: string; to: string; kind: string }
 const POIS: POI[] = [
@@ -50,12 +50,14 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
   useEffect(() => {
     const c = canvas.current!, ctx = c.getContext('2d')!;
     let raf = 0, last = performance.now(), visible = true, vw = 320;
-    const p = { x: 70, y: GROUND - 18, vx: 0, vy: 0, onGround: true, face: 1, frame: 0, ft: 0 };
+    const pk = (player?.kind || 'adult') as any;
+    const PH = pk === 'child' ? 17 : 28, PW = pk === 'child' ? 12 : 16;
+    const p = { x: 70, y: GROUND - PH, vx: 0, vy: 0, onGround: true, face: 1, frame: 0, ft: 0 };
     const dog = { x: 50, face: 1, frame: 0 };
     const stars = starSpots();
     const sparks: { x: number; y: number; t: number }[] = [];
     let cam = 0, respawn = 0;
-    const npcs = members.filter((m) => m.id !== player?.id && m.kind !== 'pet').map((m, i) => ({ m, x: 20 + i * 14, dir: 1, t: Math.random() * 100 }));
+    const npcs = members.filter((m) => m.id !== player?.id && m.kind !== 'pet').map((m, i) => ({ m, x: 14 + i * 20, dir: 1, t: Math.random() * 100, f: 0 }));
     const pet = members.find((m) => m.kind === 'pet');
     const { hour } = nowParts();
     const night = hour >= 19 || hour < 6;
@@ -105,37 +107,37 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
       const speed = 1.4;
       p.vx = (inp.r ? speed : 0) - (inp.l ? speed : 0);
       if (p.vx) p.face = p.vx > 0 ? 1 : -1;
-      if (inp.jump && p.onGround) { p.vy = -5.2; p.onGround = false; if (cb.current.sounds) chime('jump'); }
+      if (inp.jump && p.onGround) { p.vy = -5.4; p.onGround = false; if (cb.current.sounds) chime('jump'); }
       inp.jump = false;
       p.vy += 0.32 * dt; if (p.vy > 6) p.vy = 6;
-      const prevBottom = p.y + 18;
-      p.x = Math.max(0, Math.min(W - 12, p.x + p.vx * dt)); p.y += p.vy * dt;
+      const prevBottom = p.y + PH;
+      p.x = Math.max(0, Math.min(W - PW, p.x + p.vx * dt)); p.y += p.vy * dt;
       p.onGround = false;
-      const bottom = p.y + 18;
-      if (bottom >= GROUND) { p.y = GROUND - 18; p.vy = 0; p.onGround = true; }
+      const bottom = p.y + PH;
+      if (bottom >= GROUND) { p.y = GROUND - PH; p.vy = 0; p.onGround = true; }
       else if (p.vy >= 0) for (const pl of PLATFORMS) {
-        if (p.x + 9 > pl.x && p.x + 3 < pl.x + pl.w && prevBottom <= pl.y + 0.5 && bottom >= pl.y) { p.y = pl.y - 18; p.vy = 0; p.onGround = true; }
+        if (p.x + PW - 4 > pl.x && p.x + 4 < pl.x + pl.w && prevBottom <= pl.y + 0.5 && bottom >= pl.y) { p.y = pl.y - PH; p.vy = 0; p.onGround = true; }
       }
       p.ft += Math.abs(p.vx) * dt; if (p.ft > 6) { p.ft = 0; p.frame++; }
       // cachorrinha segue
       const target = p.x - p.face * 16;
       if (Math.abs(dog.x - target) > 4) { const d = Math.sign(target - dog.x); dog.x += d * 1.2 * dt; dog.face = d; dog.frame = Math.floor(now / 120); } else dog.frame = 0;
-      for (const n of npcs) { n.t += dt; if (n.t > 140) { n.t = 0; n.dir = Math.random() < 0.5 ? -1 : 1; } if (n.t < 50) n.x = Math.max(4, Math.min(108, n.x + n.dir * 0.3 * dt)); }
+      for (const n of npcs) { n.t += dt; if (n.t > 140) { n.t = 0; n.dir = Math.random() < 0.5 ? -1 : 1; } if (n.t < 50) { n.x = Math.max(4, Math.min(108, n.x + n.dir * 0.3 * dt)); n.f = Math.floor(now / 160); } else n.f = 0; }
       // estrelas
-      for (const s of stars) if (!s.got && p.x + 10 > s.x && p.x + 2 < s.x + 5 && p.y < s.y + 5 && p.y + 18 > s.y) {
+      for (const s of stars) if (!s.got && p.x + PW - 2 > s.x && p.x + 2 < s.x + 5 && p.y < s.y + 5 && p.y + PH > s.y) {
         s.got = true; sparks.push({ x: s.x, y: s.y, t: 0 }); cb.current.onStar(); if (cb.current.sounds) chime('coin');
       }
       if (stars.every((s) => s.got)) { respawn += dt; if (respawn > 400) { stars.forEach((s) => (s.got = false)); respawn = 0; } }
       // proximidade
-      const cx = p.x + 6;
+      const cx = p.x + PW / 2;
       const n = POIS.find((o) => cx > o.x - 6 && cx < o.x + o.w + 6) || null;
       setNear((cur) => (cur?.to === n?.to ? cur : n));
       if (inp.act) { inp.act = false; if (n) cb.current.nav(n.to); }
       // câmera
-      cam = Math.max(0, Math.min(W - vw, p.x - vw / 2 + 6));
+      cam = Math.max(0, Math.min(W - vw, p.x - vw / 2 + PW / 2));
 
       // ---- desenho ----
-      const sky = night ? ['#1E2440', '#2C3358', '#3B4266'] : dusk ? ['#E9A273', '#F1C49A', '#F6DDBC'] : ['#9CC3D3', '#B6D4DE', '#D3E6E8'];
+      const sky = night ? ['#1E2440', '#2C3358', '#3B4266'] : dusk ? ['#F2B79A', '#F6CFB4', '#FAE3CF'] : ['#BFDCEA', '#D3E7EF', '#E6F0F3'];
       RS(0, 0, vw, 30, sky[0]); RS(0, 30, vw, 16, sky[1]); RS(0, 46, vw, 30, sky[2]);
       if (unlocked.includes('rainbow') && !night) ['#C2643C', '#E9B949', '#5E7B3A', '#6E9FB5'].forEach((col, i) => { for (let k = 0; k < 40; k++) { const a = Math.PI * (k / 39); RS(vw * 0.7 + Math.cos(a) * (30 - i * 2) - cam * 0.05, 52 - Math.sin(a) * (30 - i * 2), 2, 2, col); } });
       if (night) { for (let i = 0; i < 40; i++) { const x = (i * 53) % vw, y = (i * 29) % 40; if (reduceMotion || (Math.floor(now / 500) + i) % 7) RS(x, y, 1, 1, '#FFF4DC'); } RS(vw - 30, 8, 8, 8, '#F3E8D4'); RS(vw - 28, 8, 6, 6, '#2C3358'); }
@@ -143,30 +145,30 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
       // nuvens (parallax)
       if (!night) for (let i = 0; i < 5; i++) { const x = ((i * 170 - cam * 0.3 + (reduceMotion ? 0 : now / 400)) % (vw + 60) + vw + 60) % (vw + 60) - 40; RS(x, 10 + i * 5, 20, 4, '#FFFFFF'); RS(x + 4, 7 + i * 5, 11, 3, '#FFFFFF'); }
       // colinas
-      for (let x = 0; x < vw; x++) { const hx = x + cam * 0.5; const h = 12 + Math.sin(hx / 40) * 5 + Math.sin(hx / 17) * 2; RS(x, GROUND - h, 1, h, night ? '#26382A' : '#86A866'); }
+      for (let x = 0; x < vw; x++) { const hx = x + cam * 0.5; const h = 12 + Math.sin(hx / 40) * 5 + Math.sin(hx / 17) * 2; RS(x, GROUND - h, 1, h, night ? '#26382A' : '#B7D7A8'); }
       // árvores ao fundo
-      for (let i = 0; i < 12; i++) { const x = i * 70 + 20; if (x - cam < -20 || x - cam > vw + 20) continue; R(x + 4, GROUND - 14, 3, 14, '#5A3A22'); R(x, GROUND - 26, 11, 13, night ? '#2F4420' : '#5E7B3A'); R(x + 2, GROUND - 29, 7, 4, night ? '#2F4420' : '#6E8E44'); }
+      for (let i = 0; i < 12; i++) { const x = i * 70 + 20; if (x - cam < -20 || x - cam > vw + 20) continue; R(x + 4, GROUND - 14, 3, 14, '#5A3A22'); R(x, GROUND - 26, 11, 13, night ? '#2F4420' : '#7FB278'); R(x + 2, GROUND - 29, 7, 4, night ? '#2F4420' : '#93C48A'); }
       // chão
-      R(0, GROUND, W, H - GROUND, night ? '#4A3424' : '#8A5A3B'); R(0, GROUND, W, 3, night ? '#3F5A2A' : '#5E7B3A');
+      R(0, GROUND, W, H - GROUND, night ? '#4A3424' : '#D8BC94'); R(0, GROUND, W, 3, night ? '#3F5A2A' : '#8CC084');
       for (let x = 0; x < W; x += 6) R(x, GROUND + 6 + ((x / 6) % 2) * 4, 2, 1, '#00000022');
       // POIs
       for (const o of POIS) drawPOI(o, now);
       if (unlocked.includes('lantern')) { R(705, GROUND - 22, 2, 22, '#3A2A1E'); R(702, GROUND - 28, 8, 7, night ? '#F1C75E' : '#E9B949'); }
       // plataformas
-      for (const pl of PLATFORMS) { R(pl.x, pl.y, pl.w, 4, '#8A5A3B'); R(pl.x, pl.y, pl.w, 2, '#5E7B3A'); R(pl.x, pl.y + 4, pl.w, 1, '#00000033'); }
+      for (const pl of PLATFORMS) { R(pl.x, pl.y, pl.w, 4, '#C69C6D'); R(pl.x, pl.y, pl.w, 2, '#8CC084'); R(pl.x, pl.y + 4, pl.w, 1, '#00000033'); }
       // estrelas
       for (const s of stars) if (!s.got) star(s.x, s.y + (reduceMotion ? 0 : Math.sin(now / 300 + s.t) * 1.2));
       for (const k of sparks) { k.t += dt; const r = k.t * 0.6; R(k.x + 2 - r, k.y + 2, 1, 1, '#E9B949'); R(k.x + 2 + r, k.y + 2, 1, 1, '#E9B949'); R(k.x + 2, k.y + 2 - r, 1, 1, '#E9B949'); }
       while (sparks.length && sparks[0].t > 20) sparks.shift();
       if (unlocked.includes('fireflies') && night) for (let i = 0; i < 10; i++) RS((i * 77 + now / 50 * (i % 2 ? 1 : -1)) % vw, 40 + Math.sin(now / 500 + i) * 10, 1, 1, '#F1F17A');
       // NPCs
-      for (const n of npcs) { const { grid, pal } = buildSprite(n.m.kind as any, avatarOf(n.m), 0); drawGrid(ctx, grid, pal, (n.x - cam) * S, (GROUND - grid.length) * S, S, n.dir < 0); }
+      for (const n of npcs) { const { grid, pal } = buildSprite(n.m.kind as any, avatarOf(n.m), n.f); drawGrid(ctx, grid, pal, (n.x - cam) * S, (GROUND - grid.length) * S, S, n.dir < 0); }
       // cachorrinha
       { const { grid, pal } = buildSprite('pet', pet ? avatarOf(pet) : DEFAULT_AVATARS.pet, dog.frame); drawGrid(ctx, grid, pal, (dog.x - cam) * S, (GROUND - grid.length) * S, S, dog.face < 0); }
       // jogador
-      if (player) { const kind = player.kind as any; const { grid, pal } = buildSprite(kind, avatarOf(player), p.onGround && p.vx ? p.frame : p.onGround ? 0 : 1); drawGrid(ctx, grid, pal, (p.x - cam) * S, (p.y + 18 - grid.length) * S, S, p.face < 0); }
+      if (player) { const kind = player.kind as any; const { grid, pal } = buildSprite(kind, avatarOf(player), p.onGround && p.vx ? p.frame : p.onGround ? 0 : 1); drawGrid(ctx, grid, pal, (p.x - cam) * S, (p.y + PH - grid.length) * S, S, p.face < 0); }
       // balão de interação
-      if (n) { const bx = Math.max(2, Math.min(vw - 60, n.x + n.w / 2 - 30 - cam)); RS(bx, 2, 60, 10, '#FFF9EE'); ctx.strokeStyle = '#3A2A1E'; ctx.lineWidth = S; ctx.strokeRect(bx * S, 2 * S, 60 * S, 10 * S); ctx.fillStyle = '#3A2A1E'; ctx.font = `${S * 5}px Silkscreen, monospace`; ctx.textAlign = 'center'; ctx.fillText(n.label.toUpperCase(), (bx + 30) * S, 9.2 * S); }
+      if (n) { const bx = Math.max(2, Math.min(vw - 60, n.x + n.w / 2 - 30 - cam)); ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); (ctx as any).roundRect ? (ctx as any).roundRect(bx * S, 2 * S, 60 * S, 11 * S, 4 * S) : ctx.rect(bx * S, 2 * S, 60 * S, 11 * S); ctx.fill(); ctx.fillStyle = '#1F2933'; ctx.font = `${S * 6}px 'Pixelify Sans', monospace`; ctx.textAlign = 'center'; ctx.fillText(n.label, (bx + 30) * S, 9.6 * S); }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -191,13 +193,13 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
   return (
     <div className="select-none">
       <div ref={wrap} tabIndex={0} onKeyDown={onKey(true)} onKeyUp={onKey(false)} onFocus={() => setFocused(true)} onBlur={() => { setFocused(false); input.current = { l: false, r: false, jump: false, act: false }; }}
-        className="relative w-full overflow-hidden rounded-[4px] border-[3px] border-line bg-[#9CC3D3] outline-none focus-visible:ring-[3px] focus-visible:ring-sun"
+        className="relative w-full overflow-hidden rounded-xl bg-[#BFDCEA] outline-none focus-visible:ring-[3px] focus-visible:ring-sun"
         role="application" aria-label="Minigame: use as setas ou A e D para andar, espaço para pular e Enter para entrar nos lugares">
         <canvas ref={canvas} className="block pixelated mx-auto" />
-        {!focused && <div className="absolute bottom-2 left-2 hidden md:block hud text-[9px] bg-panel/90 px-2 py-1 border-2 border-line rounded-[3px] pointer-events-none">Clique para jogar · ← → espaço enter</div>}
+        {!focused && <div className="absolute bottom-2 left-2 hidden md:block text-[11px] font-medium bg-panel/90 px-2 py-1 rounded-md shadow-pxs pointer-events-none">Clique para jogar · ← → espaço · Enter entra</div>}
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
-        <p className="hud text-[10px] text-muted">Explore · pule para coletar estrelas.</p>
+        <p className="text-[12.5px] text-muted">Explore · pule para coletar estrelas.</p>
         {playable.length > 1 && (
           <label className="flex items-center gap-2 text-xs"><span className="text-muted">Jogando com</span>
             <select className="field min-h-[32px] py-0 w-auto text-xs" value={player?.id} onChange={(e) => { setWho(e.target.value); try { localStorage.setItem('rdt:game:who', e.target.value); } catch { /* */ } }}>
@@ -211,7 +213,7 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
           <button className="btn-icon w-14 h-14 touch-none" aria-label="Esquerda" {...hold('l')}><Icon name="left" size={20} /></button>
           <button className="btn-icon w-14 h-14 touch-none" aria-label="Direita" {...hold('r')}><Icon name="right" size={20} /></button>
         </div>
-        {near && <span className="hud text-[10px] text-terra text-center">{near.label}</span>}
+        {near && <span className="pixel text-[13px] text-terra text-center">{near.label}</span>}
         <div className="flex gap-2">
           <button className="btn-sun w-14 h-14 px-0 touch-none" aria-label="Pular" onPointerDown={(e) => { e.preventDefault(); input.current.jump = true; }}><Icon name="up" size={20} /></button>
           <button className={`btn-icon w-14 h-14 touch-none ${near ? '!bg-terra text-white' : ''}`} aria-label={near ? `Entrar: ${near.label}` : 'Interagir'} onPointerDown={(e) => { e.preventDefault(); input.current.act = true; }}>A</button>

@@ -3,7 +3,11 @@ import type { Recurrence } from '@/lib/recurrence';
 export interface Base { id: string; family_id: string; created_at: string; updated_at: string; created_by?: string | null; deleted?: boolean }
 
 export type MemberKind = 'adult' | 'child' | 'pet';
-export interface Avatar { skin: string; hair: string; hairStyle: number; shirt: string; pants: string; accessory: number }
+export interface Avatar {
+  skin: string; hair: string; hairStyle: number; shirt: string; pants: string; accessory: number;
+  beard?: boolean; beardColor?: string; glasses?: number; glassesColor?: string; freckles?: boolean; outfit?: number; striped?: boolean;
+  shoes?: string; cap?: boolean; capColor?: string; checkered?: boolean; bow?: string;
+}
 export interface Member extends Base {
   user_id?: string | null; kind: MemberKind; name: string; nickname?: string | null; color: string;
   avatar: Avatar; birth_date?: string | null; photo_path?: string | null; info?: { label: string; value: string }[]; position: number;

@@ -65,7 +65,7 @@ function AdventureEditor({ adv, onClose, onCreated }: { adv: Partial<Adventure>;
       <div className="space-y-4">
         <Field label="Nome"><input className="field text-lg font-semibold" value={a.name} onChange={(e) => set({ name: e.target.value })} placeholder="Ex.: Nossa próxima viagem" /></Field>
         <div><span className="label">Capa</span>
-          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">{ADV_COVERS.map((c) => <button key={c.value} type="button" aria-pressed={a.cover === c.value} title={c.label} onClick={() => set({ cover: c.value, cover_path: null })} className={`h-12 overflow-hidden rounded-[4px] border-[3px] ${a.cover === c.value && !a.cover_path ? 'border-line' : 'border-line/20'}`}><Cover kind={c.value} className="w-full h-full" /></button>)}</div>
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">{ADV_COVERS.map((c) => <button key={c.value} type="button" aria-pressed={a.cover === c.value} title={c.label} onClick={() => set({ cover: c.value, cover_path: null })} className={`h-12 overflow-hidden rounded-lg border ${a.cover === c.value && !a.cover_path ? 'border-line' : 'border-line/20'}`}><Cover kind={c.value} className="w-full h-full" /></button>)}</div>
           <div className="mt-2"><ImagePicker value={a.cover_path} onChange={(p) => set({ cover_path: p })} label="Ou uma foto" /></div>
         </div>
         <div><span className="label">Status</span><Segmented label="Status" value={a.status!} onChange={(v) => set({ status: v })} options={(['future', 'active', 'done'] as AdvStatus[]).map((s) => ({ value: s, label: ADV_STATUS[s] }))} /></div>
@@ -158,7 +158,7 @@ export function AdventureDetail() {
             {stages.map((t, i) => { const done = t.status === 'done'; const current = t.id === nextStage?.id; return (
               <li key={t.id} className="flex gap-3 items-stretch">
                 <div className="flex flex-col items-center">
-                  <button onClick={() => toggle(t)} aria-label={done ? `Reabrir ${t.title}` : `Concluir ${t.title}`} className={`w-9 h-9 grid place-items-center rounded-[4px] border-[3px] border-line hud text-[11px] ${done ? 'bg-moss text-[rgb(var(--on-accent))]' : current ? 'bg-sun text-[rgb(58_42_30)] anim-float' : 'bg-panel'}`}>{done ? <Icon name="check" size={14} /> : String(i + 1).padStart(2, '0')}</button>
+                  <button onClick={() => toggle(t)} aria-label={done ? `Reabrir ${t.title}` : `Concluir ${t.title}`} className={`w-9 h-9 grid place-items-center rounded-lg border border-line hud text-[11px] ${done ? 'bg-moss text-[rgb(var(--on-accent))]' : current ? 'bg-sun/20 text-[#B7791F] anim-float' : 'bg-panel'}`}>{done ? <Icon name="check" size={14} /> : String(i + 1).padStart(2, '0')}</button>
                   {i < stages.length - 1 && <span className={`w-[4px] flex-1 min-h-[14px] ${done ? 'bg-moss' : 'bg-line/20'}`} />}
                 </div>
                 <button className="flex-1 text-left pb-4" onClick={() => setTask(t)}>

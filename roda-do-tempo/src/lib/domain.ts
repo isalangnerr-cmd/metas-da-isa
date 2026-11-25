@@ -91,8 +91,8 @@ export const CHILD_KINDS: Record<ChildRecordKind, { label: string; icon: IconNam
 };
 export const MOMENT_CATS = ['Primeiros passos', 'Primeiras palavras', 'Viagem', 'Aniversário', 'Descoberta', 'Momento engraçado', 'Conquista', 'Foto', 'Vídeo ou link', 'Cotidiano'];
 export const MESSAGE_KINDS: Record<MessageKind, { label: string; color: string }> = {
-  note: { label: 'Bilhete de carinho', color: '#C2643C' }, thanks: { label: 'Agradecimento', color: '#5E7B3A' },
-  surprise: { label: 'Surpresa', color: '#E9B949' }, future: { label: 'Carta para o futuro', color: '#6E9FB5' }, capsule: { label: 'Cápsula do tempo', color: '#8A5A7A' },
+  note: { label: 'Bilhete de carinho', color: '#E8624D' }, thanks: { label: 'Agradecimento', color: '#4A9B6A' },
+  surprise: { label: 'Surpresa', color: '#F2B544' }, future: { label: 'Carta para o futuro', color: '#4F8CC9' }, capsule: { label: 'Cápsula do tempo', color: '#8B63AA' },
 };
 
 export const catOf = (list: Cat[], v?: string) => list.find((c) => c.value === v) || list[list.length - 1];

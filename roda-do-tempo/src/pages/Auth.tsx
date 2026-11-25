@@ -87,7 +87,7 @@ export function AuthScreen({ onDone }: { onDone: () => void }) {
             <button className="btn-primary w-full" disabled={busy}>{busy ? 'Aguarde…' : tab === 'login' ? 'Entrar' : tab === 'signup' ? 'Criar conta' : 'Enviar link'}</button>
             {tab === 'login' && <button type="button" className="text-sm link w-full text-center" onClick={forgot}>Esqueci a senha</button>}
           </form>
-          <div className="my-4 flex items-center gap-2 text-muted"><span className="flex-1 border-t-2 border-dashed border-line/20" /><span className="hud text-[10px]">ou</span><span className="flex-1 border-t-2 border-dashed border-line/20" /></div>
+          <div className="my-4 flex items-center gap-2 text-muted"><span className="flex-1 border-t border-dashed border-line/20" /><span className="hud text-[10px]">ou</span><span className="flex-1 border-t border-dashed border-line/20" /></div>
         </>
       ) : (
         <div className="px-inset p-3 text-sm mb-4">
@@ -148,7 +148,7 @@ export function FamilySetup({ mode, userId, email, onDone }: { mode: 'cloud' | '
           <>
             <Field label="Nome da família"><input className="field" value={famName} onChange={(e) => setFamName(e.target.value)} maxLength={80} /></Field>
             <div><span className="label">Sua cor</span>
-              <div className="flex gap-2 flex-wrap">{COLORS.map((c) => <button key={c} type="button" aria-label={`Cor ${c}`} aria-pressed={c === color} onClick={() => setColor(c)} className={`w-9 h-9 rounded-[4px] border-[3px] ${c === color ? 'border-line scale-110' : 'border-line/30'}`} style={{ background: c }} />)}</div>
+              <div className="flex gap-2 flex-wrap">{COLORS.map((c) => <button key={c} type="button" aria-label={`Cor ${c}`} aria-pressed={c === color} onClick={() => setColor(c)} className={`w-9 h-9 rounded-lg border ${c === color ? 'border-line scale-110' : 'border-line/30'}`} style={{ background: c }} />)}</div>
             </div>
             <button className="btn-primary w-full" disabled={busy || !myName.trim()} onClick={create}>{busy ? 'Criando…' : 'Começar aventura'}</button>
           </>

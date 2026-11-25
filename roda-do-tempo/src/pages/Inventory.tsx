@@ -45,7 +45,7 @@ export function Inventory() {
             return (
               <Link key={l.id} to={`/inventario/${l.id}`} className="px-box p-4 block hover:-translate-y-[2px] transition-transform">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="grid place-items-center w-11 h-11 rounded-[4px] border-[3px] border-line text-[rgb(58_42_30)]" style={{ background: l.color }}><Icon name={l.icon as any} size={22} /></span>
+                  <span className="tile w-11 h-11" style={{ background: l.color + "1f", color: l.color }}><Icon name={l.icon as any} size={22} /></span>
                   <div className="min-w-0 flex-1"><div className="h-pixel text-lg leading-tight truncate">{l.name}</div><div className="text-xs text-muted">{catOf(LIST_CATS, l.category).label}</div></div>
                 </div>
                 <SegBar value={st.pct} label={`Progresso de ${l.name}`} />
@@ -61,7 +61,7 @@ export function Inventory() {
         <div className="grid sm:grid-cols-2 gap-2">
           {LIST_TEMPLATES.map((t, i) => (
             <button key={t.name} className="px-box-flat p-3 flex items-center gap-3 text-left hover:bg-panel2" onClick={() => fromTemplate(i)}>
-              <span className="grid place-items-center w-9 h-9 rounded-[4px] border-2 border-line text-[rgb(58_42_30)]" style={{ background: t.color }}><Icon name={t.icon} size={18} /></span>
+              <span className="tile w-9 h-9" style={{ background: t.color + "1f", color: t.color }}><Icon name={t.icon} size={18} /></span>
               <span><span className="block font-semibold text-sm">{t.name}</span><span className="text-xs text-muted">{t.items.length ? `${t.items.length} itens sugeridos` : 'Lista em branco'}</span></span>
             </button>
           ))}
@@ -87,8 +87,8 @@ function ListEditor({ list, onClose, onCreated }: { list: Partial<ShopList>; onC
         <Field label="Nome"><input className="field" value={l.name} onChange={(e) => set({ name: e.target.value })} maxLength={80} placeholder="Ex.: Compras do supermercado" /></Field>
         <Field label="Descrição (opcional)"><input className="field" value={l.description || ''} onChange={(e) => set({ description: e.target.value })} /></Field>
         <Field label="Categoria"><select className="field" value={l.category} onChange={(e) => set({ category: e.target.value })}>{LIST_CATS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}</select></Field>
-        <div><span className="label">Ícone</span><div className="flex flex-wrap gap-2">{LIST_ICONS.map((ic) => <button key={ic} type="button" aria-label={ic} aria-pressed={l.icon === ic} onClick={() => set({ icon: ic })} className={`grid place-items-center w-10 h-10 rounded-[4px] border-2 ${l.icon === ic ? 'border-line bg-sun' : 'border-line/30'}`}><Icon name={ic} size={18} /></button>)}</div></div>
-        <div><span className="label">Cor</span><div className="flex flex-wrap gap-2">{COLORS.map((c) => <button key={c} type="button" aria-label={`Cor ${c}`} aria-pressed={l.color === c} onClick={() => set({ color: c })} className={`w-9 h-9 rounded-[4px] border-[3px] ${l.color === c ? 'border-line' : 'border-line/20'}`} style={{ background: c }} />)}</div></div>
+        <div><span className="label">Ícone</span><div className="flex flex-wrap gap-2">{LIST_ICONS.map((ic) => <button key={ic} type="button" aria-label={ic} aria-pressed={l.icon === ic} onClick={() => set({ icon: ic })} className={`grid place-items-center w-10 h-10 rounded-lg border-2 ${l.icon === ic ? 'border-sky bg-sky/10 text-sky' : 'border-line/30'}`}><Icon name={ic} size={18} /></button>)}</div></div>
+        <div><span className="label">Cor</span><div className="flex flex-wrap gap-2">{COLORS.map((c) => <button key={c} type="button" aria-label={`Cor ${c}`} aria-pressed={l.color === c} onClick={() => set({ color: c })} className={`w-9 h-9 rounded-lg border ${l.color === c ? 'border-line' : 'border-line/20'}`} style={{ background: c }} />)}</div></div>
         <div><span className="label">Responsáveis</span><AssigneeSelect value={l.owners?.[0] || 'family'} onChange={(v) => set({ owners: [v] })} /></div>
         <Field label="Aventura relacionada"><select className="field" value={l.adventure_id || ''} onChange={(e) => set({ adventure_id: e.target.value || null })}><option value="">Nenhuma</option>{advs.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}</select></Field>
       </div>
@@ -147,9 +147,9 @@ export function ListDetail() {
   };
 
   const Row = ({ i, idx }: { i: ListItem; idx: number }) => (
-    <li className={`flex items-center gap-2 px-3 py-2 ${idx ? 'border-t-2 border-line/10' : ''}`}>
+    <li className={`flex items-center gap-2 px-3 py-2 ${idx ? 'border-t border-line' : ''}`}>
       <input type="checkbox" className="px-check" checked={i.done} onChange={() => toggle(i)} aria-label={i.done ? `Restaurar ${i.name}` : `Marcar ${i.name}`} />
-      {i.image_path && <Photo path={i.image_path} className="w-10 h-10 object-cover rounded-[3px] border-2 border-line/40" />}
+      {i.image_path && <Photo path={i.image_path} className="w-10 h-10 object-cover rounded-md border border-line/40" />}
       <button className="flex-1 min-w-0 text-left" onClick={() => setEdit(i)}>
         <span className={`font-semibold ${i.done ? 'line-through text-muted' : ''}`}>{i.qty ? <span className="text-terra">{String(i.qty).replace('.', ',')}{i.unit ? ' ' + i.unit : '×'} </span> : null}{i.name}</span>
         {(i.notes || i.link) && <span className="block text-xs text-muted truncate">{i.notes}{i.link ? ' · link' : ''}</span>}
@@ -164,7 +164,7 @@ export function ListDetail() {
       <Link to="/inventario" className="inline-flex items-center gap-1 hud text-[11px] text-muted mb-3"><Icon name="left" size={12} />Inventário</Link>
       <header className="px-box p-4 mb-4">
         <div className="flex items-center gap-3">
-          <span className="grid place-items-center w-14 h-14 rounded-[4px] border-[3px] border-line text-[rgb(58_42_30)]" style={{ background: l.color }}><Icon name={l.icon as any} size={28} /></span>
+          <span className="tile w-14 h-14" style={{ background: l.color + "1f", color: l.color }}><Icon name={l.icon as any} size={28} /></span>
           <div className="flex-1 min-w-0">
             <h1 className="h-pixel text-2xl leading-tight">{l.name}</h1>
             <div className="text-xs text-muted">{catOf(LIST_CATS, l.category).label} · {l.owners.map((o) => o === 'family' ? 'Família' : o === 'both' ? 'Nós dois' : members.find((m) => m.id === o)?.name || '').join(', ')}</div>

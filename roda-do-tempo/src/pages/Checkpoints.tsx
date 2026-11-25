@@ -66,16 +66,16 @@ function MonthView({ cursor, events, onPick, onOpen }: { cursor: string; events:
   const t = today();
   return (
     <div className="px-box overflow-hidden">
-      <div className="grid grid-cols-7 bg-panel2 border-b-2 border-line/20">{DIAS_CURTOS.map((d) => <div key={d} className="hud text-[10px] text-muted text-center py-2">{d}</div>)}</div>
+      <div className="grid grid-cols-7 bg-panel2 border-b border-line">{DIAS_CURTOS.map((d) => <div key={d} className="hud text-[10px] text-muted text-center py-2">{d}</div>)}</div>
       <div className="grid grid-cols-7">
         {Array.from({ length: cells }, (_, i) => {
           const d = addDays(start, i); const inM = d.slice(0, 7) === first.slice(0, 7); const day = occs.filter((o) => o.date === d);
           return (
-            <div key={d} className={`min-h-[78px] sm:min-h-[100px] p-1 border-r-2 border-b-2 border-line/10 ${inM ? '' : 'bg-panel2/50 text-muted'}`}>
-              <button onClick={() => onPick(d)} className={`w-7 h-7 grid place-items-center rounded-[4px] text-sm font-bold ${d === t ? 'bg-terra text-white border-2 border-line' : 'hover:bg-panel2'}`} aria-label={fmtDateLong(d)}>{+d.slice(8)}</button>
+            <div key={d} className={`min-h-[78px] sm:min-h-[100px] p-1 border-r border-b border-line/60 ${inM ? '' : 'bg-panel2/50 text-muted'}`}>
+              <button onClick={() => onPick(d)} className={`w-7 h-7 grid place-items-center rounded-lg text-sm font-bold ${d === t ? 'bg-terra text-white border border-line' : 'hover:bg-panel2'}`} aria-label={fmtDateLong(d)}>{+d.slice(8)}</button>
               <div className="space-y-[2px] mt-1">
                 {day.slice(0, 3).map((o) => (
-                  <button key={o.ev.id + o.date} onClick={() => onOpen(o)} className="block w-full text-left text-[11px] leading-tight px-1 py-[1px] rounded-[3px] truncate font-semibold text-white" style={{ background: evColor(o.ev) }}>
+                  <button key={o.ev.id + o.date} onClick={() => onOpen(o)} className="block w-full text-left text-[11px] leading-tight px-1 py-[1px] rounded-md truncate font-semibold text-white" style={{ background: evColor(o.ev) }}>
                     <span className="hidden sm:inline">{!o.ev.all_day && o.ev.start_time ? o.ev.start_time + ' ' : ''}</span>{o.ev.title}
                   </button>
                 ))}
@@ -98,7 +98,7 @@ function WeekView({ cursor, events, onOpen, onNew }: { cursor: string; events: C
       {Array.from({ length: 7 }, (_, i) => {
         const d = addDays(start, i); const day = occs.filter((o) => o.date === d);
         return (
-          <div key={d} className={`px-box-flat p-2 min-h-[120px] ${d === t ? 'ring-[3px] ring-sun' : ''}`}>
+          <div key={d} className={`px-box-flat p-2 min-h-[120px] ${d === t ? 'ring-2 ring-sky' : ''}`}>
             <div className="flex items-center justify-between mb-2"><span className="hud text-[10px] text-muted">{DIAS_CURTOS[i]} {d.slice(8)}/{d.slice(5, 7)}</span>
               <button className="text-muted hover:text-ink" onClick={() => onNew(d)} aria-label={`Novo em ${fmtDate(d)}`}><Icon name="plus" size={12} /></button></div>
             <div className="space-y-1">{day.map((o) => <EvChip key={o.ev.id + o.date} o={o} onOpen={onOpen} />)}</div>
@@ -111,7 +111,7 @@ function WeekView({ cursor, events, onOpen, onNew }: { cursor: string; events: C
 
 function EvChip({ o, onOpen }: { o: Occ; onOpen: (o: Occ) => void }) {
   return (
-    <button onClick={() => onOpen(o)} className="w-full text-left px-2 py-1 rounded-[4px] border-2 border-line/30 bg-panel" style={{ borderLeft: `6px solid ${evColor(o.ev)}` }}>
+    <button onClick={() => onOpen(o)} className="w-full text-left px-2 py-1 rounded-lg border border-line/30 bg-panel" style={{ borderLeft: `6px solid ${evColor(o.ev)}` }}>
       <div className="text-[11px] text-muted">{o.ev.all_day || !o.ev.start_time ? 'Dia inteiro' : `${o.ev.start_time}${o.ev.end_time ? '–' + o.ev.end_time : ''}`}</div>
       <div className="text-sm font-semibold leading-tight">{o.ev.title}</div>
     </button>
@@ -225,11 +225,11 @@ export function EventEditor({ ev, occ, onClose }: { ev: Partial<CalEvent>; occ?:
         <div><span className="label">Participantes</span><MemberMulti value={e.participants || []} onChange={(v) => set({ participants: v })} /></div>
         <div className="grid sm:grid-cols-2 gap-3">
           <Field label="Categoria"><select className="field" value={e.category} onChange={(x) => set({ category: x.target.value })}>{EVENT_CATS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}</select></Field>
-          <Field label="Cor"><div className="flex gap-2 items-center"><input type="color" className="w-12 h-11 rounded border-2 border-line" value={e.color || catOf(EVENT_CATS, e.category).color} onChange={(x) => set({ color: x.target.value })} />{e.color && <button type="button" className="text-sm link" onClick={() => set({ color: null })}>usar cor da categoria</button>}</div></Field>
+          <Field label="Cor"><div className="flex gap-2 items-center"><input type="color" className="w-12 h-11 rounded border border-line" value={e.color || catOf(EVENT_CATS, e.category).color} onChange={(x) => set({ color: x.target.value })} />{e.color && <button type="button" className="text-sm link" onClick={() => set({ color: null })}>usar cor da categoria</button>}</div></Field>
         </div>
         <div><span className="label">Repetição</span><RecurrenceField value={e.recurrence} onChange={(r) => set({ recurrence: r })} /></div>
         <div><span className="label">Lembretes</span>
-          <div className="flex flex-wrap gap-2">{REMINDER_OPTS.map(([m, l]) => { const on = e.reminders?.includes(m); return <button key={m} type="button" aria-pressed={on} onClick={() => set({ reminders: on ? e.reminders!.filter((x) => x !== m) : [...(e.reminders || []), m] })} className={`chip min-h-[36px] px-3 ${on ? 'bg-sun border-line' : ''}`}><Icon name="bell" size={11} />{l} antes</button>; })}</div>
+          <div className="flex flex-wrap gap-2">{REMINDER_OPTS.map(([m, l]) => { const on = e.reminders?.includes(m); return <button key={m} type="button" aria-pressed={on} onClick={() => set({ reminders: on ? e.reminders!.filter((x) => x !== m) : [...(e.reminders || []), m] })} className={`chip min-h-[36px] px-3 ${on ? 'bg-sky/10 border-sky text-sky' : ''}`}><Icon name="bell" size={11} />{l} antes</button>; })}</div>
         </div>
         <Field label="Descrição"><textarea className="field" value={e.description || ''} onChange={(x) => set({ description: x.target.value })} /></Field>
         <Field label="Aventura relacionada"><select className="field" value={e.adventure_id || ''} onChange={(x) => set({ adventure_id: x.target.value || null })}><option value="">Nenhuma</option>{advs.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}</select></Field>

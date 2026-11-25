@@ -68,20 +68,20 @@ export function App() {
   return (
     <div className="min-h-full lg:flex">
       {/* Barra lateral (computador) */}
-      <aside className="hidden lg:flex flex-col w-[260px] shrink-0 h-screen sticky top-0 border-r-[3px] border-line bg-panel2/70 p-4 gap-1 overflow-y-auto">
+      <aside className="hidden lg:flex flex-col w-[256px] shrink-0 h-screen sticky top-0 border-r border-line bg-panel p-4 gap-0.5 overflow-y-auto">
         <div className="mb-4"><Logo /></div>
         {NAV.map((n) => (
-          <NavLink key={n.to} to={n.to} end={n.to === '/'} className={({ isActive }) => `group flex items-center gap-3 px-2 py-2 rounded-[6px] border-2 ${isActive ? 'bg-panel border-line shadow-pxs' : 'border-transparent hover:bg-panel/60'}`}>
+          <NavLink key={n.to} to={n.to} end={n.to === '/'} className={({ isActive }) => `group flex items-center gap-3 px-2 py-1.5 rounded-xl ${isActive ? 'bg-panel2' : 'hover:bg-panel2/60'}`}>
             {({ isActive }) => (<>
-              <span className="grid place-items-center w-9 h-9 rounded-[4px] border-2 border-line text-[rgb(58_42_30)]" style={{ background: n.color }}><Icon name={n.icon} size={18} /></span>
+              <span className="tile w-9 h-9" style={{ background: n.color + "1f", color: n.color }}><Icon name={n.icon} size={18} /></span>
               <span className="min-w-0 flex-1">
-                <span className="flex items-baseline gap-2"><span className="hud text-[10px] text-muted">{n.n}</span><span className={`h-pixel text-[16px] ${isActive ? '' : ''}`}>{n.theme}</span></span>
-                <span className="block text-[12px] text-muted leading-tight truncate">{n.func} · {n.desc}</span>
+                <span className="flex items-baseline gap-2"><span className="pixel text-[11px] text-muted">{n.n}</span><span className={`text-[14px] ${isActive ? 'font-semibold' : 'font-medium'}`}>{n.theme}</span></span>
+                <span className="block text-[11.5px] text-muted leading-tight truncate">{n.func} · {n.desc}</span>
               </span>
             </>)}
           </NavLink>
         ))}
-        <div className="mt-auto pt-4 hud text-[9px] text-muted leading-relaxed">Mesmo time.<br />Dentro e fora do jogo.</div>
+        <div className="mt-auto pt-4 pixel text-[12px] text-muted leading-relaxed">Mesmo time.<br />Dentro e fora do jogo.</div>
       </aside>
 
       <div className="flex-1 min-w-0 flex flex-col">
@@ -106,27 +106,27 @@ export function App() {
       </div>
 
       {/* Navegação inferior (celular) */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-panel border-t-[3px] border-line safe-b" aria-label="Navegação principal">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-panel/95 backdrop-blur border-t border-line safe-b" aria-label="Navegação principal">
         <div className="grid grid-cols-5">
           {NAV.filter((n) => MOBILE_MAIN.includes(n.to)).map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.to === '/'} className={({ isActive }) => `flex flex-col items-center justify-center gap-1 py-2 min-h-[60px] ${isActive ? 'text-terra' : 'text-muted'}`}>
+            <NavLink key={n.to} to={n.to} end={n.to === '/'} className={({ isActive }) => `flex flex-col items-center justify-center gap-0.5 py-2 min-h-[60px] ${isActive ? 'text-terra' : 'text-muted'}`}>
               {({ isActive }) => (<>
-                <span className={`grid place-items-center w-9 h-7 rounded-[4px] ${isActive ? 'bg-sun text-[rgb(58_42_30)] border-2 border-line' : ''}`}><Icon name={n.icon} size={18} /></span>
-                <span className="hud text-[9px]">{n.theme.replace('World 01', 'Início')}</span>
+                <span className={`grid place-items-center w-12 h-7 rounded-full ${isActive ? 'bg-terra/12' : ''}`}><Icon name={n.icon} size={18} /></span>
+                <span className="text-[10.5px] font-semibold">{n.theme.replace('World 01', 'Início')}</span>
               </>)}
             </NavLink>
           ))}
           <button className={`flex flex-col items-center justify-center gap-1 py-2 ${more ? 'text-terra' : 'text-muted'}`} onClick={() => setMore(true)} aria-haspopup="dialog">
-            <span className="grid place-items-center w-9 h-7"><Icon name="more" size={18} /></span><span className="hud text-[9px]">Mais</span>
+            <span className="grid place-items-center w-12 h-7"><Icon name="more" size={18} /></span><span className="text-[10.5px] font-semibold">Mais</span>
           </button>
         </div>
       </nav>
       <Modal open={more} onClose={() => setMore(false)} title="Menu">
         <div className="grid grid-cols-2 gap-2">
           {NAV.filter((n) => !MOBILE_MAIN.includes(n.to)).map((n) => (
-            <NavLink key={n.to} to={n.to} className="px-box-flat p-3 flex items-center gap-2 active:translate-y-[1px]">
-              <span className="grid place-items-center w-9 h-9 rounded-[4px] border-2 border-line text-[rgb(58_42_30)]" style={{ background: n.color }}><Icon name={n.icon} size={18} /></span>
-              <span className="min-w-0"><span className="block h-pixel text-[15px] leading-tight">{n.theme}</span><span className="block text-[11px] text-muted truncate">{n.func}</span></span>
+            <NavLink key={n.to} to={n.to} className="px-box-flat p-3 flex items-center gap-3 active:scale-[0.98]">
+              <span className="tile w-9 h-9" style={{ background: n.color + "1f", color: n.color }}><Icon name={n.icon} size={18} /></span>
+              <span className="min-w-0"><span className="block font-semibold text-[14px] leading-tight">{n.theme}</span><span className="block text-[11px] text-muted truncate">{n.func}</span></span>
             </NavLink>
           ))}
         </div>
@@ -154,25 +154,25 @@ function TopBar({ onBell, unread }: { onBell: () => void; unread: number }) {
     return { icon: 'cloud' as const, text: 'Sincronizado', tone: 'text-moss' };
   }, [s.mode, sync.online, sync.pending, sync.syncing, sync.error]);
   return (
-    <header className="sticky top-0 z-30 bg-bg/90 backdrop-blur border-b-2 border-line/15 safe-t">
+    <header className="sticky top-0 z-30 bg-bg/85 backdrop-blur border-b border-line/70 safe-t">
       <div className="max-w-[1180px] mx-auto px-4 sm:px-6 h-16 flex items-center gap-3">
         <div className="lg:hidden"><Logo compact /></div>
         <div className="hidden lg:block">
-          <div className="hud text-[10px] text-muted">Hoje</div>
-          <div className="font-semibold text-sm first-letter:uppercase">{fmtDateLong(today())}</div>
+          <div className="pixel text-[11px] text-muted">Hoje</div>
+          <div className="font-medium text-sm first-letter:uppercase">{fmtDateLong(today())}</div>
         </div>
         <div className="flex-1" />
-        <div className={`hidden sm:flex items-center gap-1 hud text-[10px] ${status.tone}`} title={sync.error || ''}><Icon name={status.icon} size={14} />{status.text}</div>
-        <div className="hidden md:flex -space-x-2" aria-label="Membros da família">
+        <div className={`hidden sm:flex items-center gap-1.5 text-[12px] font-medium ${status.tone}`} title={sync.error || ''}><Icon name={status.icon} size={14} />{status.text}</div>
+        <div className="hidden md:flex -space-x-1.5" aria-label="Membros da família">
           {members.slice(0, 5).map((m) => <MemberAvatar key={m.id} m={m} size={34} />)}
         </div>
         <button className="btn-icon relative" onClick={onBell} aria-label={`Notificações${unread ? `: ${unread} novas` : ''}`}>
           <Icon name="bell" size={18} />
-          {unread > 0 && <span className="absolute -top-2 -right-2 min-w-[22px] h-[22px] px-1 grid place-items-center rounded-[4px] border-2 border-line bg-terra text-white hud text-[10px]">{unread > 9 ? '9+' : unread}</span>}
+          {unread > 0 && <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 grid place-items-center rounded-full bg-terra text-white text-[10px] font-bold ring-2 ring-bg">{unread > 9 ? '9+' : unread}</span>}
         </button>
         <button className="btn-icon" onClick={() => nav('/familia')} aria-label="Configurações"><Icon name="gear" size={18} /></button>
       </div>
-      <div className={`sm:hidden flex items-center justify-center gap-1 hud text-[9px] pb-1 -mt-1 ${status.tone}`}><Icon name={status.icon} size={11} />{status.text}</div>
+      <div className={`sm:hidden flex items-center justify-center gap-1 text-[10.5px] font-medium pb-1 -mt-1 ${status.tone}`}><Icon name={status.icon} size={11} />{status.text}</div>
     </header>
   );
 }

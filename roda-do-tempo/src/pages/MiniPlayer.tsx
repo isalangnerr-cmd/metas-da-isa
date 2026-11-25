@@ -84,13 +84,13 @@ function Timeline({ kid }: { kid: Member }) {
           <div className="absolute left-[9px] top-2 bottom-2 w-[4px] bg-line/20 rounded" />
           {years.map((y) => (
             <div key={y} className="mb-6">
-              <div className="relative -ml-6 mb-3 flex items-center gap-2"><span className="w-[22px] h-[22px] rounded-[4px] border-[3px] border-line bg-sun" /><span className="h-pixel text-xl">{y}</span></div>
+              <div className="relative -ml-6 mb-3 flex items-center gap-2"><span className="w-[22px] h-[22px] rounded-lg border border-line bg-sun" /><span className="h-pixel text-xl">{y}</span></div>
               <ul className="space-y-3">
                 {moments.filter((m) => m.date.startsWith(y)).map((m) => (
                   <li key={m.id} className="relative">
-                    <span className="absolute -left-[21px] top-4 w-3 h-3 bg-terra border-2 border-line" />
+                    <span className="absolute -left-[21px] top-4 w-3 h-3 bg-terra border border-line" />
                     <button className="px-box p-4 w-full text-left flex gap-3 hover:-translate-y-[1px] transition-transform" onClick={() => setEdit(m)}>
-                      {m.media_path && <Photo path={m.media_path} className="w-20 h-20 sm:w-28 sm:h-28 object-cover rounded-[4px] border-2 border-line shrink-0" />}
+                      {m.media_path && <Photo path={m.media_path} className="w-20 h-20 sm:w-28 sm:h-28 object-cover rounded-lg border border-line shrink-0" />}
                       <div className="min-w-0">
                         <div className="hud text-[10px] text-terra">{m.category} · {fmtDate(m.date)}{kid.birth_date ? ` · ${ageText(kid.birth_date, m.date)}` : ''}</div>
                         <div className="h-pixel text-lg leading-tight">{m.title}</div>
@@ -146,9 +146,9 @@ function Care({ kid }: { kid: Member }) {
         </Panel>
       </div>
       <Panel title="Registros" icon="list" action={<select className="field w-auto min-h-[36px] py-1 text-sm" value={kind} onChange={(e) => setKind(e.target.value as any)} aria-label="Filtrar tipo"><option value="all">Todos</option>{CARE_KINDS.map((k) => <option key={k} value={k}>{CHILD_KINDS[k].label}</option>)}</select>}>
-        {list.length ? <ul className="divide-y-2 divide-line/10">{list.map((r) => (
+        {list.length ? <ul className="divide-y divide-line">{list.map((r) => (
           <li key={r.id}><button className="w-full text-left py-2 flex items-start gap-3" onClick={() => setEdit(r)}>
-            <span className="grid place-items-center w-8 h-8 rounded-[4px] border-2 border-line bg-panel2 shrink-0"><Icon name={CHILD_KINDS[r.kind].icon} size={14} /></span>
+            <span className="grid place-items-center w-8 h-8 rounded-lg border border-line bg-panel2 shrink-0"><Icon name={CHILD_KINDS[r.kind].icon} size={14} /></span>
             <span className="flex-1 min-w-0"><span className="block font-semibold text-sm">{r.title}</span><span className="block text-xs text-muted">{CHILD_KINDS[r.kind].label} · {fmtDate(r.date)}{r.time ? ` ${r.time}` : ''}{r.data?.dose ? ` · ${r.data.dose}` : ''}</span>{r.description && <span className="block text-xs mt-1 line-clamp-2">{r.description}</span>}</span>
           </button></li>
         ))}</ul> : <Empty icon="list" title="Sem registros" />}
@@ -237,7 +237,7 @@ function Diary({ kid }: { kid: Member }) {
       {read && (
         <Modal open onClose={() => setRead(null)} title={read.title} footer={<><button className="btn-ghost" onClick={() => { setEdit(read); setRead(null); }}><Icon name="edit" size={12} />Editar</button><button className="btn-primary" onClick={() => setRead(null)}>Fechar</button></>}>
           <div className="hud text-[11px] text-muted mb-2 first-letter:uppercase">{fmtDateLong(read.date)}</div>
-          {read.media_path && <Photo path={read.media_path} className="w-full max-h-80 object-cover rounded-[4px] border-2 border-line mb-3" />}
+          {read.media_path && <Photo path={read.media_path} className="w-full max-h-80 object-cover rounded-lg border border-line mb-3" />}
           <p className="whitespace-pre-wrap leading-relaxed">{read.body}</p>
         </Modal>
       )}

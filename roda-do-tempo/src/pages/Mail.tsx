@@ -61,13 +61,13 @@ function Envelope({ m, onOpen, mine }: { m: Message; onOpen: () => void; mine: b
   const k = MESSAGE_KINDS[m.kind];
   const days = m.open_at ? diffDays(m.open_at, today()) : 0;
   return (
-    <button onClick={onOpen} className={`relative text-left px-box p-0 overflow-hidden hover:-translate-y-[2px] transition-transform ${!m.read_at && !mine && !locked ? 'ring-[3px] ring-sun' : ''}`}>
+    <button onClick={onOpen} className={`relative text-left px-box p-0 overflow-hidden hover:-translate-y-[2px] transition-transform ${!m.read_at && !mine && !locked ? 'ring-2 ring-sky' : ''}`}>
       {/* aba do envelope */}
       <svg viewBox="0 0 100 30" className="w-full h-12 block" preserveAspectRatio="none" aria-hidden><polygon points="0,0 100,0 50,30" fill={k.color} opacity=".85" /><polyline points="0,0 50,30 100,0" fill="none" stroke="rgb(var(--line))" strokeWidth="2" /></svg>
       <div className="px-4 pb-4 -mt-2">
         <div className="flex items-start gap-2">
           <div className="flex-1 min-w-0"><div className="hud text-[10px]" style={{ color: k.color }}>{k.label}</div><div className="h-pixel text-lg leading-tight truncate">{m.title}</div></div>
-          <span className="w-10 h-12 grid place-items-center border-2 border-dashed border-line/50 rounded-[3px] bg-panel2 shrink-0" aria-hidden><Icon name={(['heart', 'star', 'sparkle', 'paw', 'sun'] as const)[m.stamp % 5]} size={18} className="text-terra" /></span>
+          <span className="w-10 h-12 grid place-items-center border-2 border-dashed border-line/50 rounded-md bg-panel2 shrink-0" aria-hidden><Icon name={(['heart', 'star', 'sparkle', 'paw', 'sun'] as const)[m.stamp % 5]} size={18} className="text-terra" /></span>
         </div>
         <div className="flex items-center gap-2 mt-3 text-xs text-muted">
           {from && <MemberAvatar m={from} size={24} />}<span>{from?.nickname || from?.name}</span><Icon name="right" size={10} /><span>{to ? to.nickname || to.name : 'Família'}</span>
@@ -95,7 +95,7 @@ function Letter({ m, onClose }: { m: Message; onClose: () => void }) {
     <Modal open onClose={onClose} title={MESSAGE_KINDS[m.kind].label} footer={<>{mine && <button className="btn-ghost btn-sm mr-auto" onClick={del}><Icon name="trash" size={12} />Apagar</button>}<button className="btn-primary" onClick={onClose}>Fechar</button></>}>
       {locked && !mine ? (
         <div className="text-center py-6">
-          <div className="inline-grid place-items-center w-20 h-20 rounded-[6px] border-[3px] border-line bg-plum text-white mb-3 anim-shake"><Icon name="lock" size={36} /></div>
+          <div className="inline-grid place-items-center w-20 h-20 rounded-xl border border-line bg-plum text-white mb-3 anim-shake"><Icon name="lock" size={36} /></div>
           <div className="h-pixel text-2xl">Ainda não é hora</div>
           <p className="text-sm text-muted mt-1">Esta cápsula de {from?.nickname || from?.name} abre em <b>{fmtDateLong(m.open_at!)}</b>.</p>
         </div>
@@ -140,8 +140,8 @@ function Compose({ onClose }: { onClose: () => void }) {
       <div className="space-y-4">
         <div><span className="label">Para</span>
           <div className="flex flex-wrap gap-2">
-            {members.filter((m) => m.id !== me?.id).map((m) => <button key={m.id} type="button" aria-pressed={to === m.id} onClick={() => setTo(m.id)} className={`flex items-center gap-2 pl-1 pr-3 py-1 min-h-[44px] rounded-[6px] border-2 ${to === m.id ? 'border-line bg-sun/70' : 'border-line/30'}`}><MemberAvatar m={m} size={30} ring={false} /><span className="text-sm font-semibold">{m.nickname || m.name}</span></button>)}
-            <button type="button" aria-pressed={to === 'family'} onClick={() => setTo('family')} className={`flex items-center gap-2 px-3 min-h-[44px] rounded-[6px] border-2 ${to === 'family' ? 'border-line bg-sun/70' : 'border-line/30'}`}><Icon name="users" size={18} /><span className="text-sm font-semibold">Família toda</span></button>
+            {members.filter((m) => m.id !== me?.id).map((m) => <button key={m.id} type="button" aria-pressed={to === m.id} onClick={() => setTo(m.id)} className={`flex items-center gap-2 pl-1 pr-3 py-1 min-h-[44px] rounded-xl border-2 ${to === m.id ? 'border-sky bg-sky/10' : 'border-line/30'}`}><MemberAvatar m={m} size={30} ring={false} /><span className="text-sm font-semibold">{m.nickname || m.name}</span></button>)}
+            <button type="button" aria-pressed={to === 'family'} onClick={() => setTo('family')} className={`flex items-center gap-2 px-3 min-h-[44px] rounded-xl border-2 ${to === 'family' ? 'border-sky bg-sky/10' : 'border-line/30'}`}><Icon name="users" size={18} /><span className="text-sm font-semibold">Família toda</span></button>
           </div>
         </div>
         <Field label="Tipo"><select className="field" value={kind} onChange={(e) => setKind(e.target.value as MessageKind)}>{(Object.keys(MESSAGE_KINDS) as MessageKind[]).map((k) => <option key={k} value={k}>{MESSAGE_KINDS[k].label}</option>)}</select></Field>

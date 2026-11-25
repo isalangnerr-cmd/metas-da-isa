@@ -6,7 +6,7 @@ import type { Member, MemberKind, NotifType } from '@/data/types';
 import { Field, Icon, Modal, PageHeader, Panel, Segmented, useUI } from '@/components/ui';
 import { ImagePicker } from '@/components/forms';
 import { MemberAvatar, Sprite, avatarOf } from '@/components/Avatar';
-import { ACCESSORIES, DEFAULT_AVATARS, HAIRS, HAIR_STYLES, PANTS, SHIRTS, SKINS } from '@/game/sprites';
+import { ADULT_HAIR, CHILD_HAIR, CLOTHES, DEFAULT_AVATARS, FURS, HAIRS, OUTFITS, PATCHES, PRESETS, SHOES, SKINS } from '@/game/sprites';
 import { ACHIEVEMENTS, COLORS, COSMETICS, starTotals } from '@/lib/domain';
 import { downloadText, toICS } from '@/lib/ics';
 import { enablePush, disablePush, pushSupported, notifSupported } from '@/lib/pwa';
@@ -79,7 +79,7 @@ export function FamilyPage() {
                 <MemberAvatar m={m} size={48} photo />
                 <span className="flex-1 min-w-0"><span className="block font-semibold">{m.name}{m.nickname ? ` · ${m.nickname}` : ''}{m.id === me?.id ? ' (você)' : ''}</span>
                   <span className="block text-xs text-muted">{KIND_LABEL[m.kind]}{m.birth_date ? ` · ${ageText(m.birth_date)}` : ''}{m.kind === 'adult' && s.mode === 'cloud' ? (m.user_id ? ' · com conta' : ' · sem conta ainda') : ''}</span></span>
-                <span className="w-4 h-4 rounded-sm border-2 border-line" style={{ background: m.color }} />
+                <span className="w-4 h-4 rounded-sm border border-line" style={{ background: m.color }} />
               </button></li>
             ))}
           </ul>
@@ -120,7 +120,7 @@ export function FamilyPage() {
             <ul className="grid sm:grid-cols-2 gap-2">
               {ACHIEVEMENTS.map((a) => { const got = ach.find((x) => x.key === a.key); return (
                 <li key={a.key} className={`px-box-flat p-2 flex gap-2 ${got ? '' : 'opacity-50'}`}>
-                  <span className={`grid place-items-center w-9 h-9 rounded-[4px] border-2 border-line shrink-0 ${got ? 'bg-sun text-[rgb(58_42_30)]' : 'bg-panel2'}`}><Icon name={got ? a.icon : 'lock'} size={16} /></span>
+                  <span className={`grid place-items-center w-9 h-9 rounded-lg border border-line shrink-0 ${got ? 'bg-sun/20 text-[#B7791F]' : 'bg-panel2'}`}><Icon name={got ? a.icon : 'lock'} size={16} /></span>
                   <span className="min-w-0"><span className="block font-semibold text-sm">{a.title}</span><span className="block text-[11px] text-muted">{a.text}</span>
                     {a.unlock && <span className="block text-[11px] text-terra">{got ? 'Desbloqueou' : 'Desbloqueia'}: {COSMETICS[a.unlock]}</span>}
                     {got && <span className="block text-[10px] text-muted">{fmtDate(got.unlocked_at.slice(0, 10))}</span>}</span>
@@ -139,7 +139,7 @@ export function FamilyPage() {
               {hasExamples ? <button className="btn-ghost btn-sm" onClick={() => { removeExamples(st); ui.toast('Exemplos removidos'); }}><Icon name="trash" size={12} />Remover exemplos</button>
                 : <button className="btn-ghost btn-sm" onClick={() => { seedExamples(st, members); ui.toast('Exemplos adicionados'); }}><Icon name="sparkle" size={12} />Adicionar exemplos</button>}
             </div>
-            <div className="flex flex-wrap gap-2 pt-2 border-t-2 border-line/10">
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-line">
               <button className="btn-ghost btn-sm" onClick={() => s.signOut()}><Icon name="logout" size={12} />{s.mode === 'cloud' ? 'Sair da conta' : 'Voltar à tela inicial'}</button>
               {s.mode === 'cloud' && <button className="btn-ghost btn-sm" onClick={leave}>Sair da família</button>}
               <button className="btn-danger btn-sm" onClick={deleteAll}><Icon name="trash" size={12} />Excluir todos os dados</button>
@@ -157,8 +157,8 @@ export function FamilyPage() {
 function Toggle({ label, hint, checked, onChange, small }: { label: string; hint?: string; checked: boolean; onChange: (v: boolean) => void; small?: boolean }) {
   return (
     <label className="flex items-start gap-3 cursor-pointer">
-      <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className={`relative shrink-0 w-12 h-7 rounded-[4px] border-[3px] border-line ${checked ? 'bg-moss' : 'bg-panel2'}`}>
-        <span className={`absolute top-[2px] w-4 h-4 bg-panel border-2 border-line transition-[left] ${checked ? 'left-[24px]' : 'left-[2px]'}`} />
+      <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className={`relative shrink-0 w-11 h-6 rounded-full transition-colors ${checked ? 'bg-moss' : 'bg-muted/35'}`}>
+        <span className={`absolute top-[3px] w-[18px] h-[18px] rounded-full bg-white shadow transition-[left] ${checked ? 'left-[23px]' : 'left-[3px]'}`} />
       </button>
       <span className="min-w-0"><span className={`block ${small ? 'text-sm' : 'font-semibold text-sm'}`}>{label}</span>{hint && <span className="block text-xs text-muted">{hint}</span>}</span>
     </label>
@@ -237,7 +237,7 @@ export function MemberEditor({ member, onClose }: { member: Partial<Member>; onC
     st.remove('members', member.id!); onClose();
   };
   const Swatches = ({ list, value, on, label }: { list: string[]; value: string; on: (c: string) => void; label: string }) => (
-    <div><span className="label">{label}</span><div className="flex flex-wrap gap-1">{list.map((c) => <button key={c} type="button" aria-label={`${label} ${c}`} aria-pressed={c === value} onClick={() => on(c)} className={`w-8 h-8 rounded-[3px] border-[3px] ${c === value ? 'border-line' : 'border-line/20'}`} style={{ background: c }} />)}</div></div>
+    <div><span className="label">{label}</span><div className="flex flex-wrap gap-1">{list.map((c) => <button key={c} type="button" aria-label={`${label} ${c}`} aria-pressed={c === value} onClick={() => on(c)} className={`w-8 h-8 rounded-md border ${c === value ? 'border-line' : 'border-line/20'}`} style={{ background: c }} />)}</div></div>
   );
   return (
     <Modal open onClose={onClose} title={member.id ? 'Editar perfil' : 'Novo perfil'} wide footer={<>
@@ -245,10 +245,10 @@ export function MemberEditor({ member, onClose }: { member: Partial<Member>; onC
       <button className="btn-ghost" onClick={onClose}>Cancelar</button><button className="btn-primary" onClick={save}>Salvar</button></>}>
       <div className="grid sm:grid-cols-[180px_1fr] gap-5">
         <div className="flex flex-col items-center gap-2">
-          <div className="w-40 h-40 grid place-items-end justify-center rounded-[6px] border-[3px] border-line bg-[linear-gradient(#BFD6E0,#E3EEDF_70%,#5E7B3A_70%)] pb-6">
-            <Sprite kind={m.kind!} avatar={av} size={pet ? 60 : m.kind === 'child' ? 80 : 110} />
+          <div className="w-40 h-48 grid place-items-end justify-center rounded-2xl bg-[linear-gradient(#DCEBF2,#EEF4EC_72%,#CFE3C3_72%)] pb-5">
+            <Sprite kind={m.kind!} avatar={av} size={pet ? 80 : m.kind === 'child' ? 96 : 150} view="front" />
           </div>
-          <span className="hud text-[10px] text-muted">Personagem</span>
+          <span className="pixel text-[12px] text-muted">Personagem</span>
         </div>
         <div className="space-y-3">
           {!member.id && <div><span className="label">Tipo</span><Segmented label="Tipo" value={m.kind!} onChange={(k) => set({ kind: k, avatar: k === 'pet' ? DEFAULT_AVATARS.pet : k === 'child' ? DEFAULT_AVATARS.child : DEFAULT_AVATARS.b })} options={[{ value: 'adult', label: 'Adulto' }, { value: 'child', label: 'Criança' }, { value: 'pet', label: 'Pet' }]} /></div>}
@@ -258,19 +258,36 @@ export function MemberEditor({ member, onClose }: { member: Partial<Member>; onC
           </div>
           {m.kind !== 'adult' && <Field label="Data de nascimento"><input type="date" className="field" value={m.birth_date || ''} onChange={(e) => set({ birth_date: e.target.value || null })} /></Field>}
           <Swatches label="Cor de identificação" list={COLORS} value={m.color!} on={(c) => set({ color: c })} />
+          <div><span className="label">Modelos</span><div className="flex flex-wrap gap-2">{Object.entries(PRESETS).filter(([, p]) => p.kind === m.kind).map(([k, p]) => <button key={k} type="button" className="chip min-h-[34px] px-3 hover:text-ink" onClick={() => set({ avatar: { ...p.avatar } })}>{p.label}</button>)}</div></div>
           {pet ? (<>
-            <Swatches label="Pelagem" list={['#C9924A', '#E6C27A', '#F3E8D4', '#5A3A22', '#2B1D14', '#9A9A9A']} value={av.skin} on={(c) => setAv({ skin: c })} />
-            <Swatches label="Orelhas e manchas" list={['#8A5A2B', '#5A3A22', '#2B1D14', '#F3E8D4', '#C9924A']} value={av.hair} on={(c) => setAv({ hair: c })} />
-            <Swatches label="Coleira" list={SHIRTS} value={av.shirt} on={(c) => setAv({ shirt: c })} />
-          </>) : (<>
+            <Swatches label="Pelagem" list={FURS} value={av.skin} on={(c) => setAv({ skin: c })} />
+            <Swatches label="Orelhas e manchas" list={PATCHES} value={av.hair} on={(c) => setAv({ hair: c })} />
+          </>) : m.kind === 'child' ? (<>
             <Swatches label="Pele" list={SKINS} value={av.skin} on={(c) => setAv({ skin: c })} />
             <Swatches label="Cabelo" list={HAIRS} value={av.hair} on={(c) => setAv({ hair: c })} />
+            <Field label="Penteado"><select className="field" value={av.hairStyle} onChange={(e) => setAv({ hairStyle: +e.target.value })}>{CHILD_HAIR.map((h, i) => <option key={h} value={i}>{h}</option>)}</select></Field>
+            <Swatches label="Roupa" list={CLOTHES} value={av.shirt} on={(c) => setAv({ shirt: c, pants: c })} />
+            <Swatches label="Xuxinha" list={['#E0457B', '#D9443A', '#F2B544', '#4F8CC9', '#FFFFFF']} value={av.bow || '#E0457B'} on={(c) => setAv({ bow: c })} />
+            <label className="flex items-center gap-2"><input type="checkbox" className="px-check" checked={av.checkered !== false} onChange={(e) => setAv({ checkered: e.target.checked, shoes: '#1E1E1E' })} /><span className="text-sm">Tênis xadrez</span></label>
+          </>) : (<>
+            <Swatches label="Pele" list={SKINS} value={av.skin} on={(c) => setAv({ skin: c })} />
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Penteado"><select className="field" value={av.hairStyle} onChange={(e) => setAv({ hairStyle: +e.target.value })}>{HAIR_STYLES.map((h, i) => <option key={h} value={i}>{h}</option>)}</select></Field>
-              <Field label="Acessório"><select className="field" value={av.accessory} onChange={(e) => setAv({ accessory: +e.target.value })}>{ACCESSORIES.map((h, i) => <option key={h} value={i}>{h}</option>)}</select></Field>
+              <Field label="Cabelo"><select className="field" value={av.hairStyle} onChange={(e) => setAv({ hairStyle: +e.target.value })}>{ADULT_HAIR.map((h, i) => <option key={h} value={i}>{h}</option>)}</select></Field>
+              <Field label="Roupa"><select className="field" value={av.outfit ?? 0} onChange={(e) => setAv({ outfit: +e.target.value })}>{OUTFITS.map((h, i) => <option key={h} value={i}>{h}</option>)}</select></Field>
             </div>
-            <Swatches label="Roupa" list={SHIRTS} value={av.shirt} on={(c) => setAv({ shirt: c })} />
-            <Swatches label="Calça" list={PANTS} value={av.pants} on={(c) => setAv({ pants: c })} />
+            <Swatches label="Cor do cabelo e da barba" list={HAIRS} value={av.hair} on={(c) => setAv({ hair: c })} />
+            <div className="flex flex-wrap gap-x-5 gap-y-2">
+              <label className="flex items-center gap-2"><input type="checkbox" className="px-check" checked={!!av.glasses} onChange={(e) => setAv({ glasses: e.target.checked ? 1 : 0 })} /><span className="text-sm">Óculos</span></label>
+              <label className="flex items-center gap-2"><input type="checkbox" className="px-check" checked={!!av.beard} onChange={(e) => setAv({ beard: e.target.checked })} /><span className="text-sm">Barba</span></label>
+              <label className="flex items-center gap-2"><input type="checkbox" className="px-check" checked={!!av.freckles} onChange={(e) => setAv({ freckles: e.target.checked })} /><span className="text-sm">Sardas</span></label>
+              <label className="flex items-center gap-2"><input type="checkbox" className="px-check" checked={!!av.cap} onChange={(e) => setAv({ cap: e.target.checked })} /><span className="text-sm">Boné</span></label>
+              {(av.outfit ?? 0) === 0 && <label className="flex items-center gap-2"><input type="checkbox" className="px-check" checked={av.striped !== false} onChange={(e) => setAv({ striped: e.target.checked })} /><span className="text-sm">Listrado</span></label>}
+            </div>
+            {!!av.glasses && <Swatches label="Armação" list={['#7A3E1E', '#77787C', '#1E1E1E', '#C9924A', '#E0457B']} value={av.glassesColor || '#77787C'} on={(c) => setAv({ glassesColor: c })} />}
+            {!!av.cap && <Swatches label="Boné" list={['#E0457B', '#D9443A', '#2E2B2B', '#4F8CC9', '#5FA77A']} value={av.capColor || '#E0457B'} on={(c) => setAv({ capColor: c })} />}
+            <Swatches label="Camiseta" list={CLOTHES} value={av.shirt} on={(c) => setAv({ shirt: c })} />
+            <Swatches label={(av.outfit ?? 0) === 0 ? 'Macacão' : (av.outfit === 1 ? 'Bermuda' : 'Calça')} list={CLOTHES} value={av.pants} on={(c) => setAv({ pants: c })} />
+            <Swatches label="Tênis" list={SHOES} value={av.shoes || '#2B2B2B'} on={(c) => setAv({ shoes: c })} />
           </>)}
           <ImagePicker value={m.photo_path} onChange={(p) => set({ photo_path: p })} label="Foto (opcional)" />
           {m.kind !== 'adult' && (

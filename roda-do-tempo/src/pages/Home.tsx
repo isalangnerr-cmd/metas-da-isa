@@ -46,24 +46,24 @@ export function Home() {
       {/* Saudação */}
       <section className="flex flex-wrap items-end gap-3 anim-rise">
         <div className="flex-1 min-w-[220px]">
-          <div className="hud text-[11px] text-terra">World 01 · Nossa aventura</div>
-          <h1 className="h-pixel text-[28px] sm:text-[34px] leading-none">{greeting()}, {me?.nickname || me?.name || 'jogador'}!</h1>
+          <div className="pixel text-[13px] text-terra">World 01 · Nossa aventura</div>
+          <h1 className="h-pixel text-[28px] sm:text-[32px] leading-tight">{greeting()}, {me?.nickname || me?.name || 'jogador'}!</h1>
           <p className="text-sm text-muted mt-1 first-letter:uppercase">{fmtDateLong(t)}</p>
         </div>
-        <div className="flex -space-x-2 md:hidden">{members.slice(0, 5).map((m) => <MemberAvatar key={m.id} m={m} size={36} />)}</div>
+        <div className="flex -space-x-1.5 md:hidden">{members.slice(0, 5).map((m) => <MemberAvatar key={m.id} m={m} size={36} />)}</div>
       </section>
 
       {/* Herói com HUD + minigame */}
       <section className="px-box overflow-hidden">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 bg-[rgb(58_42_30)] text-[#F3E8D4]">
-          <span className="hud text-[12px]">World 01</span>
-          <span className="hud text-[12px]">Missões <b className="text-sun">{pad(doneToday)}/{pad(totalToday)}</b></span>
-          <span className="flex gap-1" aria-label="Três corações: a família">{[0, 1, 2].map((i) => <Icon key={i} name="heart" size={16} className="text-[#E0735A]" />)}</span>
-          <span className="hud text-[12px] flex items-center gap-1">Co-op: {pad(members.filter((m) => m.kind !== 'pet').length || 3)} + <Icon name="paw" size={14} />{pets > 1 ? pets : ''}</span>
-          {gam && <span className="hud text-[12px] flex items-center gap-1 ml-auto"><Icon name="star" size={14} className="text-sun" />{stars.total}</span>}
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 sm:px-5 py-3 border-b border-line pixel text-[13px] text-muted">
+          <span>WORLD 01</span>
+          <span>MISSÕES <b className="text-ink">{pad(doneToday)}/{pad(totalToday)}</b></span>
+          <span className="flex gap-1" aria-label="Três corações: a família">{[0, 1, 2].map((i) => <Icon key={i} name="heart" size={14} className="text-terra" />)}</span>
+          <span className="flex items-center gap-1">CO-OP: {pad(members.filter((m) => m.kind !== 'pet').length || 3)} + <Icon name="paw" size={13} />{pets > 1 ? pets : ''}</span>
+          {gam && <span className="flex items-center gap-1 ml-auto text-ink"><Icon name="star" size={14} className="text-sun" />{stars.total}</span>}
         </div>
-        <div className="p-4">
-          <h2 className="h-pixel text-[22px] sm:text-[26px] text-center mb-3 tracking-wider">UMA AVENTURA EM FAMÍLIA</h2>
+        <div className="p-4 sm:p-5">
+          <h2 className="pixel text-[20px] sm:text-[22px] mb-3">UMA AVENTURA EM FAMÍLIA</h2>
           <Game members={members} unlocked={unlocked} sounds={s.prefs.sounds} reduceMotion={s.prefs.reduceMotion}
             onStar={() => s.setPrefs({ gameStars: (s.prefs.gameStars || 0) + 1 })} />
           <p className="text-[11px] text-muted mt-2">Estrelinhas do jogo: {s.prefs.gameStars} · elas são só diversão e não contam no progresso real.</p>
@@ -82,9 +82,9 @@ export function Home() {
       <section aria-label="Atalhos">
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
           {NAV.slice(1, 8).map((n) => (
-            <Link key={n.to} to={n.to} className="px-box p-3 group hover:-translate-y-[2px] transition-transform">
-              <div className="flex items-center justify-between mb-2"><span className="hud text-[11px] text-muted">{n.n}</span><span className="grid place-items-center w-8 h-8 rounded-[4px] border-2 border-line text-[rgb(58_42_30)]" style={{ background: n.color }}><Icon name={n.icon} size={16} /></span></div>
-              <div className="h-pixel text-[16px] leading-tight">{n.theme}</div>
+            <Link key={n.to} to={n.to} className="px-box p-3 group hover:border-muted/40 hover:-translate-y-[1px] transition">
+              <div className="flex items-center justify-between mb-2"><span className="pixel text-[12px] text-muted">{n.n}</span><span className="tile w-8 h-8" style={{ background: n.color + "1f", color: n.color }}><Icon name={n.icon} size={16} /></span></div>
+              <div className="font-semibold text-[14.5px] leading-tight">{n.theme}</div>
               <div className="text-[11px] text-muted">{n.desc}</div>
             </Link>
           ))}
@@ -92,7 +92,7 @@ export function Home() {
       </section>
 
       <div className="grid lg:grid-cols-3 gap-4">
-        <Panel className="lg:col-span-2" kicker="Missões da vida real" title="Hoje" icon="sword" tone="terra" action={<Link to="/missoes" className="hud text-[10px] link">ver todas</Link>}>
+        <Panel className="lg:col-span-2" kicker="Missões da vida real" title="Hoje" icon="sword" tone="terra" action={<Link to="/missoes" className="text-[12px] font-medium text-muted link">ver todas</Link>}>
           {overdue.length > 0 && <Link to="/missoes" className="block px-inset p-2 mb-3 text-sm">{overdue.length} missão{overdue.length > 1 ? 'ões' : ''} de dias anteriores esperando um novo dia. Sem pressa.</Link>}
           {todayTasks.length ? <ul className="space-y-2">{todayTasks.slice(0, 6).map((x) => <TaskRow key={x.id} t={x} onOpen={() => setTask(x)} compact />)}</ul>
             : <p className="text-sm text-muted py-2">{doneToday ? `Tudo feito por hoje: ${doneToday} missão${doneToday > 1 ? 'ões' : ''} concluída${doneToday > 1 ? 's' : ''}!` : 'Nenhuma missão para hoje.'} <button className="link" onClick={() => setTask({ due_date: t })}>Adicionar</button></p>}
@@ -111,10 +111,10 @@ export function Home() {
           </div>
         </Panel>
 
-        <Panel kicker="Próximos checkpoints" title="Agenda" icon="flag" tone="sky" action={<Link to="/checkpoints?v=agenda" className="hud text-[10px] link">calendário</Link>}>
+        <Panel kicker="Próximos checkpoints" title="Agenda" icon="flag" tone="sky" action={<Link to="/checkpoints?v=agenda" className="text-[12px] font-medium text-muted link">calendário</Link>}>
           {upcoming.length ? <ul className="space-y-2">{upcoming.map((o) => <EventRow key={o.ev.id + o.date} o={o} showDate onOpen={(x) => setEv(x.ev)} />)}</ul> : <p className="text-sm text-muted">Nada nos próximos 14 dias.</p>}
         </Panel>
-        <Panel kicker="Inventário" title="Listas ativas" icon="bag" tone="moss" action={<Link to="/inventario" className="hud text-[10px] link">abrir</Link>}>
+        <Panel kicker="Inventário" title="Listas ativas" icon="bag" tone="moss" action={<Link to="/inventario" className="text-[12px] font-medium text-muted link">abrir</Link>}>
           {activeLists.length ? <ul className="space-y-3">{activeLists.map(({ l, st }) => (
             <li key={l.id}><Link to={`/inventario/${l.id}`} className="block"><div className="flex justify-between text-sm mb-1"><span className="font-semibold flex items-center gap-1"><Icon name={l.icon as any} size={12} />{l.name}</span><span className="text-muted">{st.total - st.done} faltando</span></div><SegBar value={st.pct} /></Link></li>
           ))}</ul> : <p className="text-sm text-muted">Nenhuma lista com itens pendentes.</p>}
@@ -123,20 +123,20 @@ export function Home() {
           {reminders.length ? <ul className="space-y-2">{reminders.map((r) => <li key={r.id}><Link to="/mini-player?tab=cuidados" className="flex gap-2 text-sm"><Icon name="pill" size={12} className="mt-1" /><span className="flex-1 font-semibold">{r.title}</span><span className="text-muted text-xs">{relDay(r.date >= t ? r.date : r.data!.next_date!)}</span></Link></li>)}</ul> : <p className="text-sm text-muted">Nenhuma consulta, vacina ou lembrete nesta semana.</p>}
         </Panel>
 
-        <Panel kicker="Próximas aventuras" title="Campanhas" icon="map" action={<Link to="/aventuras" className="hud text-[10px] link">ver</Link>}>
+        <Panel kicker="Próximas aventuras" title="Campanhas" icon="map" action={<Link to="/aventuras" className="text-[12px] font-medium text-muted link">ver</Link>}>
           {nextAdvs.length ? <ul className="space-y-3">{nextAdvs.map((a) => { const p = adventureProgress(a, tasks); return <li key={a.id}><Link to={`/aventuras/${a.id}`} className="block"><div className="flex justify-between text-sm mb-1"><span className="font-semibold">{a.name}</span><span className="text-muted">{a.start_date ? fmtDate(a.start_date) : ''}</span></div><SegBar value={p.pct} /></Link></li>; })}</ul> : <p className="text-sm text-muted">Nenhum plano em andamento. <Link to="/aventuras" className="link">Planejar</Link></p>}
         </Panel>
-        <Panel kicker="Desejos em andamento" title="Estrelas" icon="star" tone="sun" action={<Link to="/estrelas" className="hud text-[10px] link">ver</Link>}>
+        <Panel kicker="Desejos em andamento" title="Estrelas" icon="star" tone="sun" action={<Link to="/estrelas" className="text-[12px] font-medium text-muted link">ver</Link>}>
           {wishesInProgress.length ? <ul className="space-y-2">{wishesInProgress.map((w) => <li key={w.id} className="text-sm"><div className="flex justify-between"><span className="font-semibold">{w.title}</span><span className="text-muted">{w.progress}%</span></div><SegBar value={w.progress / 100} /></li>)}</ul> : <p className="text-sm text-muted">Nenhum desejo em andamento.</p>}
         </Panel>
-        <Panel kicker="Mensagens recentes" title="Correio" icon="mail" tone="plum" action={<Link to="/correio" className="hud text-[10px] link">abrir</Link>}>
+        <Panel kicker="Mensagens recentes" title="Correio" icon="mail" tone="plum" action={<Link to="/correio" className="text-[12px] font-medium text-muted link">abrir</Link>}>
           {recentMsgs.length ? <ul className="space-y-2">{recentMsgs.map((m) => { const f = members.find((x) => x.id === m.sender_id); return <li key={m.id}><Link to={`/correio?m=${m.id}`} className="flex items-center gap-2 text-sm"><MemberAvatar m={f} size={26} /><span className="flex-1 min-w-0"><span className="block font-semibold truncate">{m.title}</span><span className="block text-xs text-muted">{MESSAGE_KINDS[m.kind].label}</span></span>{!m.read_at && <span className="w-2 h-2 bg-terra" />}</Link></li>; })}</ul> : <p className="text-sm text-muted">A caixa de correio está vazia.</p>}
         </Panel>
       </div>
 
       <footer className="text-center py-6">
-        <div className="h-pixel text-[20px] sm:text-[24px] tracking-wider">NOSSA MELHOR CAMPANHA É A VIDA REAL.</div>
-        <div className="hud text-[10px] text-muted mt-2">Nossa aventura / 03 · Mesmo time. Dentro e fora do jogo.</div>
+        <div className="pixel text-[18px] sm:text-[22px] text-muted">NOSSA MELHOR CAMPANHA É A VIDA REAL.</div>
+        <div className="text-[11px] text-muted mt-2">Nossa aventura / 03 · Mesmo time. Dentro e fora do jogo.</div>
       </footer>
       {task && <TaskEditor task={task} onClose={() => setTask(null)} />}
       {ev && <EventEditor ev={ev} onClose={() => setEv(null)} />}

@@ -11,12 +11,12 @@ export default {
       },
       fontFamily: {
         pixel: ['"Pixelify Sans"', 'monospace'],
-        hud: ['Silkscreen', 'monospace'],
-        body: ['"Nunito Variable"', 'system-ui', 'sans-serif'],
+        hud: ['"Inter Variable"', 'system-ui', 'sans-serif'],
+        body: ['"Inter Variable"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        px: '4px 4px 0 0 rgb(var(--shadow))',
-        pxs: '2px 2px 0 0 rgb(var(--shadow))',
+        px: '0 1px 2px rgb(var(--shadow) / 0.04), 0 1px 1px rgb(var(--shadow) / 0.02)',
+        pxs: '0 1px 2px rgb(var(--shadow) / 0.10)',
       },
     },
   },
