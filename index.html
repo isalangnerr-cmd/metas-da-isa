@@ -37,7 +37,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15p
   position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column}
 /* iPhone com o app na tela de início: às vezes sobra uma faixa embaixo onde o app não consegue desenhar.
    Ela fica da cor do menu, e o menu não soma o espaço da barrinha do iPhone (a faixa já cumpre esse papel). */
-html.faixa{background:#1E0910!important}
+html,html.faixa{background:#1E0910!important}
 html.faixa .tabs{padding-bottom:8px!important}
 /* só o conteúdo rola; o menu de baixo fica fora da rolagem (no iPhone o position:fixed às vezes subia junto) */
 .rola{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
