@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="icone-192.png">
 <link rel="apple-touch-icon" href="icone-180.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+<style>:root{box-sizing:border-box}html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
 body[data-view="login"] .tabs, body[data-view="login"] .fab, body[data-view="login"] .top .stats, body[data-view="login"] .top .nivel{display:none!important}
 .login{display:grid;gap:12px;max-width:420px;margin:24px auto}.login input{width:100%}.login .msg{font-size:14px;color:var(--muted)}
 .ag-card input{width:100%;margin:8px 0}.ag-card ol{margin:6px 0 4px;padding-left:20px;line-height:1.5}
@@ -34,8 +34,11 @@ body[data-view="login"] .tabs, body[data-view="login"] .fab, body[data-view="log
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;margin:0;
+  height:100%;height:100dvh;display:flex;flex-direction:column}
+/* só o conteúdo rola; o menu de baixo fica fora da rolagem (no iPhone o position:fixed às vezes subia junto) */
+.rola{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-  padding-block:0 calc(150px + env(safe-area-inset-bottom,0px))}
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:96px;scroll-padding-top:env(safe-area-inset-top,0px)}
 .wrap{max-width:720px;margin:0 auto}
 h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.01em}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -142,6 +145,7 @@ body:not([data-view="hoje"]) .top .stats,body:not([data-view="hoje"]) .top .nive
 @media (max-width:480px){.lstats{grid-template-columns:repeat(2,1fr)}}
 .meta-leit{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:6px;font-weight:700;font-size:13.5px}
 .meta-leit.ok{border-color:color-mix(in srgb,var(--a-eu) 55%,var(--line))}
+.meta-leit .li-dia{margin-top:2px}
 .meta-leit .nivel-row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .agora{background:linear-gradient(135deg,color-mix(in srgb,var(--verde) 14%,var(--surface)),var(--surface));border:2px solid color-mix(in srgb,var(--verde) 40%,var(--line));border-radius:var(--r);padding:12px 14px;display:grid;gap:8px;box-shadow:var(--shadow)}
 .agora .rh{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -301,7 +305,7 @@ body:not([data-view="hoje"]) .top .stats,body:not([data-view="hoje"]) .top .nive
 .wins .t small{color:var(--muted);font-size:12.5px}
 
 /* abas */
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-top:1.5px solid var(--line);
+.tabs{position:relative;flex:none;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-top:1.5px solid var(--line);
   padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
 .tabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
 .tab{border:0;background:none;border-radius:14px;padding:6px 4px;display:grid;justify-items:center;gap:2px;font-size:11px;font-weight:800;color:var(--muted);min-width:0}
@@ -529,7 +533,7 @@ h1,h2{font-weight:700}
 @media (prefers-reduced-motion:reduce){.pote,.seq,.selo{transform:none}}
 </style>
 </head><body>
-<div class="wrap">
+<div class="rola" id="rola"><div class="wrap">
   <header class="top">
     <div class="brand">
       <div class="logo"><svg class="st" viewBox="0 0 24 24"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"/></svg>metas da isa</div>
@@ -545,7 +549,7 @@ h1,h2{font-weight:700}
     <div class="nivel"><div class="nivel-row"><span id="nivelNome">começando com tudo</span><span id="nivelProx" class="num"></span></div><div class="bar"><i id="nivelBar" style="width:0%"></i></div></div>
   </header>
   <main id="view"><div class="empty"><b>carregando suas metas…</b>já já aparece tudo aqui.</div></main>
-</div>
+</div></div>
 
 <nav class="tabs" aria-label="Seções"><div class="in">
   <button class="tab" data-tab="hoje" aria-current="page"><svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>hoje</button>
@@ -1023,6 +1027,15 @@ function registraPct(id, novo){
   const falta = Math.max(0, metaLeit(g) - ganhoHoje());
   toast(novo >= 100 ? 'chegou nos 100%! toca em "terminei" 🥹' : novo > antes ? `${novo}% 📖 ${falta ? `faltam ${falta}% pra meta de hoje` : pick(['a cabeça agradece','um capítulo de paz','leitora raiz ✦'])}${estrelas?` · +${estrelas} ${STAR}`:''}` : `anotado: ${novo}% 📖`);
 }
+const diaOff = o => { const d = new Date(); d.setDate(d.getDate()+o); return dk(d); };
+/* marca/desmarca à mão um dia de leitura (quando esqueceu de anotar o %); só mexe na sequência, não dá estrela */
+function liDia(k){
+  const g = clone(state.geral || defGeral()); g.leituraDias = Object.assign({}, g.leituraDias || {});
+  const on = !g.leituraDias[k]; if(on) g.leituraDias[k] = true; else delete g.leituraDias[k];
+  state.geral = g; saveGeral(); render();
+  const s = leitStreak(g); toast(on ? `marcado: li ${k===dk()?'hoje':'ontem'} 📖 · 🔥 ${s} dia${s===1?'':'s'} seguidos` : `desmarcado ${k===dk()?'hoje':'ontem'}`);
+}
+const topo = () => { const r = document.getElementById('rola'); if(r) r.scrollTo({top:0}); };
 function setPagina(id, val){
   const v = +String(val).replace(',','.').replace('%',''); if(val==='' || isNaN(v)) return;
   registraPct(id, v);
@@ -1341,6 +1354,7 @@ function vMetaLeit(chips){
   const g = state.geral || defGeral(), meta = metaLeit(g), feito = ganhoHoje(), s = leitStreak(g), ok = feito >= meta;
   return `<div class="meta-leit ${ok?'ok':''}"><div class="nivel-row"><span>${ok ? 'meta de hoje batida ✦' : 'meta de hoje'} · <b class="num">+${feito}% de ${meta}%</b></span><span class="num">${s ? `🔥 ${s} dia${s===1?'':'s'} lendo` : 'comece a sequência hoje'}</span></div>
     <div class="bar"><i style="width:${Math.max(3, Math.min(100, feito/meta*100))}%;background:var(--a-eu)"></i></div>
+    <div class="chips li-dia"><span class="hint" style="margin:0 4px 0 0">esqueceu de anotar?</span>${[['ontem',-1],['hoje',0]].map(([t,o]) => { const k = diaOff(o), on = !!(g.leituraDias||{})[k]; return `<button class="chip" data-act="liDia" data-d="${k}" aria-pressed="${on}">${on?'✓ ':''}li ${t}</button>`; }).join('')}</div>
     ${chips ? `<div class="chips" style="margin-top:8px"><span class="hint" style="margin:0 4px 0 0">meta por dia:</span>${[1,2,3,5,10].map(n=>`<button class="chip" data-act="metaLeit" data-n="${n}" aria-pressed="${meta===n}">${n}%</button>`).join('')}</div>` : ''}</div>`;
 }
 const estrelasTxt = n => n ? '★'.repeat(n) + '☆'.repeat(5-n) : '';
@@ -1683,7 +1697,7 @@ function closeSheet(){ $('#sheet').hidden = true; $('#sheet').innerHTML=''; ui.e
 
 /* ---------- eventos ---------- */
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-tab]'); if(t){ ui.tab = t.dataset.tab; ui.confirm=null; render(); window.scrollTo({top:0}); return; }
+  const t = e.target.closest('[data-tab]'); if(t){ ui.tab = t.dataset.tab; ui.confirm=null; render(); topo(); return; }
   const b = e.target.closest('[data-act]'); if(!b) { if(e.target.id==='sheet') closeSheet(); return; }
   const {act, m, k, p, r} = b.dataset;
   if(!['apagar','apagarSim'].includes(act)) ui.confirm = null;
@@ -1698,11 +1712,12 @@ document.addEventListener('click', e => {
     case 'focoTar': focoTar(b.dataset.id); break;
     case 'delTar': delTar(b.dataset.id); break;
     case 'verFeitas': ui.feitas = !ui.feitas; render(); break;
-    case 'irRotina': ui.tab = 'rotina'; ui.rot = 'dia'; render(); window.scrollTo({top:0}); break;
-    case 'irLivros': ui.tab = 'leituras'; ui.livro = null; render(); window.scrollTo({top:0}); break;
+    case 'irRotina': ui.tab = 'rotina'; ui.rot = 'dia'; render(); topo(); break;
+    case 'irLivros': ui.tab = 'leituras'; ui.livro = null; render(); topo(); break;
     case 'rot': ui.rot = b.dataset.r; ui.livro = null; render(); break;
     case 'abrirLivro': ui.livro = ui.livro === b.dataset.id ? null : b.dataset.id; render(); break;
     case 'mais10': mais10(b.dataset.id); break;
+    case 'liDia': liDia(b.dataset.d); break;
     case 'metaLeit': setMetaLeit(b.dataset.n); break;
     case 'maisPassos': ui.maisPassos = !ui.maisPassos; render(); break;
     case 'editLiv': ui.editLiv = b.dataset.id; render(); break;
@@ -1723,7 +1738,7 @@ document.addEventListener('click', e => {
     case 'trocarDesafio': trocarDesafio(); break;
     case 'outroRel': ui.rel = (ui.rel||0) + 1; render(); break;
     case 'fecharTrofeu': $('#trofeuHost').innerHTML = ''; break;
-    case 'irArea': ui.area = b.dataset.a; ui.horiz = 'todos'; ui.tab = 'metas'; render(); window.scrollTo({top:0}); break;
+    case 'irArea': ui.area = b.dataset.a; ui.horiz = 'todos'; ui.tab = 'metas'; render(); topo(); break;
     case 'open': ui.open.has(m) ? ui.open.delete(m) : ui.open.add(m); render(); break;
     case 'delPasso': delPasso(m,k,p); break;
     case 'delMarco': delMarco(m,k); break;
