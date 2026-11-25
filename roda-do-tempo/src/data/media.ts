@@ -14,6 +14,15 @@ export async function compressImage(file: File, max = 1600, quality = 0.85): Pro
   } catch { return file; }
 }
 
+export async function uploadFileWithType(file: File): Promise<{ path: string; type: string }> {
+  const s = getStore();
+  if (file.size > 15 * 1024 * 1024) throw new Error('Arquivo maior que 15 MB');
+  const isImg = file.type.startsWith('image/');
+  const blob = isImg ? await compressImage(file, 2000, 0.85) : file;
+  const ext = blob.type === 'image/jpeg' ? 'jpg' : (file.name.split('.').pop() || 'bin').toLowerCase();
+  return { path: await s.backend.upload(s.familyId, blob, ext), type: blob.type || file.type };
+}
+
 export async function uploadFile(file: File): Promise<string> {
   const s = getStore();
   if (file.size > 15 * 1024 * 1024) throw new Error('Arquivo maior que 15 MB');

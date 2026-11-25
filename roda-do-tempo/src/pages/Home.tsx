@@ -75,13 +75,13 @@ export function Home() {
         <button className="btn-primary" onClick={() => setTask({ due_date: t })}><Icon name="plus" size={14} />Missão</button>
         <button className="btn-moss" onClick={() => setEv({ date: t })}><Icon name="flag" size={14} />Checkpoint</button>
         <button className="btn-sun" onClick={() => nav(activeLists[0] ? `/inventario/${activeLists[0].l.id}` : '/inventario')}><Icon name="bag" size={14} />Item de lista</button>
-        <button className="btn-ghost" onClick={() => nav('/correio?nova=1')}><Icon name="mail" size={14} />Carta</button>
+        <button className="btn-ghost" onClick={() => nav('/entrada')}><Icon name="sparkle" size={14} />Mandar recado</button>
       </section>
 
       {/* Atalhos numerados */}
       <section aria-label="Atalhos">
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-          {NAV.slice(1, 8).map((n) => (
+          {NAV.filter((n) => /^0[1-7]$/.test(n.n)).map((n) => (
             <Link key={n.to} to={n.to} className="px-box p-3 group hover:border-muted/40 hover:-translate-y-[1px] transition">
               <div className="flex items-center justify-between mb-2"><span className="pixel text-[12px] text-muted">{n.n}</span><span className="tile w-8 h-8" style={{ background: n.color + "1f", color: n.color }}><Icon name={n.icon} size={16} /></span></div>
               <div className="font-semibold text-[14.5px] leading-tight">{n.theme}</div>

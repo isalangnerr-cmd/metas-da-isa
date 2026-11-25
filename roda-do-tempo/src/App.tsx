@@ -20,6 +20,7 @@ import { Mail } from '@/pages/Mail';
 import { FamilyPage } from '@/pages/Family';
 import { Onboarding } from '@/pages/Onboarding';
 import { NotificationsPanel } from '@/pages/Notifications';
+import { Inbox } from '@/pages/Inbox';
 
 const MOBILE_MAIN = ['/', '/missoes', '/inventario', '/checkpoints'];
 
@@ -99,6 +100,7 @@ export function App() {
             <Route path="/aventuras/:id" element={<AdventureDetail />} />
             <Route path="/correio" element={<Mail />} />
             <Route path="/familia" element={<FamilyPage />} />
+            <Route path="/entrada" element={<Inbox />} />
             <Route path="/convite/:code" element={<InviteAlready />} />
             <Route path="*" element={<Home />} />
           </Routes>
@@ -166,6 +168,7 @@ function TopBar({ onBell, unread }: { onBell: () => void; unread: number }) {
         <div className="hidden md:flex -space-x-1.5" aria-label="Membros da família">
           {members.slice(0, 5).map((m) => <MemberAvatar key={m.id} m={m} size={34} />)}
         </div>
+        <button className="btn-icon" onClick={() => nav('/entrada')} aria-label="Caixa de entrada" title="Caixa de entrada: mande um recado e a IA organiza"><Icon name="sparkle" size={18} /></button>
         <button className="btn-icon relative" onClick={onBell} aria-label={`Notificações${unread ? `: ${unread} novas` : ''}`}>
           <Icon name="bell" size={18} />
           {unread > 0 && <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 grid place-items-center rounded-full bg-terra text-white text-[10px] font-bold ring-2 ring-bg">{unread > 9 ? '9+' : unread}</span>}

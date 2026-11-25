@@ -8,6 +8,7 @@ plataforma na página inicial.
 
 - **Funcionalidades:** veja [docs/FUNCIONALIDADES.md](docs/FUNCIONALIDADES.md)
 - **Notificações push com o app fechado (opcional):** [docs/PUSH.md](docs/PUSH.md)
+- **Caixa de entrada inteligente (IA):** [docs/CAIXA-DE-ENTRADA.md](docs/CAIXA-DE-ENTRADA.md)
 
 ## Como funciona o armazenamento
 
@@ -51,7 +52,8 @@ Sem `.env.local`, o app abre no modo “neste aparelho”.
    VITE_SUPABASE_ANON_KEY=sb_publishable_...
    ```
    A chave anon é pública por design; quem protege os dados são as políticas RLS. **Nunca** coloque a `service_role` no app.
-5. (Opcional) Para lembretes e push com o app fechado, siga [docs/PUSH.md](docs/PUSH.md).
+5. (Opcional) Para a Caixa de entrada com IA, siga [docs/CAIXA-DE-ENTRADA.md](docs/CAIXA-DE-ENTRADA.md).
+6. (Opcional) Para lembretes e push com o app fechado, siga [docs/PUSH.md](docs/PUSH.md).
 
 ### Primeiro uso
 
@@ -79,7 +81,7 @@ Depois do merge na branch publicada, o app fica em `https://SEU-USUARIO.github.i
 ## Testes
 
 ```bash
-npm test                 # 27 testes: datas/fuso, recorrência, ICS, fila offline, conflitos, regras do jogo
+npm test                 # 32 testes (inclui a Caixa de entrada): datas/fuso, recorrência, ICS, fila offline, conflitos, regras do jogo
 npm run typecheck
 # Segurança do banco (precisa de um Postgres local):
 PGHOST=/tmp PGPORT=5432 supabase/tests/run.sh   # 25 verificações de RLS, cápsulas, convites, exclusão
