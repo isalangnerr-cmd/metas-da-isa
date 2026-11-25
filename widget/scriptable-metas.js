@@ -11,6 +11,7 @@ const C = {
   cereja: new Color("#FF4D6A"), creme: new Color("#FFE8C7"), cremeTinta: new Color("#5A2A10"), branco: new Color("#FFFFFF"),
 };
 const MAX_PILULAS = 2;
+const APP = "https://isalangnerr-cmd.github.io/metas-da-isa/"; // tocar no widget abre o app
 
 const fm = FileManager.local();
 const cache = fm.joinPath(fm.documentsDirectory(), "metas-widget.json");
@@ -51,7 +52,7 @@ function frase(hs, feitos, tarefas) {
 
 async function monta() {
   const w = new ListWidget();
-  w.backgroundColor = C.fundo; w.setPadding(12, 12, 12, 12);
+  w.backgroundColor = C.fundo; w.setPadding(12, 12, 12, 12); w.url = APP;
   w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000);
   const d = await dados();
   if (!d) { txt(w, `${saudacao()}, isa ✦`, 17, C.tinta, true); w.addSpacer(4); txt(w, "não consegui carregar agora, já já eu tento de novo", 12, C.apagado, false, 2); return w; }
