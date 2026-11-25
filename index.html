@@ -34,7 +34,7 @@ body[data-view="login"] .tabs, body[data-view="login"] .fab, body[data-view="log
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;margin:0;
-  height:100%;height:100dvh;display:flex;flex-direction:column}
+  position:fixed;top:0;left:0;right:0;height:100%;height:100dvh;height:var(--app-h,100dvh);display:flex;flex-direction:column}
 /* só o conteúdo rola; o menu de baixo fica fora da rolagem (no iPhone o position:fixed às vezes subia junto) */
 .rola{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -1834,6 +1834,15 @@ function tick(){
 }
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.warn('sw', e));
+/* iPhone com o app na tela de início: o 100vh/100dvh vem mais curto (desconta a barra de status)
+   e o menu de baixo ficava longe do fim da tela. Aqui mede a tela de verdade. */
+function alturaApp(){
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent), standalone = navigator.standalone || matchMedia('(display-mode: standalone)').matches;
+  let h = innerHeight;
+  if(ios && standalone){ const em_pe = innerHeight >= innerWidth; h = Math.max(innerHeight, em_pe ? screen.height : screen.width); }
+  document.documentElement.style.setProperty('--app-h', h + 'px');
+}
+alturaApp(); addEventListener('resize', alturaApp); addEventListener('orientationchange', () => setTimeout(alturaApp, 300));
 boot();
 })();
 </script>
