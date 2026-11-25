@@ -1,7 +1,6 @@
 -- Testes de segurança (RLS) e regras do banco. Rode com supabase/tests/run.sh
 \set ON_ERROR_STOP 1
 insert into auth.users values ('11111111-1111-1111-1111-111111111111','a@x'),('22222222-2222-2222-2222-222222222222','b@x'),('33333333-3333-3333-3333-333333333333','intruso@x');
-grant select on all tables in schema public to authenticated;
 
 create function pg_temp.as_user(u text) returns void language plpgsql as $$ begin perform set_config('request.jwt.claim.sub', u, false); end $$;
 create function pg_temp.check(ok boolean, msg text) returns void language plpgsql as $$ begin if not ok then raise exception 'FALHOU: %', msg; end if; raise notice 'ok: %', msg; end $$;
