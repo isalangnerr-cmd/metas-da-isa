@@ -60,12 +60,12 @@ async function monta() {
   const d = await dados();
   if (!d) { txt(w, `${saudacao()}, isa ✦`, 17, C.tinta, true); w.addSpacer(4); txt(w, "não consegui carregar agora, já já eu tento de novo", 12, C.apagado, false, 2); return w; }
 
-  const linha = w.addStack(); linha.layoutHorizontally(); linha.centerAlignContent();
+  const linha = w.addStack(); linha.layoutHorizontally(); linha.centerAlignContent(); linha.url = TOQUE;
 
   // ---- adesivo da leitura ----
   const L = d.leitura;
   const ad = linha.addStack(); ad.layoutVertically(); ad.size = new Size(112, 132);
-  ad.backgroundColor = C.cereja; ad.cornerRadius = 20; ad.borderWidth = 3; ad.borderColor = C.branco;
+  ad.url = TOQUE; ad.backgroundColor = C.cereja; ad.cornerRadius = 20; ad.borderWidth = 3; ad.borderColor = C.branco;
   ad.setPadding(8, 6, 8, 6);
   ad.addSpacer();
   centro(ad, "📚", 20, C.branco, true);
@@ -81,7 +81,7 @@ async function monta() {
 
   // ---- saudação + rotina ----
   const hs = d.habitos || [], feitos = hs.filter(h => h.feito).length, ts = d.tarefas || [];
-  const dir = linha.addStack(); dir.layoutVertically();
+  const dir = linha.addStack(); dir.layoutVertically(); dir.url = TOQUE;
   txt(dir, `${saudacao()}, isa ✦`, 17, C.tinta, true);
   dir.addSpacer(1);
   txt(dir, frase(hs, feitos, ts), 12, C.apagado, true, 2);
@@ -93,6 +93,9 @@ async function monta() {
   mostra.forEach((t, n) => { if (n) dir.addSpacer(5); pilula(dir, "★ " + t.titulo, C.creme, C.cremeTinta); });
   if (resto > 0) { if (mostra.length) dir.addSpacer(5); pilula(dir, `+ ${resto} coisinha${resto === 1 ? "" : "s"}`, C.card, C.rosa, C.linha); }
   dir.addSpacer();
+  const rod = dir.addStack(); rod.layoutHorizontally(); rod.addSpacer();
+  const hora = new DateFormatter(); hora.dateFormat = "HH:mm";
+  txt(rod, "atualizado às " + hora.string(new Date()), 9, C.linha, false);
 
   linha.addSpacer();
   return w;
