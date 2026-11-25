@@ -2,7 +2,6 @@
 -- num Postgres comum. NÃO rode isto no Supabase de verdade.
 do $$ begin create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls; exception when duplicate_object then null; end $$;
 grant usage on schema public to anon, authenticated;
-alter default privileges in schema public grant all on tables to anon, authenticated;
 alter default privileges in schema public grant all on functions to anon, authenticated;
 create schema auth; grant usage on schema auth to anon, authenticated;
 create table auth.users (id uuid primary key, email text);
