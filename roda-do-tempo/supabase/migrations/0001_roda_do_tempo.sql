@@ -5,7 +5,6 @@
 -- só podem ser lidas/escritas por adultos que pertencem a ela.
 -- =====================================================================
 
-create extension if not exists pgcrypto;
 
 -- ---------- Núcleo: famílias e acesso ----------
 create table if not exists public.families (
@@ -286,7 +285,7 @@ create table if not exists public.user_prefs (
 create table if not exists public.invites (
   id uuid primary key default gen_random_uuid(),
   family_id uuid not null references public.families(id) on delete cascade,
-  code text not null unique default encode(gen_random_bytes(12), 'hex'),
+  code text not null unique default replace(gen_random_uuid()::text, '-', ''),
   email text, member_id uuid references public.members(id) on delete cascade,
   expires_at timestamptz not null default now() + interval '14 days',
   used_by uuid references auth.users(id), used_at timestamptz,
@@ -600,5 +599,14 @@ begin
   end loop;
 end $$;
 
--- Ninguém anônimo acessa nada
-revoke all on all tables in schema public from anon;
+-- Ninguém anônimo acessa as tabelas do app
+do $$
+declare t text;
+begin
+  foreach t in array array['families','family_users','members','tasks','task_completions','lists','list_items','events','child_records',
+                           'memories','wishes','adventures','messages','message_bodies','notifications','achievements','star_transactions',
+                           'user_prefs','invites','push_subscriptions']
+  loop
+    execute format('revoke all on public.%I from anon', t);
+  end loop;
+end $$;
