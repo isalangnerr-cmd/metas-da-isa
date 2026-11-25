@@ -1,17 +1,16 @@
-// Widget "Metas da Isa" para o app Scriptable (iPhone), tamanho médio.
-// Esquerda: sequência de leitura + barrinha da meta do dia. Direita: rotina de hoje (tarefas e hábitos que faltam).
+// Widget "Metas da Isa" para o app Scriptable (iPhone), tamanho médio. Estilo "adesivinhos".
+// Esquerda: adesivo cereja com a sequência de leitura. Direita: saudação, frase do dia,
+// tarefas com estrela (foco) em pílulas e o resto resumido em "+ x coisinhas".
 // Coloque a chave secreta abaixo (ela só permite LER esses dados).
 const CHAVE = "COLE_A_CHAVE_AQUI";
 const URL_DADOS = "https://oojnqitywbasfxuispiw.supabase.co/functions/v1/metas-widget?k=" + CHAVE;
 
 const C = {
-  fundo: new Color("#2E0F17"), card: new Color("#451A25"), trilho: new Color("#5A2432"),
-  tinta: new Color("#FFF4EC"), apagado: new Color("#EBC6CC"), cereja: new Color("#FF4D6A"), creme: new Color("#FFE8C7"),
+  fundo: new Color("#2E0F17"), card: new Color("#451A25"), linha: new Color("#6B2E3D"),
+  tinta: new Color("#FFF4EC"), apagado: new Color("#EBC6CC"), rosa: new Color("#FFC2CD"),
+  cereja: new Color("#FF4D6A"), creme: new Color("#FFE8C7"), cremeTinta: new Color("#5A2A10"), branco: new Color("#FFFFFF"),
 };
-const PAD = 14, ESQ = 108, VAO = 14;
-// largura aproximada do widget médio (varia com o modelo do iPhone)
-const LARG = Math.round(Device.screenSize().width * 0.87);
-const DIR = Math.max(150, LARG - 2 * PAD - ESQ - VAO);
+const MAX_PILULAS = 2;
 
 const fm = FileManager.local();
 const cache = fm.joinPath(fm.documentsDirectory(), "metas-widget.json");
@@ -24,70 +23,71 @@ async function dados() {
   return fm.fileExists(cache) ? JSON.parse(fm.readString(cache)) : null;
 }
 
-function txt(st, s, size, cor, bold) {
+function txt(st, s, size, cor, bold, linhas = 1) {
   const t = st.addText(String(s));
-  t.font = bold ? Font.boldRoundedSystemFont(size) : Font.mediumRoundedSystemFont(size);
-  t.textColor = cor; t.lineLimit = 1; t.minimumScaleFactor = 0.7;
+  t.font = bold ? Font.boldRoundedSystemFont(size) : Font.semiboldRoundedSystemFont(size);
+  t.textColor = cor; t.lineLimit = linhas; t.minimumScaleFactor = 0.7;
   return t;
 }
-function barra(st, w, frac, cor) {
-  const h = 6, dc = new DrawContext();
-  dc.size = new Size(w, h); dc.opaque = false; dc.respectScreenScale = true;
-  const p = new Path(); p.addRoundedRect(new Rect(0, 0, w, h), h / 2, h / 2);
-  dc.addPath(p); dc.setFillColor(C.trilho); dc.fillPath();
-  const f = Math.max(0, Math.min(1, frac));
-  if (f > 0) { const q = new Path(); q.addRoundedRect(new Rect(0, 0, Math.max(h, w * f), h), h / 2, h / 2); dc.addPath(q); dc.setFillColor(cor); dc.fillPath(); }
-  const img = st.addImage(dc.getImage()); img.imageSize = new Size(w, h);
+function centro(st, s, size, cor, bold) {
+  const r = st.addStack(); r.layoutHorizontally(); r.addSpacer();
+  const t = txt(r, s, size, cor, bold); t.centerAlignText(); r.addSpacer(); return t;
 }
-function item(st, icone, corIcone, titulo, corTxt) {
-  const r = st.addStack(); r.layoutHorizontally(); r.centerAlignContent();
-  const i = r.addStack(); i.size = new Size(16, 0); txt(i, icone, 12, corIcone, true);
-  r.addSpacer(4); txt(r, titulo, 13, corTxt, false); r.addSpacer();
+function pilula(st, s, fundo, cor, borda) {
+  const r = st.addStack(); r.layoutHorizontally();
+  const p = r.addStack(); p.backgroundColor = fundo; p.cornerRadius = 11; p.setPadding(3, 9, 3, 9);
+  if (borda) { p.borderWidth = 1.5; p.borderColor = borda; }
+  txt(p, s, 12, cor, true); r.addSpacer();
+}
+const saudacao = () => { const h = new Date().getHours(); return h < 12 ? "bom dia" : h < 18 ? "boa tarde" : "boa noite"; };
+function frase(hs, feitos, tarefas) {
+  const falta = hs.length - feitos;
+  if (!falta && !tarefas.length) return "tudo feito hoje, que mulher 💃";
+  if (!falta) return "hábitos todos feitos ✦ arrasou";
+  if (falta === 1) return "falta só 1 hábito, você tá voando";
+  if (!feitos) return new Date().getHours() < 12 ? "um passinho de cada vez ✦" : "bora começar pelo mais fácil?";
+  return `faltam ${falta} hábitos, bora? ✦`;
 }
 
 async function monta() {
   const w = new ListWidget();
-  w.backgroundColor = C.fundo; w.setPadding(PAD, PAD, PAD, PAD);
+  w.backgroundColor = C.fundo; w.setPadding(12, 12, 12, 12);
   w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000);
   const d = await dados();
-  if (!d) { txt(w, "metas da isa ✦", 15, C.tinta, true); w.addSpacer(4); txt(w, "não consegui carregar agora", 12, C.apagado); return w; }
+  if (!d) { txt(w, `${saudacao()}, isa ✦`, 17, C.tinta, true); w.addSpacer(4); txt(w, "não consegui carregar agora, já já eu tento de novo", 12, C.apagado, false, 2); return w; }
 
-  const linha = w.addStack(); linha.layoutHorizontally();
+  const linha = w.addStack(); linha.layoutHorizontally(); linha.centerAlignContent();
 
-  // ---- esquerda: leitura ----
-  const L = d.leitura, ok = L.feito >= L.meta;
-  const esq = linha.addStack(); esq.layoutVertically(); esq.size = new Size(ESQ, 0);
-  esq.backgroundColor = C.card; esq.cornerRadius = 18; esq.setPadding(12, 12, 12, 12);
-  txt(esq, "🔥 leitura", 11, C.apagado, true);
-  esq.addSpacer();
-  txt(esq, L.sequencia, 36, C.creme, true);
-  txt(esq, L.sequencia === 1 ? "dia seguido" : "dias seguidos", 11, C.apagado, false);
-  esq.addSpacer();
-  barra(esq, ESQ - 24, L.feito / L.meta, ok ? C.creme : C.cereja);
-  esq.addSpacer(5);
-  txt(esq, ok ? "meta batida ✦" : (L.leuHoje ? `+${L.feito}% de ${L.meta}%` : "ainda não leu hoje"), 11, ok ? C.creme : C.tinta, true);
+  // ---- adesivo da leitura ----
+  const L = d.leitura;
+  const ad = linha.addStack(); ad.layoutVertically(); ad.size = new Size(112, 132);
+  ad.backgroundColor = C.cereja; ad.cornerRadius = 20; ad.borderWidth = 3; ad.borderColor = C.branco;
+  ad.setPadding(8, 6, 8, 6);
+  ad.addSpacer();
+  centro(ad, "📚", 20, C.branco, true);
+  centro(ad, L.sequencia, 38, C.branco, true);
+  if (!L.sequencia) centro(ad, "comece hoje ✦", 12, C.branco, true);
+  else {
+    centro(ad, L.sequencia === 1 ? "dia lendo" : "dias lendo", 12, C.branco, true);
+    centro(ad, L.leuHoje ? "sem parar 🥹" : "bora ler hoje?", 12, C.branco, true);
+  }
+  ad.addSpacer();
 
-  linha.addSpacer(VAO);
+  linha.addSpacer(12);
 
-  // ---- direita: rotina de hoje ----
-  const hs = d.habitos || [], feitos = hs.filter(h => h.feito).length;
-  const dir = linha.addStack(); dir.layoutVertically(); dir.size = new Size(DIR, 0);
-  dir.setPadding(2, 0, 0, 0);
-  const cab = dir.addStack(); cab.layoutHorizontally(); cab.centerAlignContent();
-  txt(cab, "rotina de hoje", 11, C.apagado, true); cab.addSpacer();
-  txt(cab, `${feitos}/${hs.length} hábitos`, 11, feitos === hs.length ? C.creme : C.apagado, true);
-  dir.addSpacer(6);
-  barra(dir, DIR, hs.length ? feitos / hs.length : 0, C.creme);
+  // ---- saudação + rotina ----
+  const hs = d.habitos || [], feitos = hs.filter(h => h.feito).length, ts = d.tarefas || [];
+  const dir = linha.addStack(); dir.layoutVertically();
+  txt(dir, `${saudacao()}, isa ✦`, 17, C.tinta, true);
+  dir.addSpacer(1);
+  txt(dir, frase(hs, feitos, ts), 12, C.apagado, true, 2);
   dir.addSpacer(8);
 
-  const itens = [
-    ...(d.tarefas || []).map(t => t.atrasada ? ["!", C.cereja, t.titulo, C.cereja] : [t.foco ? "★" : "•", C.creme, t.titulo, C.tinta]),
-    ...hs.filter(h => !h.feito).map(h => ["○", C.apagado, h.titulo, C.tinta]),
-  ];
-  const MAX = 4;
-  if (!itens.length) { dir.addSpacer(); txt(dir, "tudo feito hoje 💃", 15, C.creme, true); }
-  itens.slice(0, itens.length > MAX ? MAX - 1 : MAX).forEach((x, n) => { if (n) dir.addSpacer(3); item(dir, ...x); });
-  if (itens.length > MAX) { dir.addSpacer(3); item(dir, "+", C.apagado, `mais ${itens.length - MAX + 1} no app`, C.apagado); }
+  const estrela = ts.filter(t => t.foco);
+  const mostra = estrela.slice(0, MAX_PILULAS);
+  const resto = ts.length - mostra.length + (hs.length - feitos);
+  mostra.forEach((t, n) => { if (n) dir.addSpacer(5); pilula(dir, "★ " + t.titulo, C.creme, C.cremeTinta); });
+  if (resto > 0) { if (mostra.length) dir.addSpacer(5); pilula(dir, `+ ${resto} coisinha${resto === 1 ? "" : "s"}`, C.card, C.rosa, C.linha); }
   dir.addSpacer();
 
   linha.addSpacer();
