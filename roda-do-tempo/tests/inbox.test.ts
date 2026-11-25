@@ -45,7 +45,7 @@ describe('caixa de entrada', () => {
     ], { members, gamification: true });
     expect(counts).toEqual({ event: 1, task: 1, list_item: 2 });
     const ev = s.all('events')[0];
-    expect(ev.start_time).toBe('15:00'); expect(ev.all_day).toBe(false); expect(ev.reminders).toEqual([60]);
+    expect(ev.start_time).toBe('15:00'); expect(ev.all_day).toBe(false); expect(ev.reminders).toEqual([1440, 15]);
     expect(s.all('tasks')[0].assignee).toBe('both');
     expect(s.all('lists')).toHaveLength(1); // reaproveita a lista pelo nome (sem acento/maiúscula)
     expect(countsText(counts)).toBe('1 checkpoint, 1 missão, 2 itens de lista');

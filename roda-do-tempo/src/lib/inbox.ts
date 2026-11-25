@@ -59,7 +59,7 @@ export function applyItems(s: Store, items: InboxItem[], opts: { members: Member
       s.save('events', {
         title: it.title, date: it.date!, start_time: allDay ? null : it.time, end_time: allDay ? null : it.end_time, all_day: allDay,
         location: it.location || undefined, description: desc, participants: ['family'],
-        category: EVENT_CATS.some((c) => c.value === it.category) ? it.category! : 'familia', reminders: [it.reminder_minutes ?? (allDay ? 1440 : 60)],
+        category: EVENT_CATS.some((c) => c.value === it.category) ? it.category! : 'familia', reminders: [...new Set([1440, 15, ...(it.reminder_minutes != null ? [it.reminder_minutes] : [])])],
       });
       inc('event');
     } else if (it.kind === 'list_item') {

@@ -1,50 +1,27 @@
-# Notificações push com o app fechado (opcional)
+# Notificações push (com o app fechado)
 
-Sem esta configuração, o app já avisa:
-- na **central de notificações** (sininho), sincronizada entre aparelhos;
-- com **notificação do sistema** enquanto o app está aberto ou em segundo plano recente.
+**Já configurado no projeto da família.** Como funciona:
 
-Para receber avisos com o app **fechado** (inclusive no iPhone com o app instalado na tela de início, iOS 16.4+):
+- `rdt_generate_reminders()` roda a cada 5 minutos (pg_cron) e cria avisos de:
+  missões do dia, compromissos (padrão: 1 dia antes e 15 minutos antes), consultas/vacinas da filha
+  (véspera às 18h e no dia às 7h) e cápsulas do tempo que abriram.
+- Os avisos imediatos (missão atribuída, carta nova, lista alterada, desejo realizado, aventura concluída)
+  são criados por gatilhos no banco.
+- A Edge Function `rdt-push` roda a cada minuto e entrega os avisos novos como push nos aparelhos inscritos.
+- As chaves VAPID e o segredo do agendador ficam na tabela protegida `rdt_push_config` (só o servidor lê);
+  a chave pública VAPID fica em `.env.production` (`VITE_VAPID_PUBLIC_KEY`).
 
-## 1. Chaves VAPID
+## Para cada pessoa ativar
 
-```bash
-npx web-push generate-vapid-keys
-```
+- **iPhone (iOS 16.4+):** abra o app no Safari → Compartilhar → *Adicionar à Tela de Início*. Abra pelo ícone,
+  vá em **Nossa família → Notificações → Avisos do sistema (push)** e permita.
+- **Android / computador:** **Nossa família → Notificações → Avisos do sistema (push)** e permita no navegador.
 
-- A chave **pública** vai no `.env.local` do app: `VITE_VAPID_PUBLIC_KEY=...` (e rode `npm run build:pages` de novo).
-- As duas vão como segredos da Edge Function (passo 2).
+Cada aparelho precisa ativar uma vez. Os tipos de aviso podem ser ligados/desligados na mesma tela.
 
-## 2. Edge Function `rdt-push`
+## Reconfigurar em outro projeto
 
-```bash
-npx supabase login
-npx supabase link --project-ref SEU_PROJECT_REF
-npx supabase secrets set VAPID_PUBLIC_KEY=... VAPID_PRIVATE_KEY=... VAPID_SUBJECT=mailto:voce@exemplo.com CRON_SECRET=$(openssl rand -hex 24)
-npx supabase functions deploy rdt-push --no-verify-jwt
-```
-
-## 3. Agendamento
-
-No Supabase, ative as extensões **pg_cron** e **pg_net** (Database → Extensions). Depois, no SQL Editor:
-
-```sql
--- lembretes de missões do dia e cápsulas liberadas
-\i supabase/migrations/0002_lembretes_no_servidor.sql   -- (ou cole o conteúdo)
-
--- entrega por push a cada 5 minutos (troque REF e o CRON_SECRET)
-select cron.schedule('rdt-push', '*/5 * * * *', $$
-  select net.http_post(
-    url := 'https://REF.supabase.co/functions/v1/rdt-push',
-    headers := jsonb_build_object('Authorization', 'Bearer SEU_CRON_SECRET')
-  );
-$$);
-```
-
-## 4. No app
-
-**Nossa família → Notificações → Avisos do sistema (push)**. Cada pessoa escolhe quais tipos de aviso quer receber.
-
-Os lembretes de compromissos do calendário e de consultas/vacinas são gerados pelo app (com ele aberto em algum aparelho).
-O servidor gera os de missões do dia e de cápsulas, além dos avisos imediatos (missão atribuída, carta nova,
-lista alterada — no máximo um por lista por hora —, desejo realizado e aventura concluída).
+1. Rode `0002a_push_config.sql` e `0002_lembretes_no_servidor.sql` (ajuste a URL da função).
+2. Gere chaves com `npx web-push generate-vapid-keys` e insira em `rdt_push_config` junto com um segredo aleatório.
+3. Publique a função: `npx supabase functions deploy rdt-push --no-verify-jwt`.
+4. Coloque a chave pública em `VITE_VAPID_PUBLIC_KEY` e gere o build.

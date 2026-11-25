@@ -37,7 +37,11 @@ export function computeReminders(meId: string | undefined, prefs: UserPrefs, now
       if (e.participants.length && meId && !e.participants.includes(meId) && !e.participants.includes('family')) continue;
       for (const m of e.reminders || []) {
         const at = zonedToDate(o.date, e.all_day || !e.start_time ? '09:00' : e.start_time).getTime() - (e.all_day ? 0 : 0);
-        if (ms >= at - m * 60e3 && ms < at) out.push({ key: `ev:${e.id}:${o.date}:${m}`, type: 'event_soon', title: 'Checkpoint chegando', body: `${e.title}${e.start_time && !e.all_day ? ' · ' + e.start_time : ''}`, link: `/checkpoints?d=${o.date}` });
+        const from = at - m * 60e3;
+        if (ms >= from && ms < Math.min(at, from + 2 * 3600e3)) {
+          const title = m >= 1440 ? (o.date === addDays(t0, 1) ? 'Amanhã tem checkpoint' : 'Checkpoint chegando') : `Daqui a ${m} min`;
+          out.push({ key: `ev:${e.id}:${o.date}:${m}`, type: 'event_soon', title, body: `${e.title}${e.start_time && !e.all_day ? ' · ' + e.start_time : ''}`, link: `/checkpoints?d=${o.date}` });
+        }
       }
     }
   }
@@ -71,7 +75,8 @@ export function useReminders() {
         const id = deterministicId(`${s.userId}:${p.key}`);
         if (st.data.notifications.has(id)) continue;
         st.save('notifications', { id, user_id: s.userId, type: p.type, title: p.title, body: p.body, link: p.link, key: p.key });
-        systemNotify(p.title, p.body, p.link);
+        // com push ligado, quem entrega é o servidor (em todos os aparelhos); senão, o app avisa enquanto aberto
+        if (!(s.mode === 'cloud' && s.prefs.push)) systemNotify(p.title, p.body, p.link);
       }
     };
     const first = setTimeout(tick, 3000);

@@ -8,7 +8,7 @@ import { avatarOf } from '@/components/Avatar';
 import { Icon, chime } from '@/components/ui';
 import { nowParts } from '@/lib/dates';
 
-const S = 3; // escala do pixel
+let S = 3; // escala do pixel (2 em telas estreitas, para mostrar mais cenário)
 const W = 760; // largura do mundo (px lógicos)
 const H = 90;  // altura lógica
 const GROUND = 76;
@@ -80,7 +80,7 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
     const dusk = hour >= 17 && hour < 19;
 
     const resize = () => {
-      const w = wrap.current!.clientWidth; vw = Math.min(W, Math.ceil(w / S));
+      const w = wrap.current!.clientWidth; S = w < 640 ? 2 : 3; vw = Math.min(W, Math.ceil(w / S));
       c.width = vw * S; c.height = H * S; c.style.width = `${vw * S}px`; c.style.height = `${H * S}px`;
       ctx.imageSmoothingEnabled = false;
     };
@@ -214,6 +214,17 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
         className="relative w-full overflow-hidden rounded-xl bg-[#BFDCEA] outline-none focus-visible:ring-[3px] focus-visible:ring-sun"
         role="application" aria-label="Minigame: use as setas ou A e D para andar, espaço para pular e Enter para entrar nos lugares">
         <canvas ref={canvas} className="block pixelated mx-auto" />
+        {/* controles de toque, por cima do jogo (no celular) */}
+        <div className="md:hidden absolute inset-x-0 bottom-0 p-2 flex items-end justify-between pointer-events-none select-none">
+          <div className="flex gap-2 pointer-events-auto">
+            <button className="game-btn" aria-label="Esquerda" {...hold('l')}><Icon name="left" size={20} /></button>
+            <button className="game-btn" aria-label="Direita" {...hold('r')}><Icon name="right" size={20} /></button>
+          </div>
+          <div className="flex gap-2 pointer-events-auto">
+            <button className="game-btn !bg-sun !text-[#3A2A10]" aria-label="Pular" onPointerDown={(e) => { e.preventDefault(); input.current.jump = true; }}><Icon name="up" size={20} /></button>
+            <button className={`game-btn font-bold ${near ? '!bg-terra !text-white' : ''}`} aria-label={near ? `Entrar: ${near.label}` : 'Interagir'} onPointerDown={(e) => { e.preventDefault(); input.current.act = true; }}>{near ? 'Entrar' : 'A'}</button>
+          </div>
+        </div>
         {!focused && <div className="absolute bottom-2 left-2 hidden md:block text-[11px] font-medium bg-panel/90 px-2 py-1 rounded-md shadow-pxs pointer-events-none">Clique para jogar · ← → espaço · Enter entra</div>}
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
@@ -225,17 +236,6 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
             </select></label>
         )}
         {near && <button className="hidden md:inline-flex btn-primary btn-sm ml-auto" onClick={() => nav(near.to)}>Entrar: {near.label}</button>}
-      </div>
-      <div className="flex md:hidden items-center justify-between gap-2 mt-3">
-        <div className="flex gap-2">
-          <button className="btn-icon w-14 h-14 touch-none" aria-label="Esquerda" {...hold('l')}><Icon name="left" size={20} /></button>
-          <button className="btn-icon w-14 h-14 touch-none" aria-label="Direita" {...hold('r')}><Icon name="right" size={20} /></button>
-        </div>
-        {near && <span className="pixel text-[13px] text-terra text-center">{near.label}</span>}
-        <div className="flex gap-2">
-          <button className="btn-sun w-14 h-14 px-0 touch-none" aria-label="Pular" onPointerDown={(e) => { e.preventDefault(); input.current.jump = true; }}><Icon name="up" size={20} /></button>
-          <button className={`btn-icon w-14 h-14 touch-none ${near ? '!bg-terra text-white' : ''}`} aria-label={near ? `Entrar: ${near.label}` : 'Interagir'} onPointerDown={(e) => { e.preventDefault(); input.current.act = true; }}>A</button>
-        </div>
       </div>
     </div>
   );
