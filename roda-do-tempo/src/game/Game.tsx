@@ -46,6 +46,9 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
   const input = useRef({ l: false, r: false, jump: false, act: false });
   const cb = useRef({ onStar, sounds, nav }); cb.current = { onStar, sounds, nav };
   const player = playable.find((m) => m.id === who) || playable[0];
+  // dados que mudam com frequência ficam numa ref: o jogo não reinicia a cada sincronização
+  const live = useRef({ members, unlocked, player });
+  live.current = { members, unlocked, player };
 
   useEffect(() => {
     const c = canvas.current!, ctx = c.getContext('2d')!;
@@ -57,8 +60,21 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
     const stars = starSpots();
     const sparks: { x: number; y: number; t: number }[] = [];
     let cam = 0, respawn = 0;
-    const npcs = members.filter((m) => m.id !== player?.id && m.kind !== 'pet').map((m, i) => ({ m, x: 14 + i * 20, dir: 1, t: Math.random() * 100, f: 0 }));
-    const pet = members.find((m) => m.kind === 'pet');
+    let unlocked = live.current.unlocked;
+    let npcs: { m: Member; x: number; dir: number; t: number; f: number }[] = [];
+    let pet: Member | undefined;
+    let crewKey = '';
+    const syncCrew = () => {
+      const ms = live.current.members;
+      const key = ms.map((m) => m.id + m.updated_at).join('|') + (live.current.player?.id || '');
+      if (key === crewKey) return;
+      crewKey = key;
+      const old = new Map(npcs.map((n) => [n.m.id, n]));
+      npcs = ms.filter((m) => m.id !== live.current.player?.id && m.kind !== 'pet')
+        .map((m, i) => ({ ...(old.get(m.id) || { x: 14 + i * 20, dir: 1, t: Math.random() * 100, f: 0 }), m }));
+      pet = ms.find((m) => m.kind === 'pet');
+    };
+    syncCrew();
     const { hour } = nowParts();
     const night = hour >= 19 || hour < 6;
     const dusk = hour >= 17 && hour < 19;
@@ -102,6 +118,8 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
     const loop = (now: number) => {
       if (!visible) return;
       const dt = Math.min(2.5, (now - last) / 16.67); last = now;
+      unlocked = live.current.unlocked; syncCrew();
+      const player = live.current.player;
       const inp = input.current;
       // física
       const speed = 1.4;
@@ -173,7 +191,7 @@ export function Game({ members, unlocked, onStar, sounds, reduceMotion }: Props)
     };
     raf = requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); visible = false; };
-  }, [player?.id, members, unlocked, reduceMotion]);
+  }, [player?.id, reduceMotion]);
 
   // teclado: só quando o jogo está focado (não atrapalha o resto do app)
   const onKey = (down: boolean) => (e: React.KeyboardEvent) => {

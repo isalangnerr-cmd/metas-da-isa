@@ -37,7 +37,8 @@ export function Home() {
   const reminders = recs.filter((r) => ['consult', 'vaccine', 'reminder'].includes(r.kind) && ((r.date >= t && r.date <= addDays(t, 7)) || (r.data?.next_date && r.data.next_date >= t && r.data.next_date <= addDays(t, 7))));
   const weekDone = comps.filter((c) => c.date >= addDays(t, -6)).length;
   const stars = starTotals(getStore());
-  const unlocked = ACHIEVEMENTS.filter((a) => a.unlock && ach.some((x) => x.key === a.key)).map((a) => a.unlock!);
+  const unlockedKey = ACHIEVEMENTS.filter((a) => a.unlock && ach.some((x) => x.key === a.key)).map((a) => a.unlock!).join(',');
+  const unlocked = useMemo(() => (unlockedKey ? unlockedKey.split(',') : []), [unlockedKey]);
   const pad = (n: number) => String(n).padStart(2, '0');
   const pets = members.filter((m) => m.kind === 'pet').length;
 
