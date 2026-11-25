@@ -160,13 +160,13 @@ function Agenda({ from, events, onOpen }: { from: string; events: CalEvent[]; on
   );
 }
 
-const REMINDER_OPTS = [[10, '10 min'], [30, '30 min'], [60, '1 h'], [180, '3 h'], [1440, '1 dia'], [10080, '1 semana']] as const;
+const REMINDER_OPTS = [[15, '15 min'], [30, '30 min'], [60, '1 h'], [180, '3 h'], [1440, '1 dia'], [10080, '1 semana']] as const;
 
 export function EventEditor({ ev, occ, onClose }: { ev: Partial<CalEvent>; occ?: string; onClose: () => void }) {
   const ui = useUI(); const st = getStore();
   const advs = useTable('adventures');
   const isNew = !ev.id;
-  const [e, setE] = useState<Partial<CalEvent>>({ title: '', date: today(), all_day: false, start_time: '10:00', end_time: '11:00', participants: ['family'], category: 'familia', reminders: [30], ...ev });
+  const [e, setE] = useState<Partial<CalEvent>>({ title: '', date: today(), all_day: false, start_time: '10:00', end_time: '11:00', participants: ['family'], category: 'familia', reminders: [1440, 15], ...ev });
   const [err, setErr] = useState<string | null>(null);
   const set = (p: Partial<CalEvent>) => setE((x) => ({ ...x, ...p }));
   const recurring = !!ev.recurrence && ev.recurrence.freq !== 'none';

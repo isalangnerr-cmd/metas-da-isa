@@ -15,8 +15,8 @@ export function seedExamples(s: Store, members: Member[]) {
     { ...base, title: 'Passear com a cachorrinha', assignee: 'family', category: 'pet', due_date: t, recurrence: { freq: 'daily' } },
   ]);
   s.saveMany('events', [
-    { title: 'Piquenique em família', date: addDays(t, 2), start_time: '10:00', end_time: '13:00', all_day: false, participants: ['family'], category: 'familia', reminders: [60], example: true },
-    { title: 'Uma noite só nossa', date: addDays(t, 4), start_time: '20:00', end_time: '23:00', all_day: false, participants: adults.map((a) => a.id), category: 'casal', reminders: [180], example: true },
+    { title: 'Piquenique em família', date: addDays(t, 2), start_time: '10:00', end_time: '13:00', all_day: false, participants: ['family'], category: 'familia', reminders: [1440, 15], example: true },
+    { title: 'Uma noite só nossa', date: addDays(t, 4), start_time: '20:00', end_time: '23:00', all_day: false, participants: adults.map((a) => a.id), category: 'casal', reminders: [1440, 15], example: true },
   ]);
   const a = s.save('adventures', { name: 'Nossa próxima viagem', cover: 'beach', participants: ['family'], status: 'active', links: [], notes: '', example: true });
   s.saveMany('tasks', ['Escolher destino', 'Definir orçamento', 'Reservar hospedagem', 'Comprar passagens', 'Preparar roteiro', 'Organizar malas']

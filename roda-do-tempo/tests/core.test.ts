@@ -224,3 +224,33 @@ describe('regras do jogo', () => {
     expect(st.sumAll).toBe(20); expect(st.sumOpen).toBe(10); expect(st.sumDone).toBe(10); expect(st.done).toBe(1);
   });
 });
+
+import { computeReminders } from '@/lib/reminders';
+import { setStore } from '@/data/store';
+import { DEFAULT_PREFS } from '@/data/prefs';
+import { zonedToDate as z2d } from '@/lib/dates';
+
+describe('lembretes de compromissos (1 dia e 15 min antes)', () => {
+  beforeEach(() => localStorage.clear());
+  const setup = async () => {
+    const s = new Store(new LocalBackend(), 'fam', 'u'); await s.start(); setStore(s);
+    s.save('events', { title: 'Dentista', date: '2026-12-10', start_time: '15:00', end_time: '16:00', all_day: false, participants: ['family'], category: 'consulta', reminders: [1440, 15] });
+    return s;
+  };
+  const at = (date: string, time: string) => computeReminders(undefined, DEFAULT_PREFS, z2d(date, time)).filter((r) => r.type === 'event_soon');
+  it('avisa na véspera, no horário', async () => {
+    await setup();
+    const r = at('2026-12-09', '15:05');
+    expect(r).toHaveLength(1); expect(r[0].title).toBe('Amanhã tem checkpoint');
+  });
+  it('avisa 15 minutos antes', async () => {
+    await setup();
+    const r = at('2026-12-10', '14:50');
+    expect(r.map((x) => x.title)).toEqual(['Daqui a 15 min']);
+  });
+  it('não manda o aviso de véspera atrasado (janela de 2h)', async () => {
+    await setup();
+    expect(at('2026-12-10', '09:00')).toHaveLength(0);
+    expect(at('2026-12-10', '15:01')).toHaveLength(0);
+  });
+});
