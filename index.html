@@ -37,7 +37,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15p
   position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column}
 /* iPhone com o app na tela de início: às vezes sobra uma faixa embaixo onde o app não consegue desenhar.
    O iPhone pinta essa faixa com a cor do app (#2E0F17), então o menu usa essa mesma cor pra emendar, e não soma o espaço da barrinha do iPhone (a faixa já cumpre esse papel). */
-html.faixa .tabs{padding-bottom:8px!important;background:var(--bg)!important}
+html .tabs{background:var(--bg)!important}
+html.faixa .tabs{padding-bottom:8px!important}
 /* só o conteúdo rola; o menu de baixo fica fora da rolagem (no iPhone o position:fixed às vezes subia junto) */
 .rola{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -1839,10 +1840,17 @@ function tick(){
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.warn('sw', e));
 function faixaIphone(){
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent), standalone = navigator.standalone || matchMedia('(display-mode: standalone)').matches;
-  const em_pe = innerHeight >= innerWidth, falta = (em_pe ? screen.height : screen.width) - innerHeight;
+  const vv = window.visualViewport ? visualViewport.height : innerHeight;
+  const visto = Math.min(innerHeight, vv, document.documentElement.clientHeight || innerHeight, document.body ? document.body.getBoundingClientRect().height || innerHeight : innerHeight);
+  const em_pe = innerWidth < (em_pe_ref()), falta = (em_pe ? screen.height : screen.width) - visto;
   document.documentElement.classList.toggle('faixa', ios && standalone && falta > 20);
 }
-faixaIphone(); addEventListener('resize', faixaIphone); addEventListener('orientationchange', () => setTimeout(faixaIphone, 300));
+function em_pe_ref(){ return Math.max(screen.width, screen.height) * 0.75; }
+/* o iPhone às vezes só informa a altura certa um pouco depois de abrir: mede de novo algumas vezes */
+const remede = () => [0, 300, 1000, 2500].forEach(t => setTimeout(faixaIphone, t));
+remede(); addEventListener('resize', faixaIphone); addEventListener('orientationchange', remede);
+addEventListener('pageshow', remede); document.addEventListener('visibilitychange', () => { if(!document.hidden) remede(); });
+if(window.visualViewport) visualViewport.addEventListener('resize', faixaIphone);
 boot();
 })();
 </script>
