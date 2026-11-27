@@ -123,7 +123,7 @@ main{padding-top:18px;display:grid;gap:22px}
 .addf{margin-top:10px;align-items:stretch}
 .addf select.field{flex:1 1 120px}
 .ver-tudo{border:0;background:none;color:var(--roxo);font-weight:800;font-size:13px;padding:4px 0}
-body[data-view="rotina"] .fab,body[data-view="leituras"] .fab{display:none}
+body[data-view="rotina"] .fab,body[data-view="leituras"] .fab,body[data-view="diario"] .fab{display:none}
 body:not([data-view="hoje"]) .top .stats,body:not([data-view="hoje"]) .top .nivel{display:none}
 .leit-hero{background:linear-gradient(135deg,color-mix(in srgb,var(--a-eu) 18%,var(--surface)),var(--surface));border:2px solid color-mix(in srgb,var(--a-eu) 45%,var(--line));border-radius:var(--r);padding:14px;display:grid;gap:10px;box-shadow:var(--shadow)}
 .leit-hero h2{color:var(--a-eu)}
@@ -308,7 +308,7 @@ body:not([data-view="hoje"]) .top .stats,body:not([data-view="hoje"]) .top .nive
 /* abas */
 .tabs{position:relative;flex:none;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-top:1.5px solid var(--line);
   padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
-.tabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:2px}
 .tab{border:0;background:none;border-radius:14px;padding:6px 4px;display:grid;justify-items:center;gap:2px;font-size:11px;font-weight:800;color:var(--muted);min-width:0}
 .tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .tab[aria-current="page"]{color:var(--roxo);background:var(--surface2)}
@@ -531,14 +531,107 @@ h1,h2{font-weight:700}
 .toast{background:var(--creme);color:var(--creme-ink);border:2.5px solid var(--sticker)}
 .toast.big{background:var(--cereja);color:#fff}
 .trofeu{border-color:var(--sticker)}
+
+/* ================= DIÁRIO ================= */
+.btn[disabled]{opacity:.55;cursor:default}
+.org-btn{color:var(--ink);font-weight:800}
+.diario-lembrete{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:var(--creme);color:var(--creme-ink);border:3px solid var(--sticker);border-radius:var(--r);padding:12px 14px;box-shadow:var(--shadow);margin-bottom:14px}
+.diario-lembrete .dl-ic{font-size:28px;line-height:1}
+.diario-lembrete b{display:block;font-family:var(--display);font-size:17px;font-weight:600}
+.diario-lembrete small{display:block;font-weight:700;font-size:12.5px;opacity:.8}
+.diario-lembrete .st{color:var(--cereja)}
+.diario-lembrete .dl-seta{margin-left:auto;font-weight:800;font-size:20px}
+.caderno{position:relative;background:var(--creme);color:var(--creme-ink);border:3px solid var(--sticker);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 16px 16px 30px;display:grid;gap:12px;margin-bottom:22px;overflow:hidden}
+.caderno::before{content:"";position:absolute;top:0;bottom:0;left:18px;width:2px;background:color-mix(in srgb,var(--cereja) 55%,transparent)}
+.caderno .humor-q{font-family:var(--display);font-weight:600;font-size:17px}
+.humores{display:flex;gap:6px;justify-content:space-between;max-width:340px}
+.hum{flex:1;aspect-ratio:1;max-width:56px;border-radius:50%;border:2px solid color-mix(in srgb,var(--creme-ink) 25%,transparent);background:color-mix(in srgb,#fff 45%,var(--creme));font-size:26px;line-height:1;display:grid;place-items:center;padding:0;filter:grayscale(.35);transition:transform .12s}
+.hum[aria-pressed="true"]{background:var(--cereja);border-color:var(--sticker);filter:none;transform:scale(1.12);box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.pg{display:grid;gap:2px}
+.pg-q{font-family:var(--display);font-weight:600;font-size:16px;line-height:1.25;color:#8A1F35}
+.pg textarea{width:100%;border:0;outline:0;resize:vertical;background:transparent;color:var(--creme-ink);font:600 16px/1.9em var(--body);padding:0 2px;min-height:5.7em;
+  background-image:linear-gradient(transparent calc(1.9em - 1px),color-mix(in srgb,var(--cereja) 32%,transparent) calc(1.9em - 1px),color-mix(in srgb,var(--cereja) 32%,transparent) 1.9em);background-size:100% 1.9em;background-attachment:local}
+.pg textarea::placeholder{color:color-mix(in srgb,var(--creme-ink) 40%,transparent)}
+.pg textarea:focus-visible{outline:none}
+.pg:focus-within .pg-q{color:var(--cereja)}
+.caderno .actions{margin-top:2px}
+.mes-diario{margin-bottom:18px}
+.mes-nav{display:flex;align-items:center;gap:8px}
+.mes-nav b{font-family:var(--display);font-weight:600;min-width:84px;text-align:center}
+.mes-nav .chip{min-width:36px;font-size:18px;line-height:1}
+.mes-nav .chip[disabled]{opacity:.35}
+.dstats{grid-template-columns:repeat(3,1fr)!important}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:10px}
+.cal-h{text-align:center;font-size:11.5px;font-weight:800;color:var(--muted)}
+.cal-d,.cal-v{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;position:relative;padding:0;min-width:0}
+.cal-d{background:var(--surface);border:1.5px solid var(--line);color:var(--muted)}
+.cal-d small{position:absolute;top:3px;left:5px;font-size:10px;font-weight:800}
+.cal-d span{font-size:clamp(16px,5vw,24px);line-height:1;margin-top:6px}
+.cal-d.tem{background:var(--creme);border-color:var(--sticker);color:var(--creme-ink)}
+.cal-d.hoje{box-shadow:0 0 0 2.5px var(--cereja)}
+.cal-d.sel{transform:scale(1.08);box-shadow:0 0 0 3px var(--cereja)}
+.dia-ver{background:var(--creme);color:var(--creme-ink);border:3px solid var(--sticker);border-radius:18px;padding:12px 14px;display:grid;gap:6px;margin-bottom:12px}
+.dia-ver p{margin:0;font-weight:600}
+.dia-ver p small{display:block;font-weight:800;color:#8A1F35;font-size:12.5px}
+.dia-ver .chip{justify-self:start}
+.dia-ver .nivel-row span{color:var(--creme-ink);font-weight:700}
+.ia-mes{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 14px;display:grid;gap:8px;margin-bottom:10px}
+.ia-mes h4{margin:0;font-family:var(--display);font-weight:600;font-size:16px}
+.ia-mes h4 .st{color:var(--cereja)}
+.ia-mes p{margin:0}
+.temas{display:flex;flex-wrap:wrap;gap:6px}
+.tema{background:var(--creme);color:var(--creme-ink);border-radius:99px;padding:4px 10px;font-size:13px}
+.tema small{opacity:.7;font-weight:800}
+
+/* ================= ORGANIZAR ================= */
+.panel.org{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+.org-txt{width:100%;font-size:16px;min-height:120px}
+.org-imgs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.org-imgs span{position:relative}
+.org-imgs img{width:72px;height:72px;object-fit:cover;border-radius:12px;border:2px solid var(--sticker);display:block}
+.org-imgs button{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;border:2px solid var(--sticker);background:var(--cereja);color:#fff;font-weight:900;line-height:1;padding:0}
+.org-acoes{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+.org-acoes .ouvindo{border-color:var(--cereja);color:var(--cereja);animation:pulsa 1.2s infinite}
+@keyframes pulsa{50%{opacity:.55}}
+.org-msg{color:var(--creme);font-weight:700;font-size:14px}
+.org-lendo{text-align:center;padding:28px 0}
+.org-lendo p{margin:6px 0 0;font-weight:700}
+.org-spin{display:inline-block;font-size:34px;color:var(--cereja);animation:gira 1.4s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.org-resp{font-weight:700;margin:0 0 10px}
+.org-duv{background:var(--surface);border:1.5px dashed var(--line);border-radius:14px;padding:8px 12px;margin-bottom:10px}
+.org-duv p{margin:4px 0;font-size:14px}
+.org-lista{display:grid;gap:10px}
+.org-card{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:10px 12px;display:grid;gap:6px}
+.org-card.off{opacity:.5}
+.org-card .field{width:100%;font-size:16px}
+.org-chk{display:flex;align-items:center;gap:8px;font-weight:800}
+.org-chk input{width:20px;height:20px;accent-color:var(--cereja)}
+.org-t{font-weight:800}
+.org-onde{color:var(--muted);font-weight:700;font-size:12.5px}
+.org-trecho{color:var(--muted);font-style:italic;font-size:12.5px}
+.org-row{display:flex;gap:6px;flex-wrap:wrap}
+.org-row>.field{flex:1 1 110px;min-width:0}
+.org-mini{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13px;color:var(--muted)}
+.org-mini .field{width:auto;flex:1}
+.org-feito{list-style:none;margin:0 0 6px;padding:0;display:grid;gap:8px}
+.org-feito li{display:flex;gap:10px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:10px 12px}
+.org-feito li>span:first-child{font-weight:900;font-size:18px;line-height:1.2}
+.org-feito li.ok>span:first-child{color:var(--creme)}
+.org-feito li.erro>span:first-child{color:var(--cereja)}
+.org-feito b{display:block}
+.org-feito small{display:block;color:var(--muted);font-weight:700}
+.org-feito .btn{margin-top:8px;min-height:34px;padding:6px 12px;font-size:13px;text-decoration:none}
+@media (max-width:380px){.tab{font-size:10px}.tab svg{width:20px;height:20px}}
 @media (prefers-reduced-motion:reduce){.pote,.seq,.selo{transform:none}}
+@media (prefers-reduced-motion:reduce){.org-spin,.org-acoes .ouvindo{animation:none}}
 </style>
 </head><body>
 <div class="rola" id="rola"><div class="wrap">
   <header class="top">
     <div class="brand">
       <div class="logo"><svg class="st" viewBox="0 0 24 24"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"/></svg>metas da isa</div>
-      <button class="icon-btn" id="somBtn" data-act="som" aria-label="Ligar ou desligar o som">som: on</button>
+      <button class="icon-btn org-btn" data-act="organizar" aria-label="Organizar: colar um recado, mandar foto ou falar">📥 organizar</button>
     </div>
     <div class="stats">
       <div class="pote" id="pote">
@@ -555,6 +648,7 @@ h1,h2{font-weight:700}
 <nav class="tabs" aria-label="Seções"><div class="in">
   <button class="tab" data-tab="hoje" aria-current="page"><svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>hoje</button>
   <button class="tab" data-tab="rotina"><svg viewBox="0 0 24 24"><path d="M3.5 6.5l2 2 3.5-3.5M3.5 14l2 2 3.5-3.5M12 7h8.5M12 14.5h8.5M5 20.5h.01M12 20.5h8.5"/></svg>rotina</button>
+  <button class="tab" data-tab="diario"><svg viewBox="0 0 24 24"><path d="M6 3.5h11.5a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 6 3.5z"/><path d="M8.5 3.5v17M11.5 8.5h4M11.5 12h4"/></svg>diário</button>
   <button class="tab" data-tab="leituras"><svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 3.5 4.5v14c4.5 0 7 .5 8.5 2 1.5-1.5 4-2 8.5-2v-14c-4.5 0-7 .5-8.5 2z"/><path d="M12 6.5v14"/></svg>leituras</button>
   <button class="tab" data-tab="metas"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg>metas</button>
   <button class="tab" data-tab="pote"><svg viewBox="0 0 24 24"><path d="M7 4h10M8 4v3c-2 1-3 3-3 5v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6c0-2-1-4-3-5V4"/><path d="M12 11l1 2 2 .3-1.5 1.4.4 2.1-1.9-1-1.9 1 .4-2.1L9 13.3l2-.3z"/></svg>prêmios</button>
@@ -642,9 +736,8 @@ const VIVAS = ['riscado. que delícia riscar 🤏','mais uma pro pote ✦','come
 const FRASES = ['não precisa dar conta de tudo. precisa dar um passinho.','meta grande se come pelas beiradas 🤏','5 minutos no cochilo também contam.','feito é melhor que perfeito.','hoje vale até o passinho mais bobo.','você não tá atrasada, tá no seu tempo 🥹','não deixa o foguinho apagar hoje 🔥'];
 const EX = JSON.parse(document.getElementById('exemplos').textContent);
 
-const state = {metas:{}, habitos:{}, tarefas:{}, livros:{}, geral:null, loaded:{metas:false,geral:false}, mode:'loading', slow:false};
+const state = {metas:{}, habitos:{}, tarefas:{}, livros:{}, diario:{}, diarioMes:{}, geral:null, loaded:{metas:false,geral:false}, mode:'loading', slow:false};
 const ui = {tab:'hoje', tempo:0, horiz:'todos', area:'todas', open:new Set(), confirm:null, ai:{}, edit:null};
-let som = true; try{ som = localStorage.getItem('metas-som') !== 'off'; }catch(e){}
 
 /* ---------- utils ---------- */
 const $ = s => document.querySelector(s);
@@ -688,7 +781,7 @@ function queueWrite(key, run){
     .catch(e => { console.error(e); toast(e && e.code==='quota_exceeded' ? 'o espaço encheu. apague metas antigas pra continuar.' : 'não consegui salvar agora. tenta de novo daqui a pouco.'); })
     .finally(() => { dirty[key]--; });
 }
-function saveLocal(){ try{ localStorage.setItem(LS, JSON.stringify({metas:state.metas, habitos:state.habitos, tarefas:state.tarefas, livros:state.livros, geral:state.geral})); }catch(e){} }
+function saveLocal(){ try{ localStorage.setItem(LS, JSON.stringify({metas:state.metas, habitos:state.habitos, tarefas:state.tarefas, livros:state.livros, diario:state.diario, diarioMes:state.diarioMes, geral:state.geral})); }catch(e){} }
 function saveDoc(col, id){
   if(state.mode==='local') return saveLocal();
   queueWrite(col+'/'+id, () => state[col][id] ? db.doc(col+'/'+id).set(clone(state[col][id])) : db.doc(col+'/'+id).delete());
@@ -711,7 +804,7 @@ function saveGeral(){
 }
 function startLocal(){
   state.mode='local'; let saved=null; try{ saved = JSON.parse(localStorage.getItem(LS)||'null'); }catch(e){}
-  if(saved){ state.habitos = saved.habitos || {}; state.tarefas = saved.tarefas || {}; state.livros = saved.livros || {}; }
+  if(saved){ state.habitos = saved.habitos || {}; state.tarefas = saved.tarefas || {}; state.livros = saved.livros || {}; state.diario = saved.diario || {}; state.diarioMes = saved.diarioMes || {}; }
   if(saved && saved.metas){ state.metas = saved.metas; state.geral = Object.assign(defGeral(), saved.geral||{}); }
   else { EX.metas.forEach(m => state.metas[m.id] = clone(m)); state.geral = Object.assign(defGeral(), {recompensas: clone(EX.recompensas).map(r=>({...r,exemplo:true}))}); }
   state.loaded = {metas:true, geral:true}; render();
@@ -806,7 +899,7 @@ function startDb(uidv){
     if(!(dirty['estado/geral']>0)) state.geral = snap.exists ? Object.assign(defGeral(), snap.data()) : (state.geral || defGeral());
     if(!snap.metadata.fromCache) state.loaded.geral = true; settle(); render();
   }, e => { clearTimeout(timer); state.err = e.code; render(); });
-  watchCol('habitos'); watchCol('tarefas'); watchCol('livros');
+  watchCol('habitos'); watchCol('tarefas'); watchCol('livros'); watchCol('diario'); watchCol('diarioMes');
 }
 
 /* ---------- ações ---------- */
@@ -1289,10 +1382,330 @@ function vAgenda(semTitulo){
   </section>`;
 }
 
+/* ---------- diário guiado ---------- */
+const PERG_ENERGIA = ['o que te deu energia hoje?','que momento de hoje te encheu o tanque?','quem ou o que te fez sorrir hoje?','qual foi a parte mais leve do seu dia?','o que te recarregou hoje, nem que por 5 minutos?','em que momento você se sentiu mais você hoje?','qual cena de hoje você quer guardar?','o que hoje te deu um gás inesperado?','com quem foi bom estar hoje?','o que te deixou com vontade de continuar hoje?'];
+const PERG_VITORIA = ['qual pequena vitória você quer lembrar?','o que você fez hoje que a isa de ontem ia aplaudir?','qual coisinha você resolveu hoje?','do que você se orgulhou hoje, mesmo que pequeno?','que passinho você deu hoje?','o que deu certo hoje?','que "sim" ou "não" difícil você disse hoje?','o que você cuidou bem hoje (em você, na casa, na pequena)?','qual tarefa chata saiu da frente hoje?','que gentileza você fez ou recebeu hoje?'];
+const PERG_AMANHA = ['o que você faria diferente amanhã?','qual é o único passinho que importa amanhã?','o que você quer tirar do caminho amanhã?','como você quer se sentir amanhã no fim da tarde?','o que pode ficar pra depois amanhã, sem culpa?','que horário de amanhã vai ser só seu?','em que você vai pedir ajuda amanhã?','o que de hoje você quer repetir amanhã?','qual pequeno cuidado com você cabe amanhã?','o que você vai fazer mais devagar amanhã?'];
+const CARAS = ['','😞','😕','😐','🙂','😄'];
+const CARAS_NOME = ['','dia difícil','meio ruim','normal','bom','muito bom'];
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const diaNum = k => Math.round(Date.UTC(+k.slice(0,4), +k.slice(5,7)-1, +k.slice(8,10)) / 864e5);
+/* 3 perguntas novas por dia: cada lista anda num passo diferente, então nenhuma se repete no dia seguinte */
+function perguntasDoDia(k){ const n = diaNum(k); return [PERG_ENERGIA[n % 10], PERG_VITORIA[(n*3+1) % 10], PERG_AMANHA[(n*7+2) % 10]]; }
+const RASC = 'metas-diario-rascunho';
+function rascunho(k){
+  ui.dr = ui.dr || (() => { try{ return JSON.parse(localStorage.getItem(RASC) || '{}'); }catch(e){ return {}; } })();
+  if(!ui.dr[k]){ const e = state.diario[k]; ui.dr[k] = e ? {humor: +e.humor || 0, r: [...(e.respostas || ['','',''])]} : {humor:0, r:['','','']}; }
+  return ui.dr[k];
+}
+function guardaRascunho(){ try{ const k = dk(); localStorage.setItem(RASC, JSON.stringify(ui.dr && ui.dr[k] ? {[k]: ui.dr[k]} : {})); }catch(e){} }
+function setHumor(n){ const d = rascunho(dk()); d.humor = d.humor === n ? 0 : n; guardaRascunho(); render(); }
+function diaSeqDiario(){
+  const d = new Date(); if(!state.diario[dk(d)]) d.setDate(d.getDate()-1);
+  let n = 0; while(state.diario[dk(d)]){ n++; d.setDate(d.getDate()-1); } return n;
+}
+function salvarDiario(){
+  const k = dk(), d = rascunho(k), respostas = d.r.map(x => String(x || '').trim().slice(0, 4000));
+  if(!respostas.some(Boolean)){ toast('escreve pelo menos uma resposta ✦'); return; }
+  const ant = state.diario[k], agora = new Date().toISOString();
+  const e = {id:k, dia:k, humor: d.humor || 0, perguntas: (ant && ant.perguntas) || perguntasDoDia(k), respostas, escritoEm: (ant && ant.escritoEm) || agora, atualizadoEm: agora, pts: (ant && ant.pts) || 0};
+  let ganhou = 0;
+  if(!e.pts){ e.pts = 2; ganhou = 2; const g = clone(state.geral || defGeral()); addStars(g, 2); histAdd(g, k, 1); state.geral = g; saveGeral(); }
+  state.diario[k] = e; saveDoc('diario', k);
+  delete ui.dr[k]; guardaRascunho();
+  if(ganhou){ celebrate(0, false); render(); bump(); toast(`diário de hoje guardado 📔 +${ganhou} ${STAR} · ${pick(['que bom te ler ✦','página escrita, cabeça mais leve 🥹','isso também é cuidar de você ✦'])}`); }
+  else { render(); toast('diário atualizado ✦'); }
+}
+const mesMais = (m, n) => { const d = new Date(+m.slice(0,4), +m.slice(5,7)-1+n, 1); return dk(d).slice(0,7); };
+const nomeMes = m => `${MESES[+m.slice(5,7)-1]}${m.slice(0,4) !== String(new Date().getFullYear()) ? ' de ' + m.slice(0,4) : ''}`;
+function entradasMes(m){ return Object.values(state.diario).filter(e => e && e.dia && e.dia.startsWith(m)).sort((a,b) => a.dia.localeCompare(b.dia)); }
+function vLembreteDiario(){
+  if(state.diario[dk()]) return '';
+  return `<button class="diario-lembrete" data-act="irDiario"><span class="dl-ic" aria-hidden="true">📔</span><span><b>diário de hoje</b><small>3 perguntinhas e uma carinha · +2 ${STAR}</small></span><span class="dl-seta" aria-hidden="true">→</span></button>`;
+}
+function vDiario(){
+  const k = dk(), d = rascunho(k), salvo = state.diario[k], pergs = (salvo && salvo.perguntas) || perguntasDoDia(k);
+  const hojeTxt = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'});
+  const mudou = salvo && (d.humor !== (+salvo.humor || 0) || d.r.some((x,i) => String(x||'').trim() !== String((salvo.respostas||[])[i]||'')));
+  let html = `<section class="hello"><h1>diário ${STAR}</h1><p>${esc(hojeTxt)}${salvo ? ' · página de hoje escrita ✦' : ' · escrever hoje vale +2 ' + STAR}</p></section>
+  <section class="caderno" aria-label="Diário de hoje">
+    <div class="humor-q">como foi o dia?</div>
+    <div class="humores" role="group" aria-label="Humor do dia">${[1,2,3,4,5].map(n => `<button class="hum" data-act="humor" data-n="${n}" aria-pressed="${d.humor===n}" aria-label="${CARAS_NOME[n]}">${CARAS[n]}</button>`).join('')}</div>
+    ${pergs.map((q,i) => `<label class="pg"><span class="pg-q">${esc(q)}</span><textarea id="dr-${i}" data-dr="${i}" rows="3" maxlength="4000" placeholder="escreve aqui…">${esc(d.r[i] || '')}</textarea></label>`).join('')}
+    <div class="actions"><button class="btn red" data-act="salvarDiario" ${salvo && !mudou ? 'disabled' : ''}>${salvo ? (mudou ? 'salvar mudanças' : 'guardado ✦') : `guardar o dia · +2 ${STAR}`}</button></div>
+  </section>`;
+  html += vMesDiario();
+  return html;
+}
+function vMesDiario(){
+  const m = ui.mesDiario || dk().slice(0,7), ents = entradasMes(m), hoje = dk();
+  const humores = ents.map(e => +e.humor).filter(Boolean), media = humores.length ? humores.reduce((a,b)=>a+b,0)/humores.length : 0;
+  const ini = new Date(+m.slice(0,4), +m.slice(5,7)-1, 1), nDias = new Date(+m.slice(0,4), +m.slice(5,7), 0).getDate();
+  const vazio = (ini.getDay()+6) % 7; /* semana começando na segunda */
+  let cel = ''; for(let i=0;i<vazio;i++) cel += '<span class="cal-v"></span>';
+  for(let dd=1; dd<=nDias; dd++){
+    const k = m + '-' + String(dd).padStart(2,'0'), e = state.diario[k];
+    const cls = [e ? 'tem' : '', k === hoje ? 'hoje' : '', ui.diaVer === k ? 'sel' : ''].join(' ');
+    cel += e ? `<button class="cal-d ${cls}" data-act="verDia" data-d="${k}" aria-label="${dd}: ${e.humor ? CARAS_NOME[e.humor] : 'escrito'}"><small>${dd}</small><span>${e.humor ? CARAS[e.humor] : '✎'}</span></button>`
+             : `<span class="cal-d ${cls}"><small>${dd}</small></span>`;
+  }
+  const ver = ui.diaVer && ui.diaVer.startsWith(m) && state.diario[ui.diaVer];
+  const resumo = state.diarioMes[m];
+  const lendo = ui.lerMes && ui.lerMes.m === m ? ui.lerMes : null;
+  let claude = '';
+  if(ents.length >= 3){
+    if(lendo && lendo.st === 'lendo') claude = `<div class="ia-mes"><p>${STAR} o Claude tá lendo o seu mês…</p></div>`;
+    else {
+      if(lendo && lendo.st === 'erro') claude += `<p class="hint">${esc(lendo.msg)}</p>`;
+      if(resumo) claude += `<div class="ia-mes"><h4>${STAR} o que o Claude viu em ${esc(nomeMes(m))}</h4>
+        <div class="temas">${(resumo.temas||[]).map(t => `<span class="tema"><b>${esc(t.tema)}</b> <small class="num">${t.dias} dia${t.dias===1?'':'s'}</small></span>`).join('')}</div>
+        <p>${esc(resumo.reflexao||'')}</p>${resumo.humor ? `<p class="hint">${esc(resumo.humor)}</p>` : ''}
+        <p class="hint num">lido com ${resumo.dias} dia${resumo.dias===1?'':'s'} escritos${resumo.dias < ents.length ? ` · agora são ${ents.length}` : ''}</p></div>`;
+      if(!resumo || resumo.dias < ents.length) claude += `<button class="btn ai" data-act="lerMes" data-m="${m}">${STAR} ${resumo ? 'o Claude lê de novo' : 'o Claude lê o meu mês'}</button>`;
+    }
+  } else claude = `<p class="hint">com 3 dias escritos no mês, o Claude lê tudo e te mostra os temas que mais apareceram ✦</p>`;
+  return `<section class="mes-diario"><div class="sec-h"><h2>como foi o meu mês</h2>
+      <div class="mes-nav"><button class="chip" data-act="mesDiario" data-d="-1" aria-label="Mês anterior">‹</button><b>${esc(nomeMes(m))}</b><button class="chip" data-act="mesDiario" data-d="1" ${m >= dk().slice(0,7) ? 'disabled' : ''} aria-label="Próximo mês">›</button></div></div>
+    <div class="lstats dstats"><div><b class="num">${ents.length}</b><small>dias escritos</small></div><div><b class="num">${diaSeqDiario()}</b><small>dias seguidos</small></div><div><b>${media ? CARAS[Math.round(media)] : '–'}</b><small>${media ? 'humor médio ' + media.toFixed(1).replace('.',',') : 'humor médio'}</small></div></div>
+    <div class="cal"><span class="cal-h">S</span><span class="cal-h">T</span><span class="cal-h">Q</span><span class="cal-h">Q</span><span class="cal-h">S</span><span class="cal-h">S</span><span class="cal-h">D</span>${cel}</div>
+    ${ver ? `<div class="dia-ver"><div class="nivel-row"><b>${esc(new Date(ui.diaVer+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}))}</b><span>${ver.humor ? CARAS[ver.humor] + ' ' + CARAS_NOME[ver.humor] : ''}</span></div>
+      ${(ver.perguntas||[]).map((q,i) => `<p><small>${esc(q)}</small>${esc((ver.respostas||[])[i] || '—')}</p>`).join('')}
+      <button class="chip" data-act="verDia" data-d="${ui.diaVer}">fechar</button></div>` : (ents.length ? '<p class="hint">toca num dia com carinha pra reler o que você escreveu.</p>' : '')}
+    ${claude}
+  </section>`;
+}
+async function lerMes(m){
+  const ents = entradasMes(m); if(ents.length < 3) return;
+  ui.lerMes = {m, st:'lendo'}; render();
+  try{
+    const r = await ia('diario', {mes: m, entradas: ents.map(e => ({dia:e.dia, humor:+e.humor||0, perguntas:e.perguntas||[], respostas:e.respostas||[]}))});
+    const doc = {id:m, mes:m, temas:(r.temas||[]).slice(0,6), reflexao:String(r.reflexao||''), humor:String(r.humor||''), dias:ents.length, em:new Date().toISOString()};
+    state.diarioMes[m] = doc; saveDoc('diarioMes', m); ui.lerMes = null; render();
+  }catch(e){ ui.lerMes = {m, st:'erro', msg: iaErro(e)}; render(); }
+}
+
+/* ---------- Claude (função no Supabase) ---------- */
+const IA_URL = 'https://rebjgvhmqaaiyzrhoxfa.supabase.co/functions/v1/metas-ia';
+async function ia(modo, body){
+  if(!sb) throw {erro:'rede'};
+  const {data:{session}} = await sb.auth.getSession(); if(!session) throw {erro:'login'};
+  let r; try{ r = await fetch(IA_URL, {method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer ' + session.access_token}, body: JSON.stringify({modo, ...body})}); }
+  catch(e){ throw {erro:'rede'}; }
+  const j = await r.json().catch(() => ({erro:'falha'}));
+  if(!r.ok || j.erro) throw j;
+  return j;
+}
+function iaErro(e){
+  return ({rede:'sem internet agora. tenta de novo daqui a pouco.', login:'sua sessão expirou. sai e entra de novo no app.', sem_chave:'o Claude não tá configurado agora.', chave_invalida:'a chave do Claude não tá funcionando.', sem_credito:'acabaram os créditos do Claude. dá uma olhada na conta da Anthropic.', muitos_pedidos:'muitos pedidos seguidos. tenta de novo em 1 minutinho.', recusou:'o Claude não quis ler esse. tenta escrever de outro jeito.', longo_demais:'ficou grande demais pra ler de uma vez. tenta com menos coisa.', poucos_dias:'precisa de pelo menos 3 dias escritos no mês.', vazio:'escreve um recado ou manda uma foto primeiro ✦'})[e && e.erro] || 'não deu certo agora. tenta de novo.';
+}
+
+/* ---------- organizar (caixa de entrada) ---------- */
+const orgVazio = () => ({st:'novo', texto:'', imgs:[], res:null, sel:[], feito:[], msg:'', rec:null, ouvindo:false});
+let org = orgVazio();
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const TIPO_ORG = {compromisso:'📅 compromisso', tarefa:'✅ tarefa', marcar_habito:'⭐ marcar hábito', habito_novo:'🌱 hábito novo', riscar_passinho:'✦ riscar passinho', passinho_novo:'➕ passinho novo', meta_nova:'🎯 meta nova', leitura:'📚 leitura'};
+function abrirOrg(){ if(org.st === 'feito' || org.st === 'lendo') org = orgVazio(); renderOrg(); $('#sheet').hidden = false; setTimeout(() => { const t = $('#org-t'); if(t && org.st === 'novo') t.focus(); }, 60); }
+function orgOnde(it){
+  if(it.tipo === 'marcar_habito'){ const h = state.habitos[it.habito_id]; return h ? `hábito: ${h.titulo}` : 'não achei esse hábito'; }
+  if(it.tipo === 'riscar_passinho' || it.tipo === 'passinho_novo'){
+    const m = state.metas[it.meta_id] && norm(state.metas[it.meta_id]); if(!m) return 'não achei essa meta';
+    const k = m.marcos.find(x => x.id === it.marco_id); const p = k && k.passos.find(x => x.id === it.passo_id);
+    return `meta: ${m.titulo}${k ? ' · ' + k.titulo : ''}${it.tipo === 'riscar_passinho' && p ? ' · ' + p.titulo : ''}`;
+  }
+  if(it.tipo === 'leitura'){ const l = state.livros[it.livro_id]; return l ? `livro: ${l.titulo} (tá em ${pctLiv(l)}%)` : 'não achei esse livro'; }
+  return '';
+}
+function orgCard(it, i){
+  const on = org.sel[i] !== false, f = (campo, extra='') => `data-org-f="${i}:${campo}" ${extra}`;
+  const titulo = ['riscar_passinho','leitura','marcar_habito'].includes(it.tipo) ? '' :
+    `<input class="field" ${f('titulo')} value="${esc(it.titulo)}" maxlength="140" aria-label="Título">`;
+  let campos = '';
+  if(it.tipo === 'compromisso') campos = `<div class="org-row"><input class="field" type="date" ${f('data')} value="${esc(it.data)}" aria-label="Dia"><input class="field" type="time" ${f('hora')} value="${esc(it.hora)}" aria-label="Horário"><input class="field" type="time" ${f('hora_fim')} value="${esc(it.hora_fim)}" aria-label="Até"></div>`;
+  else if(['tarefa','marcar_habito','meta_nova'].includes(it.tipo)) campos = `<div class="org-row"><label class="org-mini">${it.tipo==='tarefa'?'prazo':it.tipo==='meta_nova'?'data limite':'dia'}<input class="field" type="date" ${f('data')} value="${esc(it.data)}"></label></div>`;
+  else if(it.tipo === 'leitura') campos = `<div class="org-row"><label class="org-mini">tô em<input class="field" type="number" min="0" max="100" inputmode="numeric" ${f('pct')} value="${it.pct >= 0 ? it.pct : ''}">%</label></div>`;
+  const onde = orgOnde(it), extra = [it.tipo === 'compromisso' && it.local, it.descricao].filter(Boolean).join(' · ');
+  return `<div class="org-card ${on ? '' : 'off'}"><label class="org-chk"><input type="checkbox" data-org-sel="${i}" ${on ? 'checked' : ''}><span class="tag">${TIPO_ORG[it.tipo] || it.tipo}</span></label>
+    ${it.tipo === 'riscar_passinho' || it.tipo === 'leitura' || it.tipo === 'marcar_habito' ? `<b class="org-t">${esc(it.titulo)}</b>` : titulo}
+    ${onde ? `<small class="org-onde">${esc(onde)}</small>` : ''}${extra ? `<small class="org-onde">${esc(extra)}</small>` : ''}
+    ${campos}${it.trecho ? `<small class="org-trecho">"${esc(it.trecho)}"</small>` : ''}</div>`;
+}
+function renderOrg(){
+  const s = $('#sheet'); let corpo = '';
+  if(org.st === 'novo'){
+    corpo = `<p class="hint" style="margin:0 0 10px">cola um recado, manda uma foto ou print, ou fala. eu sugiro o que entra no app e você confirma antes ✦</p>
+      <textarea class="field org-txt" id="org-t" data-org-txt rows="5" maxlength="20000" placeholder="ex: festa junina da escola sexta 15h, levar prato doce">${esc(org.texto)}</textarea>
+      ${org.imgs.length ? `<div class="org-imgs">${org.imgs.map((im,i) => `<span><img src="${im.url}" alt="imagem ${i+1}"><button type="button" data-act="orgTiraImg" data-i="${i}" aria-label="Tirar imagem ${i+1}">×</button></span>`).join('')}</div>` : ''}
+      <div class="org-acoes"><button type="button" class="btn ghost" data-act="orgFoto">📷 foto ou print</button>
+        ${SR ? `<button type="button" class="btn ghost ${org.ouvindo ? 'ouvindo' : ''}" data-act="orgFalar">${org.ouvindo ? '⏹ parar' : '🎙️ falar'}</button>` : ''}
+        <input type="file" id="org-file" accept="image/*" multiple hidden></div>
+      ${SR ? '' : '<p class="hint">pra falar, toca no 🎙️ do teclado e dita o recado ✦</p>'}
+      ${org.msg ? `<p class="org-msg">${esc(org.msg)}</p>` : ''}
+      <div class="actions"><button type="button" class="btn red" data-act="orgEnviar">organizar ${STAR}</button><button type="button" class="btn ghost" data-act="fechar">cancelar</button></div>`;
+  } else if(org.st === 'lendo'){
+    corpo = `<div class="org-lendo"><span class="org-spin" aria-hidden="true">${STAR}</span><p>lendo seu recado…</p><p class="hint">leva uns segundinhos</p></div>`;
+  } else if(org.st === 'sugestoes'){
+    const its = org.res.itens || [], n = its.filter((_,i) => org.sel[i] !== false).length;
+    corpo = `${org.res.resposta ? `<p class="org-resp">${esc(org.res.resposta)}</p>` : ''}
+      ${(org.res.duvidas||[]).length ? `<div class="org-duv">${org.res.duvidas.map(q => `<p>🤔 ${esc(q)}</p>`).join('')}</div>` : ''}
+      ${its.length ? `<p class="hint" style="margin:0 0 8px">confere, edita o que precisar e desmarca o que não quiser. nada entra sem você confirmar.</p><div class="org-lista">${its.map(orgCard).join('')}</div>` : '<div class="empty"><b>nada pra registrar</b>não achei nada pra colocar no app nesse recado.</div>'}
+      <div class="actions">${its.length ? `<button type="button" class="btn red" data-act="orgConfirmar" ${n ? '' : 'disabled'}>confirmar${n ? ` (${n})` : ''}</button>` : ''}<button type="button" class="btn ghost" data-act="orgVoltar">voltar</button></div>`;
+  } else if(org.st === 'feito'){
+    const ok = org.feito.filter(x => x.ok).length, erro = org.feito.length - ok;
+    corpo = `<p class="org-resp">${ok ? `pronto! ${ok} coisa${ok===1?'':'s'} no lugar ✦` : 'não consegui registrar nada 😕'}${erro ? ` · ${erro} deu errado` : ''}</p>
+      <ul class="org-feito">${org.feito.map(x => `<li class="${x.ok ? 'ok' : 'erro'}"><span aria-hidden="true">${x.ok ? '✓' : '✗'}</span><span><b>${esc(x.t)}</b><small>${esc(x.msg)}</small>${x.link ? `<a class="btn" href="${esc(x.link)}" target="_blank" rel="noopener">abrir no Google Agenda</a>` : ''}</span></li>`).join('')}</ul>
+      <div class="actions"><button type="button" class="btn red" data-act="fechar">fechar</button><button type="button" class="btn ghost" data-act="orgNovo">organizar outro</button></div>`;
+  }
+  /* se a caixa já está aberta, troca só o conteúdo (assim a animação de abrir não repete a cada toque) */
+  const inner = `<h3 id="org-h">📥 organizar</h3>${corpo}`, aberto = s.querySelector('.panel.org');
+  if(aberto && !s.hidden) aberto.innerHTML = inner;
+  else s.innerHTML = `<div class="panel org" role="dialog" aria-modal="true" aria-labelledby="org-h">${inner}</div>`;
+  const fi = $('#org-file'); if(fi) fi.onchange = () => { orgAddArquivos([...fi.files]); fi.value = ''; };
+}
+/* foto/print: diminui pra no máx. 1600px e manda como JPEG */
+function orgImagem(file){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => { const max = 1600, esc_ = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width*esc_); c.height = Math.round(img.height*esc_);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      const durl = c.toDataURL('image/jpeg', 0.85); res({media_type:'image/jpeg', data: durl.split(',')[1], url: durl}); };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('img')); };
+    img.src = url;
+  });
+}
+async function orgAddArquivos(files){
+  const imgs = files.filter(f => f && /^image\//.test(f.type)); if(!imgs.length) return;
+  for(const f of imgs){ if(org.imgs.length >= 4){ org.msg = 'dá pra mandar até 4 imagens por vez ✦'; break; }
+    try{ org.imgs.push(await orgImagem(f)); }catch(e){ org.msg = 'não consegui abrir essa imagem. tenta um print ou outra foto.'; } }
+  if(org.st === 'novo') renderOrg();
+}
+document.addEventListener('paste', e => {
+  if($('#sheet').hidden || !$('#sheet .org') || org.st !== 'novo') return;
+  const fs = [...((e.clipboardData && e.clipboardData.files) || [])].filter(f => /^image\//.test(f.type));
+  if(fs.length){ e.preventDefault(); org.texto = ($('#org-t') || {}).value || org.texto; orgAddArquivos(fs); }
+});
+function orgFalar(){
+  if(!SR) return;
+  if(org.rec){ try{ org.rec.stop(); }catch(_){} return; }
+  const t = $('#org-t'); if(t) org.texto = t.value;
+  const rec = new SR(); rec.lang = 'pt-BR'; rec.interimResults = true; rec.continuous = true;
+  const base = org.texto ? org.texto.replace(/\s*$/, ' ') : '';
+  let final = '';
+  rec.onresult = ev => { let inter = ''; for(let i = ev.resultIndex; i < ev.results.length; i++){ const r = ev.results[i]; if(r.isFinal) final += r[0].transcript + ' '; else inter += r[0].transcript; }
+    org.texto = (base + final + inter).trimStart(); const el = $('#org-t'); if(el) el.value = org.texto; };
+  rec.onerror = ev => { org.msg = ev.error === 'not-allowed' ? 'o microfone tá bloqueado. libera nas permissões ou dita pelo 🎙️ do teclado.' : 'não consegui ouvir. tenta de novo ou dita pelo 🎙️ do teclado.'; };
+  rec.onend = () => { org.rec = null; org.ouvindo = false; if(org.st === 'novo' && !$('#sheet').hidden) renderOrg(); };
+  try{ rec.start(); org.rec = rec; org.ouvindo = true; org.msg = ''; renderOrg(); }catch(e){ org.msg = 'não consegui ligar o microfone. dita pelo 🎙️ do teclado ✦'; renderOrg(); }
+}
+function orgContexto(){
+  const agora = new Date();
+  return {
+    hoje: dk(), agora: hm(agora), diaSemana: agora.toLocaleDateString('pt-BR', {weekday:'long'}),
+    habitos: habArr().map(h => ({id:h.id, titulo:h.titulo})),
+    metas: metasArr().filter(m => !m.concluidaEm).slice(0, 30).map(m => ({id:m.id, titulo:m.titulo, marcos: m.marcos.slice(0, 12).map(k => ({id:k.id, titulo:k.titulo, passos: k.passos.slice(0, 25).map(p => ({id:p.id, titulo:p.titulo, feito:!!p.feito}))}))})),
+    livros: livArr().filter(l => l.status === 'lendo').map(l => ({id:l.id, titulo:l.titulo, pct:pctLiv(l)})),
+    tarefas: tarArr().filter(t => !t.feita).slice(0, 40).map(t => ({titulo:t.titulo, data:t.data || ''})),
+  };
+}
+async function orgEnviar(){
+  const t = $('#org-t'); if(t) org.texto = t.value;
+  if(org.rec){ try{ org.rec.stop(); }catch(_){} }
+  if(!org.texto.trim() && !org.imgs.length){ org.msg = 'escreve um recado ou manda uma foto primeiro ✦'; renderOrg(); return; }
+  org.st = 'lendo'; org.msg = ''; renderOrg();
+  try{
+    const r = await ia('organizar', {texto: org.texto, imagens: org.imgs.map(im => ({media_type: im.media_type, data: im.data})), contexto: orgContexto()});
+    org.res = {resposta: r.resposta || '', duvidas: r.duvidas || [], itens: (r.itens || []).filter(it => TIPO_ORG[it.tipo])};
+    org.sel = org.res.itens.map(() => true); org.st = 'sugestoes';
+  }catch(e){ org.st = 'novo'; org.msg = iaErro(e); }
+  if(!$('#sheet').hidden) renderOrg();
+}
+const dataOk = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
+const horaOk = h => /^\d{2}:\d{2}$/.test(String(h || ''));
+function linkAgenda(it){
+  const base = 'https://calendar.google.com/calendar/render?action=TEMPLATE', d = it.data.replace(/-/g, '');
+  let datas;
+  if(horaOk(it.hora)){
+    const ini = new Date(it.data + 'T' + it.hora), fim = horaOk(it.hora_fim) && it.hora_fim > it.hora ? new Date(it.data + 'T' + it.hora_fim) : new Date(ini.getTime() + 60*6e4);
+    const f = x => dk(x).replace(/-/g,'') + 'T' + pad2(x.getHours()) + pad2(x.getMinutes()) + '00';
+    datas = f(ini) + '/' + f(fim);
+  } else { const amanha = new Date(it.data + 'T12:00'); amanha.setDate(amanha.getDate()+1); datas = d + '/' + dk(amanha).replace(/-/g,''); }
+  const q = new URLSearchParams({text: it.titulo, dates: datas, ctz: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Sao_Paulo'});
+  if(it.descricao) q.set('details', it.descricao); if(it.local) q.set('location', it.local);
+  return base + '&' + q.toString();
+}
+function orgAplica(it){
+  const area = AREAS[it.area] ? it.area : '';
+  switch(it.tipo){
+    case 'compromisso':
+      if(!dataOk(it.data)) return {ok:false, msg:'faltou o dia do compromisso'};
+      return {ok:true, msg:`${fmtD(it.data)}${horaOk(it.hora) ? ' às ' + it.hora : ''} · toca no botão pra salvar na sua agenda`, link: linkAgenda(it)};
+    case 'tarefa': {
+      if(!it.titulo.trim()) return {ok:false, msg:'tarefa sem título'};
+      const id = uid('t'); state.tarefas[id] = {id, titulo: it.titulo.trim().slice(0,140), area: area || 'eu', data: dataOk(it.data) ? it.data : '', foco:false, feita:false, criadoEm: new Date().toISOString()};
+      saveDoc('tarefas', id); return {ok:true, msg: 'tarefa anotada' + (dataOk(it.data) ? ' pra ' + fmtD(it.data) : '')};
+    }
+    case 'marcar_habito': {
+      const h = state.habitos[it.habito_id]; if(!h) return {ok:false, msg:'não achei esse hábito'};
+      const dia = dataOk(it.data) ? it.data : dk(); if(dia > dk()) return {ok:false, msg:'não dá pra marcar um dia que ainda não chegou'};
+      if((h.dias || {})[dia]) return {ok:true, msg:'já estava marcado ✦'};
+      toggleHab(h.id, dia); return {ok:true, msg:`marcado ${dia === dk() ? 'hoje' : 'em ' + fmtD(dia)} · +1 ${'★'}`};
+    }
+    case 'habito_novo':
+      if(!it.titulo.trim()) return {ok:false, msg:'hábito sem nome'};
+      addHab(it.titulo, area || 'saude', it.vezes_semana > 0 ? it.vezes_semana : 7);
+      return {ok:true, msg: it.vezes_semana > 0 && it.vezes_semana < 7 ? `hábito novo · ${it.vezes_semana}x por semana` : 'hábito novo · todo dia'};
+    case 'riscar_passinho': {
+      const raw = state.metas[it.meta_id]; if(!raw) return {ok:false, msg:'não achei essa meta'};
+      const m = norm(raw), k = m.marcos.find(x => x.id === it.marco_id), p = k && k.passos.find(x => x.id === it.passo_id);
+      if(!p) return {ok:false, msg:'não achei esse passinho'}; if(p.feito) return {ok:true, msg:'já estava riscado ✦'};
+      toggle(m.id, k.id, p.id); return {ok:true, msg:`riscado em "${m.titulo}"`};
+    }
+    case 'passinho_novo': {
+      const raw = state.metas[it.meta_id]; if(!raw) return {ok:false, msg:'não achei essa meta'};
+      const m = norm(raw); const k = m.marcos.find(x => x.id === it.marco_id) || m.marcos[m.marcos.length-1];
+      if(!k) return {ok:false, msg:'essa meta ainda não tem marcos. cria um marco nela primeiro.'};
+      if(!it.titulo.trim()) return {ok:false, msg:'passinho sem título'};
+      addPasso(m.id, k.id, it.titulo, [5,15,60].includes(+it.tempo) ? +it.tempo : 15); return {ok:true, msg:`passinho novo em "${m.titulo}"`};
+    }
+    case 'meta_nova': {
+      if(!it.titulo.trim()) return {ok:false, msg:'meta sem título'};
+      const id = uid('m'); state.metas[id] = {id, titulo: it.titulo.trim().slice(0,120), porque: String(it.descricao || '').slice(0,200), horizonte: H[it.horizonte] ? it.horizonte : 'curto', area: area || 'eu', prazo: dataOk(it.data) ? it.data : '', criadoEm: new Date().toISOString(), marcos: []};
+      saveMeta(id); return {ok:true, msg:'meta criada · abre ela na aba metas pra quebrar em passinhos'};
+    }
+    case 'leitura': {
+      const l = state.livros[it.livro_id]; if(!l) return {ok:false, msg:'não achei esse livro'};
+      const pct = parseInt(it.pct); if(isNaN(pct) || pct < 0 || pct > 100) return {ok:false, msg:'faltou a porcentagem'};
+      registraPct(l.id, pct); return {ok:true, msg:`agora em ${pct}%`};
+    }
+  }
+  return {ok:false, msg:'tipo desconhecido'};
+}
+function orgConfirmar(){
+  const its = org.res.itens; org.feito = [];
+  silencio = true;
+  its.forEach((it, i) => { if(org.sel[i] === false) return;
+    let r; try{ r = orgAplica(it); }catch(e){ console.error(e); r = {ok:false, msg:'deu erro ao salvar'}; }
+    org.feito.push({t: (TIPO_ORG[it.tipo] || '') + ' · ' + (it.titulo || ''), ...r}); });
+  silencio = false;
+  org.st = 'feito'; render(); renderOrg();
+  if(org.feito.some(x => x.ok)){ celebrate(1, false); bump(); }
+}
+document.addEventListener('input', e => {
+  const t = e.target;
+  if(t.matches && t.matches('[data-dr]')){ const d = rascunho(dk()); d.r[+t.dataset.dr] = t.value; guardaRascunho();
+    const b = document.querySelector('[data-act="salvarDiario"]'); if(b && b.disabled){ b.disabled = false; b.textContent = 'salvar mudanças'; } return; }
+  if(t.matches && t.matches('[data-org-txt]')){ org.texto = t.value; return; }
+  if(t.matches && t.matches('[data-org-f]')){ const [i, campo] = t.dataset.orgF.split(':'); const it = org.res && org.res.itens[+i]; if(it) it[campo] = campo === 'pct' ? (t.value === '' ? -1 : +t.value) : t.value; }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if(t.matches && t.matches('[data-org-sel]')){ org.sel[+t.dataset.orgSel] = t.checked; renderOrg(); }
+});
+
 /* ---------- render ---------- */
 function render(){
   // guarda o que estava sendo digitado
-  const keep = {}; document.querySelectorAll('#view input[id], #view select[id]').forEach(el => keep[el.id] = el.value);
+  const keep = {}; document.querySelectorAll('#view input[id], #view select[id], #view textarea[id]').forEach(el => keep[el.id] = el.value);
   const focusId = document.activeElement && document.activeElement.id;
   renderTop();
   const v = $('#view');
@@ -1306,13 +1719,12 @@ function render(){
     if(state.mode==='local') html += `<div class="banner">modo de teste: isso fica salvo só neste navegador. abrindo pelo claude.ai, fica salvo de verdade.</div>`;
     if(state.slow) html += `<div class="banner">a conexão tá lenta, pode ser que algo esteja desatualizado.</div>`;
     if(ui.tab === 'vitorias'){ ui.tab = 'pote'; ui.premio = 'vit'; }
-    html += ({hoje:vHoje, rotina:vRotina, leituras:vLeituras, metas:vMetas, pote:vPremios}[ui.tab] || vHoje)();
+    html += ({hoje:vHoje, rotina:vRotina, diario:vDiario, leituras:vLeituras, metas:vMetas, pote:vPremios}[ui.tab] || vHoje)();
     v.innerHTML = html;
   }
   Object.entries(keep).forEach(([id,val]) => { const el = document.getElementById(id); if(el) el.value = val; });
   if(focusId){ const el = document.getElementById(focusId); if(el && el.closest('#view')) el.focus(); }
   document.querySelectorAll('.tab').forEach(t => { if(t.dataset.tab===ui.tab) t.setAttribute('aria-current','page'); else t.removeAttribute('aria-current'); });
-  $('#somBtn').textContent = som ? 'som: on' : 'som: off';
   document.body.dataset.view = ui.tab;
 }
 function habRow(h, full){
@@ -1565,6 +1977,7 @@ function vHoje(){
   const nMetas = Object.keys(state.metas).length;
   return `
   <section class="hello"><h1>oi, isa ${STAR}</h1><p>${feitosHoje ? `hoje você já riscou ${feitosHoje} coisinha${feitosHoje>1?'s':''}. ${feitosHoje>=3?'tá voando 💃':'bora mais um?'}` : esc(frase)}</p></section>
+  ${vLembreteDiario()}
   ${vAgora()}
   ${vAvisos()}
   ${ag.mcp && (ag.st === 'pedir' || ag.st === 'erro') ? vAgenda() : ''}
@@ -1694,7 +2107,7 @@ function openSheet(mid, hz){
   </form>`;
   s.hidden = false; setTimeout(()=>$('#f-titulo').focus(), 50);
 }
-function closeSheet(){ $('#sheet').hidden = true; $('#sheet').innerHTML=''; ui.edit=null; }
+function closeSheet(){ if(org && org.rec){ try{ org.rec.stop(); }catch(_){} } $('#sheet').hidden = true; $('#sheet').innerHTML=''; ui.edit=null; }
 
 /* ---------- eventos ---------- */
 document.addEventListener('click', e => {
@@ -1718,6 +2131,20 @@ document.addEventListener('click', e => {
     case 'rot': ui.rot = b.dataset.r; ui.livro = null; render(); break;
     case 'abrirLivro': ui.livro = ui.livro === b.dataset.id ? null : b.dataset.id; render(); break;
     case 'mais10': mais10(b.dataset.id); break;
+    case 'irDiario': ui.tab = 'diario'; render(); topo(); break;
+    case 'humor': setHumor(+b.dataset.n); break;
+    case 'salvarDiario': salvarDiario(); break;
+    case 'mesDiario': ui.mesDiario = mesMais(ui.mesDiario || dk().slice(0,7), +b.dataset.d); ui.diaVer = null; render(); break;
+    case 'verDia': ui.diaVer = ui.diaVer === b.dataset.d ? null : b.dataset.d; render(); break;
+    case 'lerMes': lerMes(b.dataset.m); break;
+    case 'organizar': abrirOrg(); break;
+    case 'orgFoto': $('#org-file') && $('#org-file').click(); break;
+    case 'orgTiraImg': org.imgs.splice(+b.dataset.i, 1); renderOrg(); break;
+    case 'orgFalar': orgFalar(); break;
+    case 'orgEnviar': orgEnviar(); break;
+    case 'orgVoltar': org.st = 'novo'; renderOrg(); break;
+    case 'orgConfirmar': orgConfirmar(); break;
+    case 'orgNovo': org = orgVazio(); renderOrg(); break;
     case 'liDia': liDia(b.dataset.d); break;
     case 'metaLeit': setMetaLeit(b.dataset.n); break;
     case 'maisPassos': ui.maisPassos = !ui.maisPassos; render(); break;
@@ -1761,7 +2188,6 @@ document.addEventListener('click', e => {
     case 'resgatar': resgatar(r); break;
     case 'repetir': repetir(r); break;
     case 'delRew': delRew(r); break;
-    case 'som': som = !som; try{ localStorage.setItem('metas-som', som?'on':'off'); }catch(_){} render(); if(som) plim(0); break;
     case 'exemplos': EX.metas.forEach(x => { state.metas[x.id] = clone(x); saveMeta(x.id); }); { const g = clone(state.geral||defGeral()); if(!g.recompensas.length) g.recompensas = clone(EX.recompensas).map(r=>({...r,exemplo:true})); state.geral=g; saveGeral(); } ui.tab='metas'; render(); break;
   }
 });
@@ -1791,29 +2217,20 @@ document.addEventListener('submit', e => {
 });
 document.addEventListener('keydown', e => { if(e.key==='Escape' && !$('#sheet').hidden) closeSheet(); });
 
-/* ---------- dopamina: toast, som, confete ---------- */
-let toastT;
+/* ---------- dopamina: toast e confete ---------- */
+let toastT, silencio = false; /* silencio: enquanto o "organizar" aplica vários itens, sem toast/confete a cada um */
 function toast(html, o={}){
+  if(silencio) return;
   const host = $('#toastHost'); clearTimeout(toastT);
   host.innerHTML = `<div class="toast ${o.big?'big':''}" role="status"><span>${html}</span>${o.undo?'<button id="undoBtn">desfazer</button>':''}</div>`;
   if(o.undo) $('#undoBtn').onclick = () => { host.innerHTML=''; o.undo(); };
   toastT = setTimeout(()=>host.innerHTML='', o.big ? 4200 : 3200);
 }
 function bump(){ const p = $('#pote'); p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop'); }
-let actx;
-function plim(level){
-  if(!som) return; try{
-    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
-    const notes = level===2 ? [523,659,784,1047,1319] : level===1 ? [659,784,1047] : [784,1175];
-    notes.forEach((f,i) => { const o = actx.createOscillator(), g = actx.createGain(); o.type='triangle'; o.frequency.value=f;
-      const t = actx.currentTime + i*0.07; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.18,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.35);
-      o.connect(g).connect(actx.destination); o.start(t); o.stop(t+0.4); });
-  }catch(e){}
-}
 const fx = $('#fx'), cx = fx.getContext('2d'); let parts = [], raf = 0;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function celebrate(level, bonus){
-  plim(level); try{ navigator.vibrate && navigator.vibrate(level ? [20,40,20] : 15); }catch(e){}
+  if(silencio) return; try{ navigator.vibrate && navigator.vibrate(level ? [20,40,20] : 15); }catch(e){}
   if(reduce) return;
   const dpr = devicePixelRatio||1; fx.width = innerWidth*dpr; fx.height = innerHeight*dpr; cx.setTransform(dpr,0,0,dpr,0,0);
   const css = getComputedStyle(document.documentElement);
