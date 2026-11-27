@@ -26,6 +26,24 @@ const members = [mem({ id: 'a1' }), mem({ id: 'a2' }), mem({ id: 'k1', kind: 'ch
 describe('caixa de entrada', () => {
   beforeEach(() => localStorage.clear());
   it('esquema da resposta é estrito (exigência da saída estruturada)', () => checkStrict(OUTPUT_SCHEMA));
+  it('esquema usa só formatos aceitos pela API (sem lista de tipos; enum do mesmo tipo declarado)', () => {
+    const walk = (n: any, path: string) => {
+      if (!n || typeof n !== 'object') return;
+      if ('type' in n) expect(Array.isArray(n.type), `${path}: use anyOf em vez de lista de tipos`).toBe(false);
+      if (n.enum && n.type) for (const v of n.enum) expect(typeof v === (n.type === 'integer' ? 'number' : n.type), `${path}: enum ${v}`).toBe(true);
+      for (const [k, v] of Object.entries(n)) walk(v, `${path}.${k}`);
+    };
+    walk(OUTPUT_SCHEMA, 'root');
+    // limite da API: no máximo 16 campos com união (anyOf / lista de tipos)
+    let unions = 0;
+    const count = (n: any) => { if (!n || typeof n !== 'object') return; if (n.anyOf || Array.isArray(n.type)) unions++; Object.values(n).forEach(count); };
+    count(OUTPUT_SCHEMA);
+    expect(unions).toBeLessThanOrEqual(16);
+  });
+  it('aceita a resposta com textos vazios ("") no lugar de null', () => {
+    const it = sanitize({ ...base, kind: 'event', title: 'Banho da Pandora', date: '2026-11-28', time: '14:00', description: '', location: '', assignee: '', child_kind: '' as any, member_id: '', all_day: false }, members);
+    expect(it.description).toBeNull(); expect(it.location).toBeNull(); expect(it.assignee).toBe('family'); expect(it.child_kind).toBeNull(); expect(it.member_id).toBeNull();
+  });
   it('categorias da IA batem com as do app', () => {
     expect(TASK_CATEGORIES.sort()).toEqual(TASK_CATS.map((c) => c.value).sort());
     expect(EVENT_CATEGORIES.sort()).toEqual(EVENT_CATS.map((c) => c.value).sort());
