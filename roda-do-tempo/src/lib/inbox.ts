@@ -99,6 +99,7 @@ export function countsText(c: Partial<Record<InboxKind, number>>) {
 export const ERROR_TEXT: Record<string, string> = {
   no_key: 'A IA ainda não foi ligada: falta cadastrar a chave ANTHROPIC_API_KEY nos segredos das Edge Functions do Supabase.',
   bad_key: 'A chave da Anthropic cadastrada no Supabase não foi aceita. Confira se ela está correta e ativa.',
+  no_credit: 'A conta da Anthropic está sem créditos. Adicione créditos em console.anthropic.com → Billing e tente de novo.',
   rate_limit: 'Muitos pedidos seguidos. Espere um minutinho e tente de novo.',
   refusal: 'A IA não conseguiu processar esse conteúdo. Tente reescrever o recado.',
   too_long: 'O conteúdo ficou grande demais para organizar de uma vez. Tente mandar em partes.',

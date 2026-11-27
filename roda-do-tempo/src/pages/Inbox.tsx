@@ -54,9 +54,9 @@ export function Inbox() {
         body: { family_id: s.family.id, text, files: uploaded.map((u) => ({ path: u.path, media_type: u.type, name: u.name })) },
       });
       if (err) {
-        let code = 'failed';
-        try { code = (await (err as any).context?.json())?.error || code; } catch { /* */ }
-        throw new Error(ERROR_TEXT[code] || 'Não foi possível organizar agora. Tente de novo em instantes.');
+        let code = 'failed', detail = '';
+        try { const b = await (err as any).context?.json(); code = b?.error || code; detail = b?.detail || ''; } catch { /* */ }
+        throw new Error(ERROR_TEXT[code] || `Não foi possível organizar agora. Tente de novo em instantes.${detail ? ` (detalhe: ${detail})` : ''}`);
       }
       const r = data.result;
       setResult({ reply: r.reply, questions: r.questions || [], items: (r.items || []).map((it: InboxItem) => ({ ...sanitize(it, members), on: true })), uploaded });
