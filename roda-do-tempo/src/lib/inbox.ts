@@ -55,7 +55,7 @@ export function applyItems(s: Store, items: InboxItem[], opts: { members: Member
       });
       inc('task');
     } else if (it.kind === 'event') {
-      const allDay = it.all_day ?? !it.time;
+      const allDay = it.all_day === true || !it.time;
       s.save('events', {
         title: it.title, date: it.date!, start_time: allDay ? null : it.time, end_time: allDay ? null : it.end_time, all_day: allDay,
         location: it.location || undefined, description: desc, participants: ['family'],

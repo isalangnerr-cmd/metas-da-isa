@@ -34,6 +34,15 @@ describe('caixa de entrada', () => {
       for (const [k, v] of Object.entries(n)) walk(v, `${path}.${k}`);
     };
     walk(OUTPUT_SCHEMA, 'root');
+    // limite da API: no máximo 16 campos com união (anyOf / lista de tipos)
+    let unions = 0;
+    const count = (n: any) => { if (!n || typeof n !== 'object') return; if (n.anyOf || Array.isArray(n.type)) unions++; Object.values(n).forEach(count); };
+    count(OUTPUT_SCHEMA);
+    expect(unions).toBeLessThanOrEqual(16);
+  });
+  it('aceita a resposta com textos vazios ("") no lugar de null', () => {
+    const it = sanitize({ ...base, kind: 'event', title: 'Banho da Pandora', date: '2026-11-28', time: '14:00', description: '', location: '', assignee: '', child_kind: '' as any, member_id: '', all_day: false }, members);
+    expect(it.description).toBeNull(); expect(it.location).toBeNull(); expect(it.assignee).toBe('family'); expect(it.child_kind).toBeNull(); expect(it.member_id).toBeNull();
   });
   it('categorias da IA batem com as do app', () => {
     expect(TASK_CATEGORIES.sort()).toEqual(TASK_CATS.map((c) => c.value).sort());

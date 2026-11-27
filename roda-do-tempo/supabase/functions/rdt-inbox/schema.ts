@@ -1,6 +1,8 @@
 // Formato da resposta da IA (saída estruturada). Sem dependências: usado pela função e pelos testes.
 const ITEM_KINDS = ["task", "event", "list_item", "child_record", "memory", "wish"] as const;
-// campo opcional: "valor do tipo t" OU null (anyOf, formato aceito pela saída estruturada)
+// A API aceita no máximo 16 campos com união (anyOf/null). Por isso: texto ausente = "" (string vazia),
+// e só os números usam "número OU null".
+const text = (description = "") => ({ type: "string", description: (description ? description + ". " : "") + 'Use "" quando não houver.' });
 const nullable = (t: string, extra: Record<string, unknown> = {}) => ({ anyOf: [{ type: t, ...extra }, { type: "null" }] });
 
 /** Esquema da resposta (saída estruturada: o JSON sempre segue este formato). */
@@ -20,23 +22,23 @@ export const OUTPUT_SCHEMA = {
         properties: {
           kind: { type: "string", enum: [...ITEM_KINDS] },
           title: { type: "string" },
-          description: nullable("string"),
-          date: nullable("string", { description: "YYYY-MM-DD. Para tarefa: prazo. Para evento: dia." }),
-          time: nullable("string", { description: "HH:MM 24h" }),
-          end_time: nullable("string", { description: "HH:MM 24h" }),
-          all_day: nullable("boolean"),
-          location: nullable("string"),
-          assignee: nullable("string", { description: "id de membro adulto, 'both' (os dois adultos) ou 'family'" }),
-          category: nullable("string"),
-          list_id: nullable("string", { description: "id de uma lista existente, se o item couber nela" }),
-          list_name: nullable("string", { description: "nome de lista nova a criar, se nenhuma existente servir" }),
+          description: text(),
+          date: text("YYYY-MM-DD. Para tarefa: prazo. Para evento: dia"),
+          time: text("HH:MM 24h"),
+          end_time: text("HH:MM 24h"),
+          all_day: { type: "boolean", description: "true só para compromisso de dia inteiro, sem horário" },
+          location: text(),
+          assignee: text("id de membro adulto, 'both' (os dois adultos) ou 'family'"),
+          category: text(),
+          list_id: text("id de uma lista existente, se o item couber nela"),
+          list_name: text("nome de lista nova a criar, se nenhuma existente servir"),
           qty: nullable("number"),
-          unit: nullable("string"),
+          unit: text(),
           price: nullable("number"),
-          child_kind: nullable("string", { enum: ["moment", "consult", "vaccine", "growth", "food", "sleep", "school", "medicine", "reminder"] }),
-          member_id: nullable("string", { description: "membro relacionado (criança ou pet) quando for registro do Mini player" }),
+          child_kind: { type: "string", enum: ["", "moment", "consult", "vaccine", "growth", "food", "sleep", "school", "medicine", "reminder"], description: 'Use "" se não for registro da criança.' },
+          member_id: text("membro relacionado (criança ou pet) quando for registro do Mini player"),
           reminder_minutes: nullable("integer"),
-          source_quote: nullable("string", { description: "trecho curto do recado que justifica este item" }),
+          source_quote: text("trecho curto do recado que justifica este item"),
         },
       },
     },

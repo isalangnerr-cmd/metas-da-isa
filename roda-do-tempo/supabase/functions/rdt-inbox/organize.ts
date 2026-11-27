@@ -39,6 +39,7 @@ Regras:
 - Não invente informação. Se algo essencial estiver ambíguo, ainda proponha o item com o que tiver e escreva a dúvida em "questions".
 - Saúde: só organize o que foi informado; nunca dê diagnóstico, dose ou recomendação médica.
 - Títulos curtos e claros, em português do Brasil. "reply" deve ser breve (1 a 3 frases), no tom de um app acolhedor.
+- Campos de texto sem informação: "" (string vazia). Números sem informação: null.
 - Se não houver nada para criar, devolva items vazio e explique em "reply".`;
 }
 
