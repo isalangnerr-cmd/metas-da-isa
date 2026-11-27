@@ -254,3 +254,23 @@ describe('lembretes de compromissos (1 dia e 15 min antes)', () => {
     expect(at('2026-12-10', '15:01')).toHaveLength(0);
   });
 });
+
+import { reminderEvents } from '@/lib/calendar';
+describe('agenda mostra itens de outras abas', () => {
+  it('missões com prazo, cuidados da filha (e próxima data) e cápsulas viram itens da agenda', () => {
+    const tasks = [
+      { id: 't1', title: 'Pagar escola', status: 'todo', due_date: '2026-12-05', due_time: '10:00', assignee: 'family' },
+      { id: 't2', title: 'Feita', status: 'done', due_date: '2026-12-05', assignee: 'family' },
+      { id: 't3', title: 'Sem data', status: 'todo', due_date: null, assignee: 'family' },
+    ] as any;
+    const recs = [{ id: 'r1', member_id: 'k', kind: 'vaccine', date: '2026-12-01', time: '09:00', title: 'Vacina', data: { next_date: '2027-03-01' } },
+      { id: 'r2', member_id: 'k', kind: 'growth', date: '2026-12-01', title: 'Peso', data: {} }] as any;
+    const msgs = [{ id: 'm1', title: 'Para os 18', open_at: '2041-03-10', read_at: null }] as any;
+    const members = [{ id: 'k', kind: 'child', name: 'Eliza', nickname: 'Liz' }] as any;
+    const ev = reminderEvents(tasks, recs, msgs, members);
+    expect(ev.map((e) => e.title)).toEqual(['Pagar escola', 'Vacina · Liz', 'Próxima: Vacina · Liz', 'Cápsula abre: Para os 18']);
+    expect(ev[0].start_time).toBe('10:00'); expect(ev[0].all_day).toBe(false);
+    expect(ev[0].virtual?.link).toBe('/missoes?t=t1');
+    expect(ev.every((e) => e.virtual)).toBe(true);
+  });
+});

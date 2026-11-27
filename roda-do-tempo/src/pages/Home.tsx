@@ -13,6 +13,7 @@ import { EventRow, EventEditor } from './Checkpoints';
 import { listStats } from './Inventory';
 import { isLocked } from './Mail';
 import { MESSAGE_KINDS } from '@/lib/domain';
+import { extrasOn, useCalendarEvents } from '@/lib/calendar';
 
 export function Home() {
   const s = useSession(); const me = useMe(); const members = useMembers(); const nav = useNavigate();
@@ -29,7 +30,8 @@ export function Home() {
   const overdue = tasks.filter((x) => x.status !== 'done' && x.due_date && x.due_date < t);
   const doneToday = comps.filter((c) => c.date === t).length;
   const totalToday = todayTasks.length + doneToday;
-  const upcoming = useMemo(() => eventsBetween(events, t, addDays(t, 14)).slice(0, 5), [events, t]);
+  const calEvents = useCalendarEvents(extrasOn());
+  const upcoming = useMemo(() => eventsBetween(calEvents, t, addDays(t, 14)).slice(0, 6), [calEvents, t]);
   const activeLists = lists.filter((l) => !l.archived).map((l) => ({ l, st: listStats(items.filter((i) => i.list_id === l.id)) })).filter((x) => x.st.total > x.st.done).slice(0, 4);
   const nextAdvs = advs.filter((a) => a.status !== 'done').slice(0, 3);
   const wishesInProgress = wishes.filter((w) => w.status === 'progress' || w.status === 'planning').slice(0, 3);
@@ -113,7 +115,7 @@ export function Home() {
         </Panel>
 
         <Panel kicker="Próximos checkpoints" title="Agenda" icon="flag" tone="sky" action={<Link to="/checkpoints?v=agenda" className="text-[12px] font-medium text-muted link">calendário</Link>}>
-          {upcoming.length ? <ul className="space-y-2">{upcoming.map((o) => <EventRow key={o.ev.id + o.date} o={o} showDate onOpen={(x) => setEv(x.ev)} />)}</ul> : <p className="text-sm text-muted">Nada nos próximos 14 dias.</p>}
+          {upcoming.length ? <ul className="space-y-2">{upcoming.map((o) => <EventRow key={o.ev.id + o.date} o={o} showDate onOpen={(x) => (x.ev.virtual ? nav(x.ev.virtual.link) : setEv(x.ev))} />)}</ul> : <p className="text-sm text-muted">Nada nos próximos 14 dias.</p>}
         </Panel>
         <Panel kicker="Inventário" title="Listas ativas" icon="bag" tone="moss" action={<Link to="/inventario" className="text-[12px] font-medium text-muted link">abrir</Link>}>
           {activeLists.length ? <ul className="space-y-3">{activeLists.map(({ l, st }) => (

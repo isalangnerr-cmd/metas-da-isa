@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { EXTRA_CATS, extrasOn, setExtrasOn, useCalendarEvents } from '@/lib/calendar';
 import { getStore, useTable } from '@/data/store';
 import type { CalEvent } from '@/data/types';
 import { Empty, Field, Icon, Modal, PageHeader, Segmented, useUI } from '@/components/ui';
@@ -16,17 +17,20 @@ const evColor = (e: CalEvent) => e.color || catOf(EVENT_CATS, e.category).color;
 
 export function Checkpoints() {
   const events = useTable('events');
+  const nav = useNavigate();
+  const [extras, setExtras] = useState(extrasOn);
+  const all = useCalendarEvents(extras);
   const [params, setParams] = useSearchParams();
   const [view, setView] = useState<View>(() => (window.innerWidth < 640 ? 'agenda' : 'mes'));
   const [cursor, setCursor] = useState(params.get('d') || today());
   const [editing, setEditing] = useState<{ ev: Partial<CalEvent>; occ?: string } | null>(null);
   const [cat, setCat] = useState('all');
   useEffect(() => { if (params.get('novo')) { setEditing({ ev: { date: cursor } }); params.delete('novo'); setParams(params, { replace: true }); } }, [params, setParams, cursor]);
-  const evs = useMemo(() => events.filter((e) => cat === 'all' || e.category === cat), [events, cat]);
+  const evs = useMemo(() => all.filter((e) => cat === 'all' || e.category === cat), [all, cat]);
 
   const step = (dir: number) => setCursor((c) => view === 'mes' ? addMonths(startOfMonth(c), dir) : view === 'semana' ? addDays(c, 7 * dir) : view === 'dia' ? addDays(c, dir) : addDays(c, 30 * dir));
   const label = view === 'mes' ? `${monthName(+cursor.slice(5, 7) - 1)} ${cursor.slice(0, 4)}` : view === 'semana' ? `Semana de ${fmtDate(startOfWeek(cursor))}` : view === 'dia' ? fmtDateLong(cursor) : `A partir de ${fmtDate(cursor)}`;
-  const open = (o: Occ) => setEditing({ ev: o.ev, occ: o.date });
+  const open = (o: Occ) => (o.ev.virtual ? nav(o.ev.virtual.link) : setEditing({ ev: o.ev, occ: o.date }));
 
   return (
     <div>
@@ -47,7 +51,9 @@ export function Checkpoints() {
         <h2 className="h-pixel text-xl first-letter:uppercase flex-1">{label}</h2>
         <select className="field w-auto min-h-[38px] py-1 text-sm" value={cat} onChange={(e) => setCat(e.target.value)} aria-label="Filtrar categoria">
           <option value="all">Todas as categorias</option>{EVENT_CATS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+          {extras && EXTRA_CATS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
         </select>
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" className="px-check" checked={extras} onChange={(e) => { setExtras(e.target.checked); setExtrasOn(e.target.checked); if (!e.target.checked && cat.startsWith('x-')) setCat('all'); }} />Missões e lembretes</label>
       </div>
 
       {view === 'mes' && <MonthView cursor={cursor} events={evs} onPick={(d) => { setCursor(d); setView('dia'); }} onOpen={open} />}
@@ -75,7 +81,9 @@ function MonthView({ cursor, events, onPick, onOpen }: { cursor: string; events:
               <button onClick={() => onPick(d)} className={`w-7 h-7 grid place-items-center rounded-lg text-sm font-bold ${d === t ? 'bg-terra text-white border border-line' : 'hover:bg-panel2'}`} aria-label={fmtDateLong(d)}>{+d.slice(8)}</button>
               <div className="space-y-[2px] mt-1">
                 {day.slice(0, 3).map((o) => (
-                  <button key={o.ev.id + o.date} onClick={() => onOpen(o)} className="block w-full text-left text-[11px] leading-tight px-1 py-[1px] rounded-md truncate font-semibold text-white" style={{ background: evColor(o.ev) }}>
+                  <button key={o.ev.id + o.date} onClick={() => onOpen(o)} className={`block w-full text-left text-[11px] leading-tight px-1 py-[1px] rounded-md truncate font-semibold ${o.ev.virtual ? '' : 'text-white'}`}
+                    style={o.ev.virtual ? { background: evColor(o.ev) + '1f', color: evColor(o.ev), boxShadow: `inset 2px 0 0 ${evColor(o.ev)}` } : { background: evColor(o.ev) }}
+                    title={o.ev.virtual ? `${o.ev.virtual.label}: ${o.ev.title}` : o.ev.title}>
                     <span className="hidden sm:inline">{!o.ev.all_day && o.ev.start_time ? o.ev.start_time + ' ' : ''}</span>{o.ev.title}
                   </button>
                 ))}
@@ -126,6 +134,8 @@ function DayList({ date, occs, onOpen, onNew }: { date: string; occs: Occ[]; onO
 export function EventRow({ o, onOpen, showDate }: { o: Occ; onOpen: (o: Occ) => void; showDate?: boolean }) {
   const members = useMembers();
   const c = catOf(EVENT_CATS, o.ev.category);
+  const v = o.ev.virtual;
+  const icon = v ? (v.kind === 'task' ? 'sword' : v.kind === 'health' ? 'pill' : 'mail') : c.icon;
   return (
     <li>
       <button onClick={() => onOpen(o)} className="w-full px-box-flat p-3 flex items-center gap-3 text-left" style={{ borderLeft: `8px solid ${evColor(o.ev)}` }}>
@@ -136,7 +146,7 @@ export function EventRow({ o, onOpen, showDate }: { o: Occ; onOpen: (o: Occ) => 
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-semibold leading-tight">{o.ev.title}</div>
-          <div className="text-xs text-muted flex flex-wrap gap-x-2"><span className="inline-flex items-center gap-1"><Icon name={c.icon} size={11} />{c.label}</span>{o.ev.location && <span className="inline-flex items-center gap-1"><Icon name="pin" size={11} />{o.ev.location}</span>}{o.ev.recurrence && <span>{FREQ_LABEL[o.ev.recurrence.freq]}</span>}</div>
+          <div className="text-xs text-muted flex flex-wrap gap-x-2"><span className="inline-flex items-center gap-1"><Icon name={icon} size={11} />{v ? v.label : c.label}</span>{o.ev.location && <span className="inline-flex items-center gap-1"><Icon name="pin" size={11} />{o.ev.location}</span>}{o.ev.recurrence && <span>{FREQ_LABEL[o.ev.recurrence.freq]}</span>}</div>
         </div>
         <div className="flex -space-x-2">{o.ev.participants.includes('family') ? <span className="chip"><Icon name="users" size={11} />Família</span> : o.ev.participants.map((p) => members.find((m) => m.id === p)).filter(Boolean).slice(0, 3).map((m) => <MemberAvatar key={m!.id} m={m} size={26} />)}</div>
       </button>

@@ -44,6 +44,8 @@ export interface CalEvent extends Base {
   title: string; date: string; end_date?: string | null; start_time?: string | null; end_time?: string | null; all_day: boolean;
   location?: string; description?: string; participants: string[]; category: string; color?: string | null;
   recurrence?: Recurrence | null; reminders: number[]; adventure_id?: string | null; exdates?: string[]; example?: boolean;
+  /** Item de outra aba mostrado na agenda (missão, cuidado da filha, cápsula). Não é gravado como evento. */
+  virtual?: { kind: 'task' | 'health' | 'capsule'; link: string; label: string };
 }
 
 export type ChildRecordKind = 'moment' | 'consult' | 'vaccine' | 'growth' | 'food' | 'sleep' | 'school' | 'medicine' | 'reminder';
