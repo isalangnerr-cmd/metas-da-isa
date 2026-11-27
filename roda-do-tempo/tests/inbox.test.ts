@@ -26,6 +26,15 @@ const members = [mem({ id: 'a1' }), mem({ id: 'a2' }), mem({ id: 'k1', kind: 'ch
 describe('caixa de entrada', () => {
   beforeEach(() => localStorage.clear());
   it('esquema da resposta é estrito (exigência da saída estruturada)', () => checkStrict(OUTPUT_SCHEMA));
+  it('esquema usa só formatos aceitos pela API (sem lista de tipos; enum do mesmo tipo declarado)', () => {
+    const walk = (n: any, path: string) => {
+      if (!n || typeof n !== 'object') return;
+      if ('type' in n) expect(Array.isArray(n.type), `${path}: use anyOf em vez de lista de tipos`).toBe(false);
+      if (n.enum && n.type) for (const v of n.enum) expect(typeof v === (n.type === 'integer' ? 'number' : n.type), `${path}: enum ${v}`).toBe(true);
+      for (const [k, v] of Object.entries(n)) walk(v, `${path}.${k}`);
+    };
+    walk(OUTPUT_SCHEMA, 'root');
+  });
   it('categorias da IA batem com as do app', () => {
     expect(TASK_CATEGORIES.sort()).toEqual(TASK_CATS.map((c) => c.value).sort());
     expect(EVENT_CATEGORIES.sort()).toEqual(EVENT_CATS.map((c) => c.value).sort());

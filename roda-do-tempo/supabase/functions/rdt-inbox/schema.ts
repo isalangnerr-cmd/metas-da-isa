@@ -1,6 +1,7 @@
 // Formato da resposta da IA (saída estruturada). Sem dependências: usado pela função e pelos testes.
 const ITEM_KINDS = ["task", "event", "list_item", "child_record", "memory", "wish"] as const;
-const nullable = (t: string, extra: Record<string, unknown> = {}) => ({ type: [t, "null"], ...extra });
+// campo opcional: "valor do tipo t" OU null (anyOf, formato aceito pela saída estruturada)
+const nullable = (t: string, extra: Record<string, unknown> = {}) => ({ anyOf: [{ type: t, ...extra }, { type: "null" }] });
 
 /** Esquema da resposta (saída estruturada: o JSON sempre segue este formato). */
 export const OUTPUT_SCHEMA = {
@@ -32,7 +33,7 @@ export const OUTPUT_SCHEMA = {
           qty: nullable("number"),
           unit: nullable("string"),
           price: nullable("number"),
-          child_kind: nullable("string", { enum: ["moment", "consult", "vaccine", "growth", "food", "sleep", "school", "medicine", "reminder", null] }),
+          child_kind: nullable("string", { enum: ["moment", "consult", "vaccine", "growth", "food", "sleep", "school", "medicine", "reminder"] }),
           member_id: nullable("string", { description: "membro relacionado (criança ou pet) quando for registro do Mini player" }),
           reminder_minutes: nullable("integer"),
           source_quote: nullable("string", { description: "trecho curto do recado que justifica este item" }),
