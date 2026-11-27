@@ -70,9 +70,12 @@ Deno.serve(async (req) => {
     if ("error" in out) return json({ error: out.error }, 422);
     return json(out);
   } catch (e) {
-    if (e instanceof Anthropic.AuthenticationError) return json({ error: "bad_key" }, 503);
+    if (e instanceof Anthropic.APIError) console.error("anthropic_error", e.status, e.message);
+    else console.error("inbox_error", String(e));
+    if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) return json({ error: "bad_key" }, 503);
     if (e instanceof Anthropic.RateLimitError) return json({ error: "rate_limit" }, 429);
-    if (e instanceof Anthropic.APIError) return json({ error: "ai", status: e.status }, 502);
-    return json({ error: "failed", detail: String(e) }, 500);
+    if (e instanceof Anthropic.BadRequestError && /credit balance/i.test(e.message)) return json({ error: "no_credit" }, 402);
+    if (e instanceof Anthropic.APIError) return json({ error: "ai", status: e.status, detail: e.message.slice(0, 300) }, 502);
+    return json({ error: "failed", detail: String(e).slice(0, 300) }, 500);
   }
 });
